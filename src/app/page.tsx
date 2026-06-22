@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
+// Render per-request (reads live tier data; keeps the build independent of the DB).
+export const dynamic = "force-dynamic";
+
 const TRUST = [
   "12+ Year Aged Expressions",
   "Free UK Shipping on £50+",
