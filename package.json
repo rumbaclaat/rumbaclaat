@@ -12,6 +12,9 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:seed-admin": "tsx prisma/seed-admin.ts",
+    "db:seed-pages": "tsx prisma/seed-pages.ts",
+    "db:seed-content": "tsx prisma/seed-content.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {
