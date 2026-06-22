@@ -48,7 +48,7 @@ export default async function HomePage() {
             tribute to Caribbean culture, distilled into every drop.
           </p>
           <div className="d-flex gap-3 justify-content-center flex-wrap mt-4">
-            <Link href="/shop-rum" className="btn btn-gold btn-lg">
+            <Link href="/shop" className="btn btn-gold btn-lg">
               Shop Rum
             </Link>
             <Link href="/join" className="btn btn-outline-gold btn-lg">
