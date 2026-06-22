@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
 const TRUST = [
   "12+ Year Aged Expressions",
@@ -8,14 +9,18 @@ const TRUST = [
   "Award-Winning Distillery",
 ];
 
-const TIERS = [
-  { name: "Bronze", price: "Free", perk: "5% discount · 1× points", color: "var(--bronze)" },
-  { name: "Silver", price: "£9.99/mo", perk: "10% off · 1.5× points", color: "var(--silver)" },
-  { name: "Gold", price: "£24.99/mo", perk: "15% off · 2× points", color: "var(--gold)" },
-  { name: "Black Reserve", price: "£54.99/mo", perk: "20% off · 3× points", color: "var(--gold)" },
-];
+function tierColor(name: string): string {
+  if (name.toLowerCase().includes("bronze")) return "var(--bronze)";
+  if (name.toLowerCase().includes("silver")) return "var(--silver)";
+  return "var(--gold)";
+}
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Live data from Supabase (Prisma). Tiers are CMS-editable base values.
+  const tiers = await prisma.membershipTier.findMany({
+    orderBy: { sortOrder: "asc" },
+  });
+
   return (
     <>
       {/* Hero */}
@@ -66,7 +71,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Membership strip */}
+      {/* Membership strip — from the database */}
       <section
         className="section"
         style={{
@@ -85,17 +90,23 @@ export default function HomePage() {
             </p>
           </div>
           <div className="row g-3">
-            {TIERS.map((tier) => (
-              <div className="col-6 col-lg-3" key={tier.name}>
+            {tiers.map((tier) => (
+              <div className="col-6 col-lg-3" key={tier.id}>
                 <div className="card-brand text-center h-100">
-                  <div style={{ fontSize: "1.5rem", color: tier.color }} aria-hidden="true">
+                  <div style={{ fontSize: "1.5rem", color: tierColor(tier.name) }} aria-hidden="true">
                     ✦
                   </div>
                   <div className="serif" style={{ fontSize: "1.125rem", color: "var(--gold-hi)" }}>
                     {tier.name}
                   </div>
-                  <div className="serif" style={{ fontSize: "1.5rem" }}>{tier.price}</div>
-                  <p style={{ fontSize: ".75rem", marginTop: 6 }}>{tier.perk}</p>
+                  <div className="serif" style={{ fontSize: "1.5rem" }}>
+                    {tier.isFree
+                      ? "Free"
+                      : `£${Number(tier.priceMonthly).toFixed(2)}/mo`}
+                  </div>
+                  <p style={{ fontSize: ".75rem", marginTop: 6 }}>
+                    {tier.memberDiscountPct}% off · {Number(tier.pointsMultiplier)}× points
+                  </p>
                 </div>
               </div>
             ))}
@@ -113,12 +124,11 @@ export default function HomePage() {
         <div className="container">
           <div className="card-brand" style={{ maxWidth: 720, margin: "0 auto" }}>
             <span className="badge-brand">Phase 0 · Foundation</span>
-            <h2 className="h4 mt-3">CMS platform — build in progress</h2>
+            <h2 className="h4 mt-3">CMS platform — connected to Supabase ✓</h2>
             <p style={{ color: "var(--text-muted)", margin: 0 }}>
-              This is the live Next.js + Supabase shell. Global header, footer,
-              age gate and cookie consent are wired. Catalogue, CMS blocks,
-              checkout, membership, trade and the GoHighLevel sync follow per the
-              approved roadmap.
+              The tiers above are read live from your Supabase database via
+              Prisma. Catalogue, CMS blocks, checkout, membership, trade and the
+              GoHighLevel sync follow per the approved roadmap.
             </p>
           </div>
         </div>
