@@ -126,12 +126,12 @@ export default async function HomePage() {
       <section className="section-sm">
         <div className="container">
           <div className="card-brand" style={{ maxWidth: 720, margin: "0 auto" }}>
-            <span className="badge-brand">Phase 0 · Foundation</span>
+            <span className="badge-brand">Live</span>
             <h2 className="h4 mt-3">CMS platform — connected to Supabase ✓</h2>
             <p style={{ color: "var(--text-muted)", margin: 0 }}>
               The tiers above are read live from your Supabase database via
-              Prisma. Catalogue, CMS blocks, checkout, membership, trade and the
-              GoHighLevel sync follow per the approved roadmap.
+              Prisma. Manage everything from the{" "}
+              <Link href="/admin">admin area</Link>.
             </p>
           </div>
         </div>

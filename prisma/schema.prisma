@@ -71,6 +71,7 @@ model Product {
   maxQtyPerOrder Int?
   status      PublishStatus @default(draft)
   variants    ProductVariant[]
+  reviews     Review[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -156,4 +157,230 @@ model Settings {
   ageThreshold         Int     @default(18)
   ghlConfig            Json?
   updatedAt            DateTime @updatedAt
+}
+
+// ----------------------------------------------------------------------------
+// Back-office staff (RBAC) — linked to Supabase auth.users
+// ----------------------------------------------------------------------------
+
+enum StaffRole {
+  super_admin
+  content_editor
+  catalogue_manager
+  order_manager
+  membership_manager
+  trade_manager
+  marketing_manager
+}
+
+model StaffUser {
+  id         String    @id @default(cuid())
+  authUserId String    @unique
+  email      String    @unique
+  name       String?
+  role       StaffRole @default(content_editor)
+  active     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// ----------------------------------------------------------------------------
+// Media library (Supabase Storage)
+// ----------------------------------------------------------------------------
+
+model Media {
+  id         String   @id @default(cuid())
+  bucketPath String   @unique
+  url        String
+  alt        String?
+  width      Int?
+  height     Int?
+  mimeType   String?
+  createdAt  DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// CMS pages + reorderable content blocks
+// ----------------------------------------------------------------------------
+
+enum BlockType {
+  hero_carousel
+  hero_banner
+  announcement_ticker
+  trust_bar
+  parallax_callout
+  featured_products
+  sale_strip
+  membership_tiers
+  membership_promo
+  gift_card
+  cocktails_grid
+  blog_grid
+  featured_article
+  rich_text
+  two_col
+  stat_block
+  card_grid
+  newsletter
+  social_grid
+  faq_accordion
+  cta_band
+  reviews
+}
+
+model Page {
+  id             String         @id @default(cuid())
+  slug           String         @unique
+  templateType   String         @default("content")
+  title          String
+  status         PublishStatus  @default(draft)
+  seoTitle       String?
+  seoDescription String?
+  canonical      String?
+  robots         String?        @default("index,follow")
+  ogImage        String?
+  blocks         ContentBlock[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model ContentBlock {
+  id        String    @id @default(cuid())
+  pageId    String
+  page      Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  type      BlockType
+  order     Int       @default(0)
+  visible   Boolean   @default(true)
+  data      Json      @default("{}")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([pageId, order])
+}
+
+// ----------------------------------------------------------------------------
+// Editorial: blog + cocktails + FAQ
+// ----------------------------------------------------------------------------
+
+model Author {
+  id     String     @id @default(cuid())
+  name   String
+  title  String?
+  bio    String?
+  avatar String?
+  posts  BlogPost[]
+}
+
+model BlogPost {
+  id             String        @id @default(cuid())
+  slug           String        @unique
+  title          String
+  category       String?
+  excerpt        String?
+  body           String?
+  heroImage      String?
+  authorId       String?
+  author         Author?       @relation(fields: [authorId], references: [id])
+  readTime       String?
+  featured       Boolean       @default(false)
+  status         PublishStatus @default(draft)
+  publishDate    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model Cocktail {
+  id                String        @id @default(cuid())
+  slug              String        @unique
+  name              String
+  eyebrow           String?
+  lede              String?
+  difficulty        String?
+  occasion          String?
+  timeMins          Int?
+  ingredients       Json?
+  method            Json?
+  serviceNotes      Json?
+  bartenderTip      String?
+  image             String?
+  featuredProductId String?
+  status            PublishStatus @default(draft)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+}
+
+model FAQItem {
+  id        String  @id @default(cuid())
+  category  String?
+  question  String
+  answer    String
+  sortOrder Int     @default(0)
+}
+
+// ----------------------------------------------------------------------------
+// Navigation, banners, promotions, redirects, reviews
+// ----------------------------------------------------------------------------
+
+model NavigationMenu {
+  id       String    @id @default(cuid())
+  location String    @unique
+  items    NavItem[]
+}
+
+model NavItem {
+  id        String         @id @default(cuid())
+  menuId    String
+  menu      NavigationMenu @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  label     String
+  url       String
+  sortOrder Int            @default(0)
+  visible   Boolean        @default(true)
+}
+
+model Banner {
+  id        String    @id @default(cuid())
+  type      String
+  icon      String?
+  message   String
+  detail    String?
+  link      String?
+  startDate DateTime?
+  endDate   DateTime?
+  active    Boolean   @default(true)
+  sortOrder Int       @default(0)
+}
+
+model Promotion {
+  id           String    @id @default(cuid())
+  name         String
+  discountType String
+  value        Decimal   @db.Decimal(10, 2)
+  appliesTo    String
+  startDate    DateTime?
+  endDate      DateTime?
+  badgeLabel   String?
+  active       Boolean   @default(true)
+}
+
+model Redirect {
+  id         String  @id @default(cuid())
+  fromPath   String  @unique
+  toPath     String
+  statusCode Int     @default(301)
+  active     Boolean @default(true)
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  authorName String
+  memberTier String?
+  rating     Int
+  title      String?
+  body       String?
+  status     String   @default("live")
+  createdAt  DateTime @default(now())
 }

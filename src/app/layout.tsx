@@ -6,11 +6,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@/styles/theme.css";
 import "./globals.css";
 
-import SiteHeader from "@/components/site-header";
-import SiteFooter from "@/components/site-footer";
-import AgeGate from "@/components/age-gate";
-import CookieBanner from "@/components/cookie-banner";
-
 const serif = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -43,18 +38,7 @@ export default function RootLayout({
       data-bs-theme="dark"
       className={`${serif.variable} ${sans.variable}`}
     >
-      <body>
-        <a className="skip-link" href="#main">
-          Skip to main content
-        </a>
-        <SiteHeader />
-        <main id="main" className="has-fixed-nav">
-          {children}
-        </main>
-        <SiteFooter />
-        <AgeGate />
-        <CookieBanner />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
