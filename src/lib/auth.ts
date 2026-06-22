@@ -23,3 +23,10 @@ export async function getStaffUser(): Promise<StaffSession | null> {
 
   return { authUserId: user.id, email: user.email ?? staff.email, staff };
 }
+
+/** Throws if the caller is not an active staff member. Use in server actions. */
+export async function requireStaff(): Promise<StaffSession> {
+  const session = await getStaffUser();
+  if (!session) throw new Error("Unauthorized");
+  return session;
+}
