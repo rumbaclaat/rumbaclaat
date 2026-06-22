@@ -1,59 +1,36 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import HeroCarousel from "@/components/home/hero-carousel";
 
-// Render per-request (reads live tier data; keeps the build independent of the DB).
-export const dynamic = "force-dynamic";
+const U = (id: string, w = 800) =>
+  `https://images.unsplash.com/${id}?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=${w}`;
 
-const TRUST = [
-  "12+ Year Aged Expressions",
-  "Free UK Shipping on £50+",
-  "50,000+ Members",
-  "Caribbean Heritage",
-  "Award-Winning Distillery",
-];
-
-function tierColor(name: string): string {
-  if (name.toLowerCase().includes("bronze")) return "var(--bronze)";
-  if (name.toLowerCase().includes("silver")) return "var(--silver)";
-  return "var(--gold)";
-}
-
-export default async function HomePage() {
-  // Live data from Supabase (Prisma). Tiers are CMS-editable base values.
-  const tiers = await prisma.membershipTier.findMany({
-    orderBy: { sortOrder: "asc" },
-  });
-
+export default function HomePage() {
   return (
     <>
-      {/* Hero */}
-      <section className="hero">
-        <div
-          className="hero-bg"
-          style={{
-            backgroundImage:
-              "linear-gradient(135deg,#1C1A14,#161310 60%,#0E0E0E)",
-          }}
-        />
-        <div className="hero-overlay" />
-        <div className="hero-content">
-          <span className="eyebrow eyebrow-center">Premium Caribbean Rum</span>
-          <h1>
-            Born in the Caribbean.
-            <br />
-            <em className="gold">Bottled for the Bold.</em>
-          </h1>
-          <p className="hero-lede">
-            Aged in American oak. Crafted with heritage. Rumbaclaat rum is a
-            tribute to Caribbean culture, distilled into every drop.
-          </p>
-          <div className="d-flex gap-3 justify-content-center flex-wrap mt-4">
-            <Link href="/shop" className="btn btn-gold btn-lg">
-              Shop Rum
-            </Link>
-            <Link href="/join" className="btn btn-outline-gold btn-lg">
-              Join the Inner Circle
-            </Link>
+      <HeroCarousel />
+
+      {/* Announcement ticker */}
+      <section className="announcement-ticker" role="region" aria-label="Site announcements">
+        <div className="container">
+          <div className="at-inner">
+            <div className="at-viewport">
+              <div className="at-msg show">
+                <span className="at-ic" aria-hidden="true">🎁</span>
+                <span className="at-lead">Order by Saturday 13 December</span>
+                <span className="at-det">for guaranteed Christmas delivery in the UK</span>
+              </div>
+              <div className="at-msg">
+                <span className="at-ic" aria-hidden="true">🚚</span>
+                <span className="at-lead">Free UK shipping over £50</span>
+                <span className="at-det">— express upgrades available at checkout</span>
+              </div>
+              <div className="at-msg">
+                <span className="at-ic" aria-hidden="true">✦</span>
+                <span className="at-lead">Gold Members — Spiced Tasting Night, 12 Jan</span>
+                <span className="at-det">— London, RSVP via Member Portal</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -62,80 +39,262 @@ export default async function HomePage() {
       <section style={{ background: "var(--bg-card)" }}>
         <div className="container">
           <ul className="trust-bar list-unstyled m-0">
-            {TRUST.map((t) => (
-              <li className="trust-item" key={t}>
-                <span className="trust-icon" aria-hidden="true">
-                  ✦
-                </span>
-                {t}
-              </li>
-            ))}
+            <li className="trust-item"><span className="trust-icon" aria-hidden="true">✦</span> 12+ Year Aged Expressions</li>
+            <li className="trust-item"><span className="trust-icon" aria-hidden="true">✦</span> Free UK Shipping on £50+</li>
+            <li className="trust-item"><span className="trust-icon" aria-hidden="true">✦</span> 50,000+ Members</li>
+            <li className="trust-item"><span className="trust-icon" aria-hidden="true">✦</span> Caribbean Heritage</li>
+            <li className="trust-item"><span className="trust-icon" aria-hidden="true">✦</span> Award-Winning Distillery</li>
           </ul>
         </div>
       </section>
 
-      {/* Membership strip — from the database */}
+      {/* Oak parallax */}
       <section
-        className="section"
-        style={{
-          background: "linear-gradient(135deg,#1C1A14,#161310)",
-          borderTop: "1px solid var(--gold-bdr)",
-          borderBottom: "1px solid var(--gold-bdr)",
-        }}
+        className="parallax-section"
+        aria-labelledby="oak-title"
+        style={{ minHeight: 440, backgroundImage: `url('${U("photo-1765989427988-248c7d48cb56", 1800)}')` }}
       >
+        <div className="parallax-overlay" />
+        <div className="parallax-content reveal">
+          <span className="eyebrow eyebrow-center">Aged in American Oak</span>
+          <h2 id="oak-title">Patience is<br />the Secret Ingredient</h2>
+          <p style={{ color: "var(--text-muted)" }}>Twelve years minimum. Caribbean heat accelerates maturation — one year in Trinidad is worth three in Scotland.</p>
+        </div>
+      </section>
+
+      {/* Featured products */}
+      <section className="section" aria-labelledby="featured-title">
         <div className="container">
-          <div className="text-center mb-5">
-            <span className="eyebrow">Loyalty Programme</span>
-            <h2>The Inner Circle of Rum</h2>
-            <p style={{ maxWidth: 480, margin: "12px auto 0", color: "var(--text-muted)" }}>
-              Four tiers. Exclusive perks. Member-only pricing. Join free —
-              upgrade when ready.
+          <div className="text-center reveal mb-5">
+            <span className="eyebrow">Signature Collection</span>
+            <h2 id="featured-title">From the cask to the wardrobe</h2>
+            <p style={{ maxWidth: 540, margin: "12px auto 0", color: "var(--text-muted)" }}>
+              Two Caribbean expressions and the apparel we wear behind the bar. Pick a flagship from each side of the brand.
             </p>
           </div>
-          <div className="row g-3">
-            {tiers.map((tier) => (
-              <div className="col-6 col-lg-3" key={tier.id}>
-                <div className="card-brand text-center h-100">
-                  <div style={{ fontSize: "1.5rem", color: tierColor(tier.name) }} aria-hidden="true">
-                    ✦
-                  </div>
-                  <div className="serif" style={{ fontSize: "1.125rem", color: "var(--gold-hi)" }}>
-                    {tier.name}
-                  </div>
-                  <div className="serif" style={{ fontSize: "1.5rem" }}>
-                    {tier.isFree
-                      ? "Free"
-                      : `£${Number(tier.priceMonthly).toFixed(2)}/mo`}
-                  </div>
-                  <p style={{ fontSize: ".75rem", marginTop: 6 }}>
-                    {tier.memberDiscountPct}% off · {Number(tier.pointsMultiplier)}× points
-                  </p>
-                </div>
-              </div>
-            ))}
+          <div className="row g-4">
+            <FeaturedCard
+              href="/product/original-reserve"
+              img={U("photo-1758871993077-e084cc7eca86")}
+              badge="12 Year"
+              title="Rumbaclaat Original Reserve"
+              subtitle="12 Year Aged Rum — Jamaica"
+              desc="Vanilla, toasted caramel, tropical fruit. A long, warming finish that defines the Rumbaclaat character."
+              price="£49.99"
+              member="Members from £42.49"
+            />
+            <FeaturedCard
+              href="/product/spiced-gold"
+              img={U("photo-1764699186296-9dac0ddb5edb")}
+              title="Rumbaclaat Spiced Gold"
+              subtitle="Signature Spiced Expression — Barbados"
+              desc="Cinnamon, orange peel, warm spice & honey. The perfect companion for any occasion."
+              price="£38.99"
+              member="Members from £33.14"
+            />
+            <FeaturedCard
+              href="/product/gold-label-hoodie"
+              img={U("photo-1499971442178-8c10fdf5f6ac")}
+              badge="Apparel"
+              title="Gold Label Hoodie"
+              subtitle="Heavyweight French Terry — 3 colourways"
+              desc="450gsm garment-washed fleece. Embroidered gold crest. Cut for a relaxed fit. Black, Charcoal, Stone."
+              price="£95.00"
+              member="Members from £80.75"
+              cta="view"
+            />
           </div>
-          <div className="text-center mt-5">
-            <Link href="/join" className="btn btn-gold btn-lg">
-              View All Plans &amp; Join →
-            </Link>
+          <div className="text-center mt-5 d-flex gap-2 justify-content-center flex-wrap">
+            <Link href="/shop" className="btn btn-outline-gold">View Full Rum Collection →</Link>
+            <Link href="/shop?category=mens-apparel" className="btn btn-outline-gold">View All Apparel →</Link>
           </div>
         </div>
       </section>
 
-      {/* Dev status note (Phase 0 shell) */}
-      <section className="section-sm">
+      {/* Membership strip */}
+      <section
+        style={{ background: "linear-gradient(135deg,#1C1A14,#161310)", borderTop: "1px solid var(--gold-bdr)", borderBottom: "1px solid var(--gold-bdr)" }}
+        aria-labelledby="tiers-title"
+      >
+        <div className="container section-sm">
+          <div className="text-center reveal mb-5">
+            <span className="eyebrow">Loyalty Programme</span>
+            <h2 id="tiers-title">The Inner Circle of Rum</h2>
+            <p style={{ maxWidth: 480, margin: "12px auto 0", color: "var(--text-muted)" }}>Four tiers. Exclusive perks. Member-only pricing. Join free — upgrade when ready.</p>
+          </div>
+          <div className="row g-3">
+            <TierCard color="var(--bronze)" cls="tier-bronze" name="Bronze" price="Free" perk="5% discount · 1× points" />
+            <TierCard color="var(--silver)" cls="tier-silver" name="Silver" price="£9.99/mo" perk="10% off · 1.5× points" />
+            <TierCard color="var(--gold)" cls="tier-gold" name="Gold" price="£24.99/mo" perk="15% off · 2× points" highlight />
+            <TierCard color="var(--gold)" cls="tier-black" name="Black Reserve" price="£54.99/mo" perk="20% off · 3× points" />
+          </div>
+          <div className="text-center mt-5 reveal">
+            <Link href="/join" className="btn btn-gold btn-lg">View All Plans &amp; Join →</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Cocktails preview */}
+      <section className="section" aria-labelledby="cocktails-title">
         <div className="container">
-          <div className="card-brand" style={{ maxWidth: 720, margin: "0 auto" }}>
-            <span className="badge-brand">Live</span>
-            <h2 className="h4 mt-3">CMS platform — connected to Supabase ✓</h2>
-            <p style={{ color: "var(--text-muted)", margin: 0 }}>
-              The tiers above are read live from your Supabase database via
-              Prisma. Manage everything from the{" "}
-              <Link href="/admin">admin area</Link>.
-            </p>
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
+            <div>
+              <span className="eyebrow">Cocktail Recipes</span>
+              <h2 id="cocktails-title">Mix it up</h2>
+            </div>
+            <Link href="/cocktails" className="btn btn-outline-gold">View All Recipes →</Link>
+          </div>
+          <div className="row g-4">
+            <CocktailCard href="/cocktails/rumbaclaat-sour" img={U("photo-1748674755168-266c309d4712", 600)} badge="Easy · 5 mins" title="Rumbaclaat Sour" desc="Fresh lime, egg white, bitters. Elegant aperitif." />
+            <CocktailCard href="/cocktails" img={U("photo-1767745455688-49391131f751", 600)} badge="Medium · 8 mins" title="Dark & Smoky" desc="Mezcal, dark honey, mole bitters. An evening classic." />
+            <CocktailCard href="/cocktails/spiced-mule" img={U("photo-1609189123897-42db027571c9", 600)} badge="Easy · 3 mins" title="Spiced Mule" desc="Spiced Gold, ginger beer, lime. Refreshing and easy." />
+          </div>
+        </div>
+      </section>
+
+      {/* Blog preview */}
+      <section className="section" style={{ background: "var(--bg-card)", borderTop: "1px solid var(--gold-bdr)" }} aria-labelledby="blog-title">
+        <div className="container">
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5 reveal">
+            <div><span className="eyebrow">From the Blog</span><h2 id="blog-title">Stories &amp; Craft</h2></div>
+            <Link href="/blog" className="btn btn-outline-gold">All Posts →</Link>
+          </div>
+          <div className="row g-4">
+            <BlogCard href="/blog/the-story-behind-rumbaclaat" img={U("photo-1642963036562-affa2703f5ad")} badge="Heritage" title="The Story Behind Rumbaclaat" desc="From the Caribbean canefields to your glass — the origins of our brand." meta="Jan 20, 2025 · 6 min read" />
+            <BlogCard href="/blog/the-art-of-rum-ageing" img={U("photo-1764699186296-9dac0ddb5edb")} badge="Craft" title="The Art of Rum Ageing" desc="Understanding the journey from distillate to reserve expression." meta="Jan 10, 2025 · 8 min read" />
+            <BlogCard href="/blog/cocktail-culture-in-2025" img={U("photo-1767745455688-49391131f751")} badge="Cocktails" title="Cocktail Culture in 2025" desc="The trends shaping premium cocktail experiences worldwide." meta="Jan 5, 2025 · 5 min read" />
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="section home-newsletter reveal" aria-labelledby="newsletter-title">
+        <div className="container">
+          <div className="home-newsletter-card">
+            <span className="eyebrow">Letters from the Distillery</span>
+            <h2 id="newsletter-title">Join the Rumbaclaat list</h2>
+            <p style={{ color: "var(--text-muted)" }}>A few emails a month. New releases, journal pieces, cocktail recipes, member events. No noise — unsubscribe whenever you like.</p>
+            <form className="home-newsletter-row" action="/newsletter">
+              <label htmlFor="hn-email" className="visually-hidden">Email address</label>
+              <input className="form-control form-control-lg" type="email" id="hn-email" name="email" placeholder="you@example.com" autoComplete="email" />
+              <button type="submit" className="btn btn-gold btn-lg">Subscribe →</button>
+            </form>
+            <p className="home-newsletter-help">By subscribing you confirm you&apos;re 18+ and accept our <Link href="/privacy">Privacy Policy</Link>.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Socials */}
+      <section className="section home-socials reveal" aria-labelledby="follow-title">
+        <div className="container">
+          <div className="home-socials-inner">
+            <div className="home-socials-copy">
+              <span className="eyebrow">From Our Feed</span>
+              <h2 id="follow-title">Follow Rumbaclaat</h2>
+              <p style={{ color: "var(--text-muted)" }}>Behind-the-bar moments, new cocktails, distillery dispatches, drops and member events. We post when there&apos;s something worth saying — never more.</p>
+              <p className="home-socials-handle">@rumbaclaat</p>
+            </div>
+            <ul className="home-socials-grid list-unstyled" aria-label="Our social channels">
+              <Social name="Instagram" meta="Stills + reels · 18.4k" href="https://www.instagram.com/" />
+              <Social name="TikTok" meta="Cocktails & pours · 9.1k" href="https://www.tiktok.com/" />
+              <Social name="Facebook" meta="Events & news · 5.6k" href="https://www.facebook.com/" />
+              <Social name="LinkedIn" meta="Trade & press · 1.2k" href="https://www.linkedin.com/" />
+            </ul>
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+function FeaturedCard(props: {
+  href: string; img: string; badge?: string; title: string; subtitle: string; desc: string; price: string; member: string; cta?: "view";
+}) {
+  return (
+    <div className="col-12 col-md-6 col-lg-4">
+      <article className="product-card reveal">
+        <Link href={props.href} className="product-card-img-link" aria-label={`View ${props.title}`}>
+          <div className="product-card-img">
+            <img src={props.img} alt={props.title} loading="lazy" />
+            {props.badge && <span className="badge-brand" style={{ position: "absolute", top: 12, left: 12 }}>{props.badge}</span>}
+          </div>
+        </Link>
+        <div className="product-card-body">
+          <div className="stars" aria-label="Rated 5 out of 5">★★★★★</div>
+          <h3><Link href={props.href} style={{ color: "inherit", textDecoration: "none" }}>{props.title}</Link></h3>
+          <p className="subtitle">{props.subtitle}</p>
+          <p style={{ fontSize: ".8125rem" }}>{props.desc}</p>
+          <div className="product-card-price">
+            <div>
+              <div className="price">{props.price}</div>
+              <div className="price-member">{props.member}</div>
+            </div>
+            {props.cta === "view" ? (
+              <Link href={props.href} className="btn btn-gold btn-sm">View →</Link>
+            ) : (
+              <Link href={props.href} className="btn btn-gold btn-sm">Add to Cart</Link>
+            )}
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function TierCard({ color, cls, name, price, perk, highlight }: { color: string; cls: string; name: string; price: string; perk: string; highlight?: boolean }) {
+  return (
+    <div className="col-6 col-lg-3">
+      <div className="tier-strip-card reveal" style={highlight ? { borderColor: "var(--gold-md)" } : undefined}>
+        <div style={{ fontSize: "1.5rem", color }} aria-hidden="true">✦</div>
+        <div className={`tier-name ${cls}`}>{name}</div>
+        <div className="tier-price">{price}</div>
+        <p style={{ fontSize: ".75rem", marginTop: 6 }}>{perk}</p>
+      </div>
+    </div>
+  );
+}
+
+function CocktailCard({ href, img, badge, title, desc }: { href: string; img: string; badge: string; title: string; desc: string }) {
+  return (
+    <div className="col-12 col-md-4">
+      <Link className="img-overlay reveal d-block" href={href} style={{ aspectRatio: "3/4" }}>
+        <img src={img} alt={title} loading="lazy" />
+        <span className="img-overlay-text">
+          <span className="badge-brand mb-2">{badge}</span>
+          <span className="h4 d-block">{title}</span>
+          <span className="d-block" style={{ fontSize: ".8125rem", color: "rgba(245,240,232,.82)" }}>{desc}</span>
+        </span>
+      </Link>
+    </div>
+  );
+}
+
+function BlogCard({ href, img, badge, title, desc, meta }: { href: string; img: string; badge: string; title: string; desc: string; meta: string }) {
+  return (
+    <div className="col-12 col-md-4">
+      <article className="product-card reveal">
+        <div className="product-card-img"><img src={img} alt={title} loading="lazy" /></div>
+        <div className="product-card-body">
+          <span className="badge-brand mb-2">{badge}</span>
+          <h3 style={{ fontSize: "1.0625rem" }}><Link className="stretched-card-link gold" href={href}>{title}</Link></h3>
+          <p style={{ fontSize: ".8125rem", marginTop: 6 }}>{desc}</p>
+          <p style={{ fontSize: ".75rem", color: "var(--text-dim)", marginTop: 12 }}>{meta}</p>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+function Social({ name, meta, href }: { name: string; meta: string; href: string }) {
+  return (
+    <li>
+      <a href={href} rel="noopener" target="_blank" className="home-social">
+        <span className="home-social-icon" aria-hidden="true">✦</span>
+        <span className="home-social-text">
+          <span className="home-social-name">{name}</span>
+          <span className="home-social-meta">{meta}</span>
+        </span>
+      </a>
+    </li>
   );
 }

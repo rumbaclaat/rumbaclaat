@@ -384,3 +384,42 @@ model Review {
   status     String   @default("live")
   createdAt  DateTime @default(now())
 }
+
+// ----------------------------------------------------------------------------
+// Orders (retail)
+// ----------------------------------------------------------------------------
+
+model Order {
+  id              String      @id @default(cuid())
+  ref             String      @unique
+  email           String
+  customerName    String?
+  phone           String?
+  status          String      @default("received") // received|paid|packed|dispatched|delivered|cancelled
+  subtotal        Decimal     @db.Decimal(10, 2)
+  shipping        Decimal     @db.Decimal(10, 2)
+  total           Decimal     @db.Decimal(10, 2)
+  pointsEarned    Int         @default(0)
+  deliveryMethod  String?
+  paymentMethod   String?
+  paymentStatus   String      @default("simulated") // simulated|paid|pending|refunded
+  shippingAddress Json?
+  items           OrderItem[]
+  placedAt        DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([email])
+  @@index([placedAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String?
+  variantId String?
+  name      String
+  unitPrice Decimal @db.Decimal(10, 2)
+  qty       Int
+  lineTotal Decimal @db.Decimal(10, 2)
+}
