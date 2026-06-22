@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico"><link rel="icon" type="image/png" sizes="256x256" href="assets/img/favicon-256.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test journeys — Rumbaclaat dev hub</title>
+  <meta name="description" content="Dev hub — direct links to every form, journey and confirmation state in the Rumbaclaat site for QA testing.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Bootstrap first, brand theme second -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+
+  <style>
+    .home-hero-bg { background-image:url('https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80'); }
+    .oak-parallax { min-height:440px; background-image:url('https://images.unsplash.com/photo-1765989427988-248c7d48cb56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80'); }
+  </style>
+  
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="author" content="Rumbaclaat">
+  <meta name="theme-color" content="#0E0E0E">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Rumbaclaat">
+  <meta property="og:title" content="Rumbaclaat — Premium Caribbean Rum">
+  <meta property="og:description" content="Premium Caribbean rum, aged in American oak. Shop signature expressions, join the Inner Circle membership, and explore cocktail recipes. 18+ only.">
+  
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:secure_url" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+  <!-- Twitter / X cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rumbaclaat — Premium Caribbean Rum">
+  <meta name="twitter:description" content="Premium Caribbean rum, aged in American oak. Shop signature expressions, join the Inner Circle membership, and explore cocktail recipes. 18+ only.">
+  <meta name="twitter:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta name="twitter:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Rumbaclaat",
+    "url": "https://rumbaclaat.com",
+    "logo": "https://rumbaclaat.com/assets/img/rumbaclaat-wordmark.png",
+    "description": "Premium Caribbean rum and luxury lifestyle brand.",
+    "sameAs": []
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Rumbaclaat",
+    "url": "https://rumbaclaat.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://rumbaclaat.com/search.html?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+]
+  </script>
+
+  <style>
+    .dev-banner {
+      background: #2a1a00; color: var(--gold-hi);
+      border: 1px solid var(--gold-md); border-radius: 12px;
+      padding: 16px 20px; margin-bottom: 32px;
+      font-size: .875rem;
+    }
+    .dev-banner strong { color: var(--text); }
+    .dev-banner kbd {
+      background: var(--bg-card2); border: 1px solid var(--gold-bdr);
+      border-radius: 4px; padding: 1px 6px; font-size: .8125rem;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      color: var(--gold-hi);
+    }
+
+    .dev-section { margin-bottom: 40px; }
+    .dev-section > h2 {
+      font-family: var(--serif); font-size: 1.5rem; font-weight: 600;
+      color: var(--text);
+      border-bottom: 1px solid var(--gold-bdr); padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .dev-section > h2 .small {
+      font-family: var(--sans); font-size: .75rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--text-dim); margin-left: 10px;
+    }
+
+    .dev-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr) auto auto;
+      gap: 14px; align-items: center;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--gold-bdr);
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    .dev-row .dev-name {
+      font-family: var(--serif); font-size: 1.0625rem; color: var(--text);
+    }
+    .dev-row .dev-desc {
+      font-size: .8125rem; color: var(--text-muted);
+    }
+    .dev-row .btn { white-space: nowrap; }
+    @media (max-width: 760px) {
+      .dev-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .dev-row .dev-actions {
+        display: flex; gap: 8px; flex-wrap: wrap;
+        grid-column: 1; margin-top: 4px;
+      }
+    }
+    .dev-actions { display: contents; }
+    @media (max-width: 760px) { .dev-actions { display: flex; } }
+
+    .dev-helper-row {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      padding: 14px 16px;
+      background: var(--bg-card2);
+      border: 1px solid var(--gold-bdr);
+      border-radius: 12px;
+      margin-bottom: 32px;
+    }
+  </style>
+
+</head>
+<body data-rc-demo-toggle="true">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ===================== HEADER / NAV ===================== -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-brand-rc fixed-top" aria-label="Primary">
+      <div class="container">
+        <a class="navbar-brand" href="index.html" aria-label="Rumbaclaat — home">
+          <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="170" height="23">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
+                aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="primaryNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="cocktails.html">Cocktails</a></li>
+            <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="join.html">Membership</a></li>
+            <li class="nav-item"><a class="nav-link" href="trade.html">Trade</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            <a class="nav-join-btn" href="join.html">★ Join Free</a>
+            <a class="nav-icon-btn" href="search.html" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </a>
+            <a class="nav-icon-btn" href="cart.html" data-cart-link aria-label="Cart, 0 items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span class="cart-count" hidden>0</span>
+            </a>
+            <a class="nav-icon-btn" href="account.html" aria-label="My account">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main id="main" class="has-fixed-nav">
+    <div class="container section">
+
+      <span class="eyebrow">DEV HUB · NOT FOR PRODUCTION</span>
+      <h1 style="font-size:clamp(1.75rem,3.5vw,2.5rem);">Test journeys</h1>
+      <p class="lede" style="max-width:720px;font-size:1.0625rem;color:var(--text-muted);margin-top:14px;">
+        Direct links to every form, journey, and success state in the site. Use this for QA, walk-throughs, and showing flows to stakeholders without filling forms in by hand.
+      </p>
+
+      <!-- Dev mode banner -->
+      <div class="dev-banner" role="note">
+        <p style="margin:0 0 6px;"><strong>Dev bypass is active</strong> on every page. That means:</p>
+        <ul style="margin:0 0 0 18px;padding:0;font-size:.8125rem;color:var(--text-muted);">
+          <li>The age gate is skipped automatically.</li>
+          <li>All form fields are pre-filled with plausible test data on page load.</li>
+          <li>All <code>required</code> attributes are stripped — you can submit any form by clicking its button, no typing needed.</li>
+          <li>The cart is seeded with 1× Original Reserve if empty, so the cart page renders populated.</li>
+        </ul>
+        <p style="margin:10px 0 0;font-size:.8125rem;">
+          To return to production behaviour, remove the line <kbd>&lt;script&gt;window.RC_DEV_BYPASS = true;&lt;/script&gt;</kbd> from every HTML file.
+        </p>
+      </div>
+
+      <!-- Dev helpers -->
+      <div class="dev-helper-row" role="group" aria-label="Local-state helpers">
+        <button type="button" class="btn btn-gold btn-sm" data-dev="full-journey">▶ Start full purchase journey</button>
+        <button type="button" class="btn btn-outline-gold btn-sm" data-dev="clear-cart">Clear cart</button>
+        <button type="button" class="btn btn-outline-gold btn-sm" data-dev="clear-storage">Clear all localStorage</button>
+        <button type="button" class="btn btn-outline-gold btn-sm" data-dev="reset-age">Reset age gate</button>
+        <button type="button" class="btn btn-outline-gold btn-sm" data-dev="add-extra">Add 3 demo items to cart</button>
+        <button type="button" class="btn btn-outline-gold btn-sm" data-dev="sign-in">Sign in (member view)</button>
+        <button type="button" class="btn btn-outline-gold btn-sm" data-dev="sign-out">Sign out (guest view)</button>
+        <span style="font-size:.75rem;color:var(--text-dim);align-self:center;margin-left:auto;">
+          Sign-in state currently: <strong id="signed-in-state" style="color:var(--gold-hi);">checking…</strong>
+        </span>
+      </div>
+
+      <!-- Sections -->
+      <section class="dev-section" aria-labelledby="ds-shop">
+        <h2 id="ds-shop">Shopping &amp; checkout <span class="small">3 stops</span></h2>
+        
+      <div class="dev-row">
+        <div class="dev-name">Cart</div>
+        <div class="dev-desc">View current cart contents (dev bypass seeds 1× Original Reserve)</div>
+        <div class="dev-actions">
+          <a href="cart.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Checkout</div>
+        <div class="dev-desc">Address + payment form. Submit with no validation under RC_DEV_BYPASS.</div>
+        <div class="dev-actions">
+          <a href="checkout.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="order.html" class="btn btn-gold btn-sm">View order confirmation →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Order detail</div>
+        <div class="dev-desc">Static order detail page used as post-checkout receipt.</div>
+        <div class="dev-actions">
+          <a href="order.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+      </section>
+
+      <section class="dev-section" aria-labelledby="ds-acct">
+        <h2 id="ds-acct">Account <span class="small">5 stops</span></h2>
+        
+      <div class="dev-row">
+        <div class="dev-name">Sign in</div>
+        <div class="dev-desc">Existing customer login form → dashboard.</div>
+        <div class="dev-actions">
+          <a href="account.html?view=login" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="account.html?view=dashboard" class="btn btn-gold btn-sm">Skip to dashboard →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Create account</div>
+        <div class="dev-desc">Free Bronze registration → dashboard with welcome announce.</div>
+        <div class="dev-actions">
+          <a href="account.html?view=register" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="account.html#created" class="btn btn-gold btn-sm">Skip to dashboard →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Reset password</div>
+        <div class="dev-desc">Forgot-password request form.</div>
+        <div class="dev-actions">
+          <a href="account.html?view=reset" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Account dashboard</div>
+        <div class="dev-desc">Logged-in state with tabs (overview, orders, details, addresses, membership).</div>
+        <div class="dev-actions">
+          <a href="account.html?view=dashboard" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Change membership (in-account)</div>
+        <div class="dev-desc">Inline tier grid + payment-only modal on the Membership tab.</div>
+        <div class="dev-actions">
+          <a href="account.html?view=dashboard#tab=membership" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+      </section>
+
+      <section class="dev-section" aria-labelledby="ds-mem">
+        <h2 id="ds-mem">Membership <span class="small">6 stops</span></h2>
+        
+      <div class="dev-row">
+        <div class="dev-name">Join — Bronze (free)</div>
+        <div class="dev-desc">Tier picker → account creation → no-charge completion.</div>
+        <div class="dev-actions">
+          <a href="signup.html?tier=Bronze" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="signup.html?tier=Bronze&step=4" class="btn btn-gold btn-sm">Skip to welcome →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Join — Silver</div>
+        <div class="dev-desc">Tier picker → account → payment → completion.</div>
+        <div class="dev-actions">
+          <a href="signup.html?tier=Silver" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="signup.html?tier=Silver&step=4" class="btn btn-gold btn-sm">Skip to welcome →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Join — Gold</div>
+        <div class="dev-desc">Tier picker → account → payment → completion.</div>
+        <div class="dev-actions">
+          <a href="signup.html?tier=Gold" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="signup.html?tier=Gold&step=4" class="btn btn-gold btn-sm">Skip to welcome →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Join — Black Reserve</div>
+        <div class="dev-desc">Tier picker → account → payment → completion.</div>
+        <div class="dev-actions">
+          <a href="signup.html?tier=Black%20Reserve" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="signup.html?tier=Black%20Reserve&step=4" class="btn btn-gold btn-sm">Skip to welcome →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Members portal</div>
+        <div class="dev-desc">Logged-in member dashboard with notifications, rewards, tier preview.</div>
+        <div class="dev-actions">
+          <a href="membership.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Plans comparison page</div>
+        <div class="dev-desc">Public-facing 4-tier plan comparison.</div>
+        <div class="dev-actions">
+          <a href="join.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+      </section>
+
+      <section class="dev-section" aria-labelledby="ds-trade">
+        <h2 id="ds-trade">Trade <span class="small">3 stops · GoHighLevel CRM</span></h2>
+        
+      <div class="dev-row">
+        <div class="dev-name">Trade — apply for access</div>
+        <div class="dev-desc">Standalone application page. Submits to CRM (GoHighLevel) and shows the received confirmation.</div>
+        <div class="dev-actions">
+          <a href="trade-apply.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="trade-apply.html?view=applied" class="btn btn-gold btn-sm">View 'application received' state →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Trade — sign in</div>
+        <div class="dev-desc">Sign-in only on the trade gate, with link to the apply page.</div>
+        <div class="dev-actions">
+          <a href="trade.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          <a href="trade.html?view=portal" class="btn btn-gold btn-sm">Skip to trade dashboard →</a>
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Trade dashboard</div>
+        <div class="dev-desc">Pricing, orders, place-order, messages, export compliance, account.</div>
+        <div class="dev-actions">
+          <a href="trade.html?view=portal" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+      </section>
+
+      <section class="dev-section" aria-labelledby="ds-comms">
+        <h2 id="ds-comms">Communications <span class="small">6 stops</span></h2>
+        
+      <div class="dev-row">
+        <div class="dev-name">Newsletter signup</div>
+        <div class="dev-desc">Single-field email subscription with confirmation toast.</div>
+        <div class="dev-actions">
+          <a href="newsletter.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Contact — general enquiry</div>
+        <div class="dev-desc">Public contact form.</div>
+        <div class="dev-actions">
+          <a href="contact.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Contact — trade enquiry</div>
+        <div class="dev-desc">Trade-specific contact form (separate tab in /contact).</div>
+        <div class="dev-actions">
+          <a href="contact.html#trade" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Unsubscribe</div>
+        <div class="dev-desc">Marketing email unsubscribe handler.</div>
+        <div class="dev-actions">
+          <a href="unsubscribe.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Gift cards</div>
+        <div class="dev-desc">Send a digital gift card.</div>
+        <div class="dev-actions">
+          <a href="gift-cards.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Cookie preferences</div>
+        <div class="dev-desc">Granular cookie consent management.</div>
+        <div class="dev-actions">
+          <a href="cookie-preferences.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+      </section>
+
+      <section class="dev-section" aria-labelledby="ds-content">
+        <h2 id="ds-content">Catalogue, content &amp; static <span class="small">16 stops</span></h2>
+        
+      <div class="dev-row">
+        <div class="dev-name">Single product — rum</div>
+        <div class="dev-desc">Original Reserve PDP with gallery + accordion + add-to-cart.</div>
+        <div class="dev-actions">
+          <a href="product-rum.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Single product — apparel (Hoodie)</div>
+        <div class="dev-desc">Gold Label Hoodie with colour swatches + size selector.</div>
+        <div class="dev-actions">
+          <a href="product-apparel.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Single product — apparel (Tee)</div>
+        <div class="dev-desc">Black Reserve Tee with colour swatches, size selector, out-of-stock notify.</div>
+        <div class="dev-actions">
+          <a href="product-tee.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Rum collection listing</div>
+        <div class="dev-desc">Catalogue page for rums.</div>
+        <div class="dev-actions">
+          <a href="shop-rum.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Men's apparel listing</div>
+        <div class="dev-desc">Catalogue page for menswear.</div>
+        <div class="dev-actions">
+          <a href="shop-men.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Women's apparel listing</div>
+        <div class="dev-desc">Catalogue page for womenswear.</div>
+        <div class="dev-actions">
+          <a href="shop-women.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Cocktails listing</div>
+        <div class="dev-desc">All four cocktails with search/filter.</div>
+        <div class="dev-actions">
+          <a href="cocktails.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Cocktail detail — Sour</div>
+        <div class="dev-desc">Single cocktail landing page (template for the others).</div>
+        <div class="dev-actions">
+          <a href="cocktail-rumbaclaat-sour.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Cocktail detail — Dark & Smoky</div>
+        <div class="dev-desc">Single cocktail landing page.</div>
+        <div class="dev-actions">
+          <a href="cocktail-dark-smoky.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Cocktail detail — Spiced Mule</div>
+        <div class="dev-desc">Single cocktail landing page.</div>
+        <div class="dev-actions">
+          <a href="cocktail-spiced-mule.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Cocktail detail — Old Fashioned</div>
+        <div class="dev-desc">Single cocktail landing page.</div>
+        <div class="dev-actions">
+          <a href="cocktail-old-fashioned.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Blog index</div>
+        <div class="dev-desc">Editorial journal listing.</div>
+        <div class="dev-actions">
+          <a href="blog.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Blog post</div>
+        <div class="dev-desc">Sample journal article with full layout (use as dummy).</div>
+        <div class="dev-actions">
+          <a href="blog-post.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Search</div>
+        <div class="dev-desc">Full-site search with type-ahead.</div>
+        <div class="dev-actions">
+          <a href="search.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">FAQ</div>
+        <div class="dev-desc">Frequently asked questions, grouped by topic.</div>
+        <div class="dev-actions">
+          <a href="faq.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">About</div>
+        <div class="dev-desc">Brand story.</div>
+        <div class="dev-actions">
+          <a href="about.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Press &amp; where to buy</div>
+        <div class="dev-desc">Press kit + where-to-buy list.</div>
+        <div class="dev-actions">
+          <a href="press.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+      </section>
+
+      <section class="dev-section" aria-labelledby="ds-sys">
+        <h2 id="ds-sys">System &amp; legal <span class="small">4 stops</span></h2>
+        
+      <div class="dev-row">
+        <div class="dev-name">404 — page not found</div>
+        <div class="dev-desc">Custom 404 page.</div>
+        <div class="dev-actions">
+          <a href="404.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Privacy policy</div>
+        <div class="dev-desc">Legal — privacy.</div>
+        <div class="dev-actions">
+          <a href="privacy.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Terms &amp; conditions</div>
+        <div class="dev-desc">Legal — terms.</div>
+        <div class="dev-actions">
+          <a href="terms.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+
+      <div class="dev-row">
+        <div class="dev-name">Cookies</div>
+        <div class="dev-desc">Legal — cookies.</div>
+        <div class="dev-actions">
+          <a href="cookies.html" class="btn btn-outline-gold btn-sm">Open form</a>
+          
+        </div>
+      </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Local-state helpers -->
+  <script>
+  (function(){
+    'use strict';
+    const announce = (m) => { const r = document.getElementById('sr-announcer'); if (r) { r.textContent = ''; setTimeout(() => r.textContent = m, 50); } };
+
+    function refreshSignedInState() {
+      const el = document.getElementById('signed-in-state');
+      if (!el) return;
+      const isIn = localStorage.getItem('rc_signed_in') === 'true';
+      const email = localStorage.getItem('rc_user_email') || '';
+      el.textContent = isIn ? ('SIGNED IN' + (email ? ' (' + email + ')' : '')) : 'GUEST';
+      el.style.color = isIn ? '#4ade80' : 'var(--text-muted)';
+    }
+    refreshSignedInState();
+
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-dev]'); if (!t) return;
+      const act = t.dataset.dev;
+      try {
+        if (act === 'clear-cart') { localStorage.removeItem('rc_cart'); announce('Cart cleared'); }
+        if (act === 'clear-storage') { localStorage.clear(); sessionStorage.clear(); announce('All localStorage and sessionStorage cleared. Reload to see the effect.'); }
+        if (act === 'reset-age') { sessionStorage.removeItem('rc_age_ok'); announce('Age gate reset. Disable RC_DEV_BYPASS and reload to see it.'); }
+        if (act === 'add-extra') {
+          const items = [
+            {id:'rum-002', name:'Spiced Gold', price:38.99, regularPrice:38.99, onSale:false, qty:1},
+            {id:'apparel-001', name:'Gold Label Hoodie (Charcoal, L)', price:95.00, regularPrice:95.00, onSale:false, qty:1},
+            {id:'apparel-002', name:'Reserve Cap', price:35.00, regularPrice:35.00, onSale:false, qty:1}
+          ];
+          let cart = []; try { cart = JSON.parse(localStorage.getItem('rc_cart') || '[]'); } catch(_) {}
+          items.forEach(i => { if (!cart.find(c => c.id === i.id)) cart.push(i); });
+          localStorage.setItem('rc_cart', JSON.stringify(cart));
+          announce('3 demo items added to cart. Open the cart to see them.');
+        }
+        if (act === 'sign-in') {
+          localStorage.setItem('rc_signed_in', 'true');
+          localStorage.setItem('rc_user_email', 'james@example.com');
+          refreshSignedInState();
+          announce('Signed in as james@example.com. Stock-notify widget on PDPs now shows the member variant.');
+        }
+        if (act === 'sign-out') {
+          localStorage.removeItem('rc_signed_in');
+          localStorage.removeItem('rc_user_email');
+          refreshSignedInState();
+          announce('Signed out. Stock-notify widget on PDPs now shows the guest email field.');
+        }
+        if (act === 'full-journey') {
+          // Pre-seed a multi-item cart and jump straight to the cart page —
+          // from there the user can click Checkout → fill (auto) → place order → see success.
+          const items = [
+            {id:'rum-001', name:'Rumbaclaat Original Reserve', price:49.99, regularPrice:49.99, onSale:false, qty:1},
+            {id:'rum-002', name:'Rumbaclaat Spiced Gold', price:38.99, regularPrice:38.99, onSale:false, qty:1},
+            {id:'men-001-Black-M', name:'Black Reserve Tee (Black, M)', price:45.00, regularPrice:45.00, onSale:false, qty:1}
+          ];
+          localStorage.setItem('rc_cart', JSON.stringify(items));
+          announce('Cart seeded with 3 items. Opening cart…');
+          setTimeout(() => { location.href = 'cart.html'; }, 200);
+        }
+      } catch(err) { console.error(err); }
+    });
+  })();
+  </script>
+
+<footer class="site-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-5">
+          <div class="footer-logo">
+            <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="200" height="27">
+          </div>
+          <p style="font-size:.875rem;max-width:300px;">Premium Caribbean rum &amp; luxury lifestyle brand. From the canefields of Jamaica to your glass.</p>
+          <p style="font-size:.75rem;color:var(--text-dim);">Please drink responsibly. You must be 18 or over to buy alcohol. Age verified at checkout and on delivery.</p>
+        </div>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Shop">
+          <h2>Shop</h2>
+          <a href="shop-rum.html">Rum Collection</a>
+          <a href="shop-men.html">Men's Apparel</a>
+          <a href="shop-women.html">Women's Apparel</a>
+          <a href="cart.html">Cart</a>
+        </nav>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Discover">
+          <h2>Discover</h2>
+          <a href="cocktails.html">Cocktail Recipes</a>
+          <a href="blog.html">Blog &amp; Stories</a>
+          <a href="join.html">Membership</a>
+          <a href="membership.html">Member Portal</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="gift-cards.html">Gift Cards</a>
+          <a href="about.html">About Us</a>
+        </nav>
+        <nav class="col-6 col-lg-3 footer-col" aria-label="Business and legal">
+          <h2>Help &amp; Business</h2>
+          <a href="faq.html">FAQ</a>
+          <a href="trade.html">Trade Portal</a>
+          <a href="press.html">Press</a>
+          <a href="where-to-buy.html">Where to buy</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="account.html">My Account</a>
+          <a href="delivery.html">Delivery Policy</a>
+        </nav>
+      </div>
+      <!-- Partners + socials strip -->
+      <div class="footer-meta-row">
+        <div class="footer-partners">
+          <a class="footer-drinkaware" href="https://www.drinkaware.co.uk/" rel="noopener" target="_blank" aria-label="Drinkaware — open in new tab">
+            <img src="assets/img/drinkaware-logo.png" alt="Drinkaware.co.uk" width="160" height="16" loading="lazy">
+          </a>
+          <span class="footer-accreditation" aria-label="International Drinks Specialists — score 92, Sincere Evaluation and Feedback">
+            <img src="assets/img/intl-drinks-specialists-92.png" alt="International Drinks Specialists — 92 / 100" width="90" height="50" loading="lazy">
+          </span>
+        </div>
+
+        <ul class="footer-socials list-unstyled" aria-label="Rumbaclaat on social media">
+          <li><a href="https://www.facebook.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12H16l-.4 2.9h-2.2v7A10 10 0 0 0 22 12Z"/></svg>
+          </a></li>
+          <li><a href="https://www.instagram.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.5.5.7.9.9 1.4.2.5.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.5.5-.9.7-1.4.9-.5.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4a3.7 3.7 0 0 1-1.4-.9 3.7 3.7 0 0 1-.9-1.4c-.2-.5-.4-1.1-.4-2.2-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.5-.5.9-.7 1.4-.9.5-.2 1.1-.4 2.2-.4 1.3-.1 1.6-.1 4.8-.1ZM12 0C8.7 0 8.3 0 7.1.1 5.8.1 5 .3 4.2.6c-.8.3-1.5.7-2.2 1.4A6.1 6.1 0 0 0 .6 4.2C.3 5 .1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.1.5 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.8.3 1.6.5 2.9.5 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.1-.2 2.9-.5a6.1 6.1 0 0 0 2.2-1.4 6.1 6.1 0 0 0 1.4-2.2c.3-.8.5-1.6.5-2.9.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.1-.5-2.9a6.1 6.1 0 0 0-1.4-2.2A6.1 6.1 0 0 0 19.8.6C19 .3 18.2.1 16.9.1 15.7 0 15.3 0 12 0Zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9Z"/></svg>
+          </a></li>
+          <li><a href="https://www.linkedin.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5V9h3v10Zm-1.5-11.3A1.7 1.7 0 1 1 6.5 4.3a1.7 1.7 0 0 1 0 3.4ZM19 19h-3v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3V9h2.9v1.4h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7V19Z"/></svg>
+          </a></li>
+          <li><a href="https://www.tiktok.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 8.6a8.4 8.4 0 0 1-4.9-1.6v7.5a6.2 6.2 0 1 1-5.4-6.1v3a3.2 3.2 0 1 0 2.4 3.1V2h2.9a5.5 5.5 0 0 0 5 5v3.6Z"/></svg>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>© <span id="year">2026</span> Rumbaclaat Limited. All rights reserved.</span>
+        <span class="d-flex gap-4 flex-wrap">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="cookies.html">Cookies</a>
+          <a href="cookie-preferences.html">Cookie preferences</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Screen-reader live region for cart/toast announcements -->
+  <div aria-live="polite" class="visually-hidden" id="sr-announcer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script>window.RC_DEV_BYPASS = true; /* TESTING ONLY — strip before launch */</script>
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

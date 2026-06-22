@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico"><link rel="icon" type="image/png" sizes="256x256" href="assets/img/favicon-256.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trade Portal — Rumbaclaat</title>
+  <meta name="description" content="Apply for a Rumbaclaat trade account or sign in to your wholesale portal. Application-only — approved within one working day.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .nav-pills .nav-link{color:var(--text-muted);}
+    .nav-pills .nav-link.active{background:var(--gold-lt);color:var(--gold-hi);}
+    .trade-table{width:100%;border-collapse:collapse;}
+    .trade-table th{padding:12px 16px;text-align:left;font-size:.75rem;font-weight:500;color:var(--text-muted);background:var(--bg-card);border-bottom:1px solid var(--gold-bdr);}
+    .trade-table td{padding:12px 16px;font-size:.875rem;color:var(--text);border-bottom:1px solid rgba(198,167,94,.05);}
+    .trade-table tr:nth-child(even) td{background:var(--bg-card3);}
+    .msg-item{background:var(--bg-card2);border:1px solid var(--gold-bdr);border-radius:var(--radius);padding:14px;margin-bottom:8px;width:100%;text-align:left;}
+    .msg-item.unread{border-color:rgba(198,167,94,.3);}
+    .msg-item:hover,.msg-item:focus{border-color:var(--gold);}
+  </style>
+  <link rel="canonical" href="https://rumbaclaat.com/trade.html">
+  <meta name="robots" content="index,follow">
+  <meta name="author" content="Rumbaclaat">
+  <meta name="theme-color" content="#0E0E0E">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Rumbaclaat">
+  <meta property="og:title" content="Trade Portal — Rumbaclaat">
+  <meta property="og:description" content="Rumbaclaat wholesale and export trade portal: volume pricing, order calculator, export compliance, and account management.">
+  <meta property="og:url" content="https://rumbaclaat.com/trade.html">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:secure_url" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+  <!-- Twitter / X cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Trade Portal — Rumbaclaat">
+  <meta name="twitter:description" content="Rumbaclaat wholesale and export trade portal: volume pricing, order calculator, export compliance, and account management.">
+  <meta name="twitter:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta name="twitter:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+
+  <style>
+    .trade-view { display: none; }
+    .trade-view.active { display: block; }
+    .trade-view[hidden] { display: none; }
+    .trade-view:not([hidden]) { display: block; }
+    /* Default visible: view-gate has .active in markup */
+  </style>
+
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-brand-rc fixed-top" aria-label="Primary">
+      <div class="container">
+        <a class="navbar-brand" href="index.html" aria-label="Rumbaclaat — home">
+          <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="170" height="23">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
+                aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="primaryNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="cocktails.html">Cocktails</a></li>
+            <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="join.html">Membership</a></li>
+            <li class="nav-item"><a class="nav-link" href="trade.html">Trade</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            <a class="nav-join-btn" href="join.html">★ Join Free</a>
+            <a class="nav-icon-btn" href="search.html" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </a>
+            <a class="nav-icon-btn" href="cart.html" data-cart-link aria-label="Cart, 0 items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span class="cart-count" hidden>0</span>
+            </a>
+            <a class="nav-icon-btn" href="account.html" aria-label="My account">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="has-fixed-nav">
+    <h1 class="visually-hidden">Trade portal</h1>
+
+    <!-- ── VIEW: GATE (default, public) ──────────────────────── -->
+    <div class="container section trade-view active" id="view-gate">
+      <div class="text-center reveal mb-5" style="max-width:720px;margin:0 auto;">
+        <span class="eyebrow">RUMBACLAAT TRADE</span>
+        <h2 style="font-size:clamp(2rem,4vw,2.75rem);font-family:var(--serif);font-weight:600;">Wholesale &amp; Export Portal</h2>
+        <p class="lede" style="font-size:1.05rem;color:var(--text-muted);margin-top:14px;">
+          Sign in to your wholesale account below. New here? Apply for trade access and we&apos;ll respond within one working day.
+        </p>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+        <div class="col-12 col-md-9 col-lg-7">
+          <div class="card-brand reveal d-flex flex-column">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="badge-brand badge-gold">Existing customers</span>
+            </div>
+            <h2 class="h3" style="font-family:var(--serif);font-weight:600;margin-bottom:6px;">Sign in to your trade account</h2>
+            <p style="font-size:.9375rem;color:var(--text-muted);margin-bottom:20px;">View your pricing, place new orders, message your account manager, and download invoices.</p>
+
+            <div class="alert d-none" id="err-trade-signin" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></div>
+
+            <form id="form-trade-signin" novalidate class="d-flex flex-column">
+              <div class="mb-3">
+                <label class="form-label" for="ts-email">Business email *</label>
+                <input class="form-control" type="email" id="ts-email" autocomplete="email" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="ts-password">Password *</label>
+                <input class="form-control" type="password" id="ts-password" autocomplete="current-password" required>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="ts-remember">
+                  <label class="form-check-label" for="ts-remember" style="font-size:.875rem;">Remember this device</label>
+                </div>
+                <a href="account.html#reset" style="font-size:.8125rem;">Forgot password?</a>
+              </div>
+              <button type="submit" class="btn btn-gold w-100">Sign in to trade portal</button>
+            </form>
+          </div>
+
+          <!-- Apply CTA — separate page -->
+          <div class="trade-apply-cta reveal mt-3">
+            <div>
+              <p class="trade-apply-cta-title">No trade account yet?</p>
+              <p class="trade-apply-cta-sub">Bars, restaurants, retailers and distributors can apply for wholesale access.</p>
+            </div>
+            <a href="trade-apply.html" class="btn btn-outline-gold">Apply for a trade account →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Why open a trade account -->
+      <section class="section-sm" style="margin-top:32px;padding-top:32px;border-top:1px solid var(--gold-bdr);">
+        <h2 class="h4 mb-3" style="text-align:center;">Why open a trade account?</h2>
+        <div class="row g-3">
+          <div class="col-12 col-md-4"><div class="card-brand h-100"><p style="font-size:1rem;font-weight:600;color:var(--gold-hi);margin-bottom:6px;">Tiered wholesale pricing</p><p style="font-size:.875rem;color:var(--text-muted);margin:0;">From £22.75 / bottle on Original Reserve at volume — full schedule visible once approved.</p></div></div>
+          <div class="col-12 col-md-4"><div class="card-brand h-100"><p style="font-size:1rem;font-weight:600;color:var(--gold-hi);margin-bottom:6px;">60-day payment terms</p><p style="font-size:.875rem;color:var(--text-muted);margin:0;">Net 60 invoicing on every order after the first two cleared payments.</p></div></div>
+          <div class="col-12 col-md-4"><div class="card-brand h-100"><p style="font-size:1rem;font-weight:600;color:var(--gold-hi);margin-bottom:6px;">Dedicated account manager</p><p style="font-size:.875rem;color:var(--text-muted);margin:0;">Direct line for new orders, pricing queries, and bespoke export paperwork.</p></div></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── VIEW: PORTAL (existing dashboard, signed-in state) ── -->
+    <div class="trade-view" id="view-portal" hidden>
+<div class="container section">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+        <div><span class="eyebrow">TRADE PORTAL</span><h2 style="font-size:2rem;font-family:var(--serif);font-weight:600;">Wholesale &amp; Export</h2></div>
+        <div class="d-flex gap-2 align-items-center"><span class="badge-brand badge-gold">Signed in</span><button type="button" class="btn btn-ghost btn-sm" data-trade-view="gate">Sign out</button></div>
+        </div>
+
+      <div class="row g-3 reveal mb-2">
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">YTD Orders</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">3</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">+1 this month</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">YTD Spend</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">£3,369.60</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">Across 3 orders</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Current Pricing</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">Wholesale</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">From £22.75/btl</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Open Orders</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">1</div><div style="font-size:.6875rem;color:var(--yellow);margin-top:4px;">Processing</div></div></div>
+      </div>
+
+      <ul class="nav nav-pills gap-2 my-4 reveal" role="tablist" aria-label="Trade portal sections">
+        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t-pricing" type="button" role="tab" aria-selected="true">Pricing</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-orders" type="button" role="tab" aria-selected="false">Orders</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-order-form" type="button" role="tab" aria-selected="false">Place Order</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-messages" type="button" role="tab" aria-selected="false">Messages <span class="badge-brand" style="font-size:.625rem;padding:2px 7px;">2</span></button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-export" type="button" role="tab" aria-selected="false">Export Compliance</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-account" type="button" role="tab" aria-selected="false">Account</button></li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- PRICING -->
+        <div id="t-pricing" class="tab-pane fade show active" role="tabpanel">
+          <div class="card-brand reveal mb-3" style="border-color:var(--gold-md);">
+            <p style="font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-hi);margin-bottom:4px;">Your Pricing Tier: Wholesale</p>
+            <p style="margin:0;">All prices include UK VAT at 20%. Payment terms: 60 days. Minimum order: 6 bottles (1 case).</p>
+          </div>
+          <div class="row g-4">
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100"><h2 class="h4 mb-3">Original Reserve — Wholesale</h2><div class="table-responsive"><table class="trade-table"><caption class="visually-hidden">Volume-based wholesale pricing for Original Reserve</caption><thead><tr><th scope="col">Volume</th><th scope="col">Price/Bottle</th><th scope="col">Price/Case</th></tr></thead><tbody><tr><td>1–4 cases</td><td style="color:var(--gold-hi);font-family:var(--serif);">£26.00</td><td>£156.00</td></tr><tr><td>5–9 cases</td><td style="color:var(--gold-hi);font-family:var(--serif);">£24.50</td><td>£147.00</td></tr><tr><td>10+ cases</td><td style="color:var(--gold-hi);font-family:var(--serif);">£22.75</td><td>£136.50</td></tr></tbody></table></div><p style="font-size:.8125rem;color:var(--text-muted);margin-top:12px;margin-bottom:0;">VAT 20% incl. · Min. 1 case (6 btl) · 60-day terms</p></div></div>
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100"><h2 class="h4 mb-3">Spiced Gold — Wholesale</h2><div class="table-responsive"><table class="trade-table"><caption class="visually-hidden">Volume-based wholesale pricing for Spiced Gold</caption><thead><tr><th scope="col">Volume</th><th scope="col">Price/Bottle</th><th scope="col">Price/Case</th></tr></thead><tbody><tr><td>1–4 cases</td><td style="color:var(--gold-hi);font-family:var(--serif);">£20.00</td><td>£120.00</td></tr><tr><td>5–9 cases</td><td style="color:var(--gold-hi);font-family:var(--serif);">£18.75</td><td>£112.50</td></tr><tr><td>10+ cases</td><td style="color:var(--gold-hi);font-family:var(--serif);">£17.50</td><td>£105.00</td></tr></tbody></table></div><p style="font-size:.8125rem;color:var(--text-muted);margin-top:12px;margin-bottom:0;">VAT 20% incl. · Min. 1 case (6 btl) · 60-day terms</p></div></div>
+          </div>
+        </div>
+
+        <!-- ORDERS -->
+        <div id="t-orders" class="tab-pane fade" role="tabpanel">
+          <div class="card-brand reveal"><div class="table-responsive"><table class="trade-table"><caption class="visually-hidden">Your trade order history</caption><thead><tr><th scope="col">Order ID</th><th scope="col">Date</th><th scope="col">Items</th><th scope="col">Total (inc VAT)</th><th scope="col">Status</th><th scope="col">Delivery</th></tr></thead><tbody>
+            <tr><th scope="row" style="color:var(--gold-hi);">ORD-2025-0041</th><td>Jan 18, 2025</td><td>Original Reserve × 5 cases</td><td style="font-family:var(--serif);color:var(--gold-hi);">£882.00</td><td><span class="badge-brand" style="color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.1)">Delivered</span></td><td>Jan 22</td></tr>
+            <tr><th scope="row" style="color:var(--gold-hi);">ORD-2025-0039</th><td>Jan 10, 2025</td><td>Original Reserve × 3 + Spiced Gold × 2</td><td style="font-family:var(--serif);color:var(--gold-hi);">£849.60</td><td><span class="badge-brand" style="color:var(--yellow);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.1)">Processing</span></td><td>TBC</td></tr>
+            <tr><th scope="row" style="color:var(--gold-hi);">ORD-2025-0031</th><td>Dec 20, 2024</td><td>Original Reserve × 10 cases</td><td style="font-family:var(--serif);color:var(--gold-hi);">£1,638.00</td><td><span class="badge-brand" style="color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.1)">Delivered</span></td><td>Dec 28</td></tr>
+          </tbody></table></div></div>
+        </div>
+
+        <!-- ORDER FORM -->
+        <div id="t-order-form" class="tab-pane fade" role="tabpanel">
+          <div class="card-brand reveal">
+            <h2 class="h3 mb-4">Place a New Order</h2>
+            <div class="alert d-none" id="err-trade-order" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></div>
+            <form id="form-trade-order" novalidate>
+              <div class="row g-3 mb-3">
+                <div class="col-sm-6"><label class="form-label" for="trade-product">Product *</label><select class="form-select" id="trade-product" required><option value="">Select product…</option><option value="rum-001">Original Reserve (12 Year)</option><option value="rum-002">Spiced Gold</option></select></div>
+                <div class="col-sm-6"><label class="form-label" for="trade-cases">Number of cases *</label><input class="form-control" type="number" id="trade-cases" min="1" required></div>
+              </div>
+              <div id="trade-calc" class="mb-3" hidden style="background:var(--bg-card2);border:1px solid var(--gold-bdr);border-radius:var(--radius);padding:16px;" aria-live="polite">
+                <div class="d-flex justify-content-between mb-2" style="font-size:.875rem;"><span style="color:var(--text-muted);">Cases × 6 = Bottles</span><span id="tc-bottles">0</span></div>
+                <div class="d-flex justify-content-between mb-2" style="font-size:.875rem;"><span style="color:var(--text-muted);">Price per bottle</span><span id="tc-ppb">£0.00</span></div>
+                <div class="d-flex justify-content-between mb-2" style="font-size:.875rem;"><span style="color:var(--text-muted);">Net total</span><span id="tc-net">£0.00</span></div>
+                <div class="d-flex justify-content-between mb-2" style="font-size:.875rem;"><span style="color:var(--text-muted);">VAT (20%)</span><span id="tc-vat">£0.00</span></div>
+                <hr style="border-color:var(--gold-bdr);">
+                <div class="d-flex justify-content-between" style="font-weight:600;"><span>Grand Total (inc VAT)</span><span id="tc-total" style="font-family:var(--serif);font-size:1.375rem;color:var(--gold-hi);">£0.00</span></div>
+              </div>
+              <div class="mb-3"><label class="form-label" for="trade-notes">Delivery notes</label><textarea class="form-control" id="trade-notes" rows="3"></textarea></div>
+              <div class="mb-3"><label class="form-label" for="trade-po">Purchase order reference</label><input class="form-control" id="trade-po" placeholder="Your internal PO number (optional)"></div>
+              <button type="submit" class="btn btn-gold">Submit Order Request</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- MESSAGES -->
+        <div id="t-messages" class="tab-pane fade" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12 col-lg-6">
+              <button type="button" class="msg-item unread reveal"><div class="d-flex justify-content-between mb-1"><span style="font-size:.8125rem;font-weight:600;color:var(--text);">Q1 2025 Pricing Update</span><span class="notif-dot" aria-label="Unread"></span></div><span class="d-block" style="font-size:.8125rem;color:var(--text-muted);">Please find attached your updated pricing schedule for Q1 2025…</span><span class="d-block" style="font-size:.6875rem;color:var(--text-dim);margin-top:4px;">Rumbaclaat Trade Team · Jan 8</span></button>
+              <button type="button" class="msg-item unread reveal"><div class="d-flex justify-content-between mb-1"><span style="font-size:.8125rem;font-weight:600;color:var(--text);">Order ORD-2025-0039 Confirmed</span><span class="notif-dot" aria-label="Unread"></span></div><span class="d-block" style="font-size:.8125rem;color:var(--text-muted);">Your order has been confirmed and is being processed…</span><span class="d-block" style="font-size:.6875rem;color:var(--text-dim);margin-top:4px;">Rumbaclaat Trade Team · Jan 10</span></button>
+              <button type="button" class="msg-item reveal"><div class="d-flex justify-content-between mb-1"><span style="font-size:.8125rem;font-weight:600;color:var(--text);">Welcome to Rumbaclaat Trade</span></div><span class="d-block" style="font-size:.8125rem;color:var(--text-muted);">Welcome to our trade platform. Your account has been approved…</span><span class="d-block" style="font-size:.6875rem;color:var(--text-dim);margin-top:4px;">Rumbaclaat Trade Team · Jan 15</span></button>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="card-brand reveal">
+                <h2 class="h4 mb-3">Send a Message</h2>
+                <div class="alert d-none" id="err-trade-msg" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></div>
+                <form id="form-trade-msg" novalidate>
+                  <div class="mb-3"><label class="form-label" for="tm-subject">Subject *</label><input class="form-control" id="tm-subject" required></div>
+                  <div class="mb-3"><label class="form-label" for="tm-message">Message *</label><textarea class="form-control" id="tm-message" rows="4" required></textarea></div>
+                  <button type="submit" class="btn btn-gold w-100">Send Message</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXPORT -->
+        <div id="t-export" class="tab-pane fade" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100"><h2 class="h4 mb-3">Export Compliance — Original Reserve</h2><div class="table-responsive"><table class="trade-table"><tbody>
+              <tr><td style="color:var(--text-muted);">Commodity Code</td><td style="color:var(--gold-hi);font-weight:600;">2208400000</td></tr><tr><td style="color:var(--text-muted);">Country of Origin</td><td>Jamaica</td></tr><tr><td style="color:var(--text-muted);">Net Weight</td><td>1.32 kg/bottle</td></tr><tr><td style="color:var(--text-muted);">Gross Weight</td><td>1.85 kg/bottle</td></tr><tr><td style="color:var(--text-muted);">ABV</td><td>43%</td></tr><tr><td style="color:var(--text-muted);">Volume</td><td>700ml</td></tr><tr><td style="color:var(--text-muted);">Incoterms</td><td>EXW, FOB, CIF</td></tr>
+            </tbody></table></div></div></div>
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100"><h2 class="h4 mb-3">Export Compliance — Spiced Gold</h2><div class="table-responsive"><table class="trade-table"><tbody>
+              <tr><td style="color:var(--text-muted);">Commodity Code</td><td style="color:var(--gold-hi);font-weight:600;">2208400000</td></tr><tr><td style="color:var(--text-muted);">Country of Origin</td><td>Barbados</td></tr><tr><td style="color:var(--text-muted);">Net Weight</td><td>1.28 kg/bottle</td></tr><tr><td style="color:var(--text-muted);">Gross Weight</td><td>1.79 kg/bottle</td></tr><tr><td style="color:var(--text-muted);">ABV</td><td>40%</td></tr><tr><td style="color:var(--text-muted);">Volume</td><td>700ml</td></tr><tr><td style="color:var(--text-muted);">Incoterms</td><td>EXW, FOB, CIF</td></tr>
+            </tbody></table></div></div></div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT -->
+        <div id="t-account" class="tab-pane fade" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100">
+              <h2 class="h4 mb-3">Company Details</h2>
+              <form id="form-trade-account" novalidate>
+                <div class="mb-3"><label class="form-label" for="ta-company">Company name</label><input class="form-control" id="ta-company" value="The Rum House Ltd" autocomplete="organization"></div>
+                <div class="row g-3"><div class="col-sm-6"><label class="form-label" for="ta-contact">Contact name</label><input class="form-control" id="ta-contact" value="Sarah Johnson" autocomplete="name"></div><div class="col-sm-6"><label class="form-label" for="ta-email">Email</label><input class="form-control" type="email" id="ta-email" value="sarah@therumhouse.co.uk" autocomplete="email"></div></div>
+                <div class="mb-3 mt-3"><label class="form-label" for="ta-btype">Business type</label><select class="form-select" id="ta-btype"><option>Restaurant / Bar</option><option selected>Off-licence / Retailer</option><option>Wholesale Distributor</option><option>Export / International</option></select></div>
+                <div class="row g-3"><div class="col-sm-6"><label class="form-label" for="ta-vat">VAT number</label><input class="form-control" id="ta-vat" value="GB123456789"></div><div class="col-sm-6"><label class="form-label" for="ta-terms">Payment terms</label><input class="form-control" id="ta-terms" value="60 days" readonly style="opacity:.6;"></div></div>
+                <button type="submit" class="btn btn-gold mt-3">Save Changes</button>
+              </form>
+            </div></div>
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100">
+              <h2 class="h4 mb-3">Account Summary</h2>
+              <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--gold-bdr);"><span style="font-size:.875rem;color:var(--text-muted);">Account Status</span><span class="badge-brand" style="color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.1)">Active</span></div>
+              <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--gold-bdr);"><span style="font-size:.875rem;color:var(--text-muted);">Pricing Tier</span><span class="badge-brand badge-gold">Wholesale</span></div>
+              <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--gold-bdr);"><span style="font-size:.875rem;color:var(--text-muted);">Credit Limit</span><span style="font-family:var(--serif);color:var(--gold-hi);">£5,000</span></div>
+              <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--gold-bdr);"><span style="font-size:.875rem;color:var(--text-muted);">Outstanding Balance</span><span style="font-family:var(--serif);color:var(--text);">£849.60</span></div>
+              <div class="d-flex justify-content-between py-2"><span style="font-size:.875rem;color:var(--text-muted);">Account Manager</span><span style="font-size:.875rem;"><a href="mailto:trade@rumbaclaat.com">trade@rumbaclaat.com</a></span></div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-5">
+          <div class="footer-logo">
+            <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="200" height="27">
+          </div>
+          <p style="font-size:.875rem;max-width:300px;">Premium Caribbean rum &amp; luxury lifestyle brand. From the canefields of Jamaica to your glass.</p>
+          <p style="font-size:.75rem;color:var(--text-dim);">Please drink responsibly. You must be 18 or over to buy alcohol. Age verified at checkout and on delivery.</p>
+        </div>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Shop">
+          <h2>Shop</h2>
+          <a href="shop-rum.html">Rum Collection</a>
+          <a href="shop-men.html">Men's Apparel</a>
+          <a href="shop-women.html">Women's Apparel</a>
+          <a href="cart.html">Cart</a>
+        </nav>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Discover">
+          <h2>Discover</h2>
+          <a href="cocktails.html">Cocktail Recipes</a>
+          <a href="blog.html">Blog &amp; Stories</a>
+          <a href="join.html">Membership</a>
+          <a href="membership.html">Member Portal</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="gift-cards.html">Gift Cards</a>
+          <a href="about.html">About Us</a>
+        </nav>
+        <nav class="col-6 col-lg-3 footer-col" aria-label="Business and legal">
+          <h2>Help &amp; Business</h2>
+          <a href="faq.html">FAQ</a>
+          <a href="trade.html">Trade Portal</a>
+          <a href="press.html">Press</a>
+          <a href="where-to-buy.html">Where to buy</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="account.html">My Account</a>
+          <a href="delivery.html">Delivery Policy</a>
+        </nav>
+      </div>
+      <!-- Partners + socials strip -->
+      <div class="footer-meta-row">
+        <div class="footer-partners">
+          <a class="footer-drinkaware" href="https://www.drinkaware.co.uk/" rel="noopener" target="_blank" aria-label="Drinkaware — open in new tab">
+            <img src="assets/img/drinkaware-logo.png" alt="Drinkaware.co.uk" width="160" height="16" loading="lazy">
+          </a>
+          <span class="footer-accreditation" aria-label="International Drinks Specialists — score 92, Sincere Evaluation and Feedback">
+            <img src="assets/img/intl-drinks-specialists-92.png" alt="International Drinks Specialists — 92 / 100" width="90" height="50" loading="lazy">
+          </span>
+        </div>
+
+        <ul class="footer-socials list-unstyled" aria-label="Rumbaclaat on social media">
+          <li><a href="https://www.facebook.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12H16l-.4 2.9h-2.2v7A10 10 0 0 0 22 12Z"/></svg>
+          </a></li>
+          <li><a href="https://www.instagram.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.5.5.7.9.9 1.4.2.5.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.5.5-.9.7-1.4.9-.5.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4a3.7 3.7 0 0 1-1.4-.9 3.7 3.7 0 0 1-.9-1.4c-.2-.5-.4-1.1-.4-2.2-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.5-.5.9-.7 1.4-.9.5-.2 1.1-.4 2.2-.4 1.3-.1 1.6-.1 4.8-.1ZM12 0C8.7 0 8.3 0 7.1.1 5.8.1 5 .3 4.2.6c-.8.3-1.5.7-2.2 1.4A6.1 6.1 0 0 0 .6 4.2C.3 5 .1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.1.5 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.8.3 1.6.5 2.9.5 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.1-.2 2.9-.5a6.1 6.1 0 0 0 2.2-1.4 6.1 6.1 0 0 0 1.4-2.2c.3-.8.5-1.6.5-2.9.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.1-.5-2.9a6.1 6.1 0 0 0-1.4-2.2A6.1 6.1 0 0 0 19.8.6C19 .3 18.2.1 16.9.1 15.7 0 15.3 0 12 0Zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9Z"/></svg>
+          </a></li>
+          <li><a href="https://www.linkedin.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5V9h3v10Zm-1.5-11.3A1.7 1.7 0 1 1 6.5 4.3a1.7 1.7 0 0 1 0 3.4ZM19 19h-3v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3V9h2.9v1.4h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7V19Z"/></svg>
+          </a></li>
+          <li><a href="https://www.tiktok.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 8.6a8.4 8.4 0 0 1-4.9-1.6v7.5a6.2 6.2 0 1 1-5.4-6.1v3a3.2 3.2 0 1 0 2.4 3.1V2h2.9a5.5 5.5 0 0 0 5 5v3.6Z"/></svg>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>© <span id="year">2026</span> Rumbaclaat Limited. All rights reserved.</span>
+        <span class="d-flex gap-4 flex-wrap">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="cookies.html">Cookies</a>
+          <a href="cookie-preferences.html">Cookie preferences</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <div aria-live="polite" class="visually-hidden" id="sr-announcer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script>window.RC_DEV_BYPASS = true; /* TESTING ONLY — strip before launch */</script>
+  <script src="assets/js/main.js" defer></script>
+
+  <script>
+  (function(){
+    'use strict';
+    const $=(s)=>document.querySelector(s);
+    const $$=(s)=>Array.from(document.querySelectorAll(s));
+    const announce=(m)=>{const r=$('#sr-announcer');if(r){r.textContent='';setTimeout(()=>r.textContent=m,50);}};
+
+    function showView(name){
+      $$('.trade-view').forEach(v=>{
+        const on = (v.id === 'view-'+name);
+        v.classList.toggle('active', on);
+        if (on) v.removeAttribute('hidden'); else v.setAttribute('hidden','');
+      });
+      window.scrollTo({top:0, behavior:'smooth'});
+      const h = document.querySelector('#view-'+name+' h1, #view-'+name+' h2');
+      if (h) { h.setAttribute('tabindex','-1'); h.focus({preventScroll:true}); }
+    }
+
+    // Pricing calc — used only when the dashboard is visible
+    const pricing={'rum-001':[{max:4,ppb:26},{max:9,ppb:24.5},{max:999,ppb:22.75}],'rum-002':[{max:4,ppb:20},{max:9,ppb:18.75},{max:999,ppb:17.5}]};
+    function calc(){
+      const p=$('#trade-product'); if(!p) return;
+      const product=p.value, cases=parseInt($('#trade-cases').value)||0, div=$('#trade-calc');
+      if(!product||cases<1){div.hidden=true;return;}
+      div.hidden=false;
+      const tiers=pricing[product]; const ppb=(tiers.find(t=>cases<=t.max)||tiers[tiers.length-1]).ppb;
+      const bottles=cases*6, net=bottles*ppb, vat=net*0.2, total=net+vat;
+      $('#tc-bottles').textContent=bottles; $('#tc-ppb').textContent='£'+ppb.toFixed(2);
+      $('#tc-net').textContent='£'+net.toFixed(2); $('#tc-vat').textContent='£'+vat.toFixed(2); $('#tc-total').textContent='£'+total.toFixed(2);
+    }
+    function validate(form,err){
+      const missing=[];
+      form.querySelectorAll('[required]').forEach(f=>{const ok=f.type==='checkbox'?f.checked:f.value.trim()!=='';f.setAttribute('aria-invalid',ok?'false':'true');if(!ok){const l=form.querySelector('label[for="'+f.id+'"]');missing.push(l?l.textContent.replace(' *',''):f.id);}});
+      if(missing.length){err.classList.remove('d-none');err.textContent='Please complete: '+missing.join(', ')+'.';err.focus();return false;}
+      err.classList.add('d-none');return true;
+    }
+
+    // View switching buttons
+    document.addEventListener('click',(e)=>{
+      const t=e.target.closest('[data-trade-view]');
+      if(t){ showView(t.dataset.tradeView); if(t.dataset.tradeView==='gate') announce('Signed out — back to trade portal'); }
+    });
+
+    // Sign-in form → portal view
+    const signinForm = $('#form-trade-signin');
+    if (signinForm) signinForm.addEventListener('submit',(e)=>{e.preventDefault(); if(validate(e.target,$('#err-trade-signin'))){showView('portal'); announce('Signed in — welcome back');}});
+
+    // Dashboard inputs — only attach if present in DOM
+    document.addEventListener('input',(e)=>{ if(e.target.id==='trade-product'||e.target.id==='trade-cases') calc(); });
+    document.addEventListener('change',(e)=>{ if(e.target.id==='trade-product') calc(); });
+    const orderForm = $('#form-trade-order');
+    if (orderForm) orderForm.addEventListener('submit',(e)=>{e.preventDefault(); if(validate(e.target,$('#err-trade-order'))){e.target.reset();$('#trade-calc').hidden=true;announce('Trade order submitted — your account manager will confirm within 1 business day');}});
+    const msgForm = $('#form-trade-msg');
+    if (msgForm) msgForm.addEventListener('submit',(e)=>{e.preventDefault(); if(validate(e.target,$('#err-trade-msg'))){e.target.reset();announce('Message sent to trade team');}});
+    const acctForm = $('#form-trade-account');
+    if (acctForm) acctForm.addEventListener('submit',(e)=>{e.preventDefault();announce('Account details saved');});
+
+    // Honour ?view=portal for testing
+    const params = new URLSearchParams(location.search);
+    if (params.get('view') === 'portal') showView('portal');
+    if (params.get('view') === 'applied') showView('applied');
+  })();
+  </script>
+
+
+</body>
+</html>

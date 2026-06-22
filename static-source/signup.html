@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico"><link rel="icon" type="image/png" sizes="256x256" href="assets/img/favicon-256.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Join Membership — Rumbaclaat</title>
+  <meta name="description" content="Sign up for Rumbaclaat membership. Choose your tier, create your account, and join the Inner Circle. 18+ only.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .su-step{display:none;} .su-step.active{display:block;}
+    .step-bar{display:flex;align-items:center;justify-content:center;margin-bottom:32px;flex-wrap:wrap;gap:4px;}
+    .step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid;font-size:.8125rem;font-weight:700;}
+    .step-circle.done{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.4);color:var(--green);}
+    .step-circle.active{background:var(--gold);border-color:var(--gold);color:#0E0E0E;}
+    .step-circle.pending{background:var(--bg-card2);border-color:var(--gold-bdr);color:var(--text-dim);}
+    .step-label{font-size:.625rem;color:var(--text-dim);margin-top:5px;}
+    .step-line{width:40px;height:1px;margin:0 4px 16px;background:var(--gold-bdr);}
+    .tier-select{border-radius:16px;padding:20px;text-align:left;border:1.5px solid var(--gold-bdr);background:var(--bg-card);width:100%;height:100%;}
+    .tier-select.selected,.tier-select:hover{background:var(--gold-lt);border-color:var(--gold);}
+    .modal-content{background:var(--bg-card);}
+    @media(max-width:575.98px){.step-label{display:none;}}
+  </style>
+  <link rel="canonical" href="https://rumbaclaat.com/signup.html">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="author" content="Rumbaclaat">
+  <meta name="theme-color" content="#0E0E0E">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Rumbaclaat">
+  <meta property="og:title" content="Join Membership — Rumbaclaat">
+  <meta property="og:description" content="Sign up for Rumbaclaat membership. Choose your tier, create your account, and join the Inner Circle. 18+ only.">
+  <meta property="og:url" content="https://rumbaclaat.com/signup.html">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:secure_url" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+  <!-- Twitter / X cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Join Membership — Rumbaclaat">
+  <meta name="twitter:description" content="Sign up for Rumbaclaat membership. Choose your tier, create your account, and join the Inner Circle. 18+ only.">
+  <meta name="twitter:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta name="twitter:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-brand-rc fixed-top" aria-label="Primary">
+      <div class="container">
+        <a class="navbar-brand" href="index.html" aria-label="Rumbaclaat — home">
+          <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="170" height="23">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
+                aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="primaryNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="cocktails.html">Cocktails</a></li>
+            <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="join.html">Membership</a></li>
+            <li class="nav-item"><a class="nav-link" href="trade.html">Trade</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            <a class="nav-join-btn" href="join.html">★ Join Free</a>
+            <a class="nav-icon-btn" href="search.html" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </a>
+            <a class="nav-icon-btn" href="cart.html" data-cart-link aria-label="Cart, 0 items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span class="cart-count" hidden>0</span>
+            </a>
+            <a class="nav-icon-btn" href="account.html" aria-label="My account">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="has-fixed-nav">
+
+    <div class="container section" style="max-width:680px;">
+      <h1 class="visually-hidden">Join Rumbaclaat Membership</h1>
+
+      <ol class="step-bar list-unstyled" aria-label="Signup progress">
+        <li class="d-flex flex-column align-items-center"><span class="step-circle active" id="ss1" aria-current="step">1</span><span class="step-label">Choose Tier</span></li>
+        <li class="step-line" aria-hidden="true"></li>
+        <li class="d-flex flex-column align-items-center"><span class="step-circle pending" id="ss2">2</span><span class="step-label">Create Account</span></li>
+        <li class="step-line" aria-hidden="true"></li>
+        <li class="d-flex flex-column align-items-center"><span class="step-circle pending" id="ss3">3</span><span class="step-label">Payment</span></li>
+        <li class="step-line" aria-hidden="true"></li>
+        <li class="d-flex flex-column align-items-center"><span class="step-circle pending" id="ss4">✓</span><span class="step-label">Confirm</span></li>
+      </ol>
+
+      <!-- Step 1: Tier -->
+      <section id="su-1" class="su-step active" aria-labelledby="su1h">
+        <div class="card-brand">
+          <h2 id="su1h" class="h3 mb-2">Choose your tier</h2>
+          <p class="mb-4">Select the membership that suits you. You can change tier any time.</p>
+          <fieldset style="border:0;padding:0;margin:0;">
+            <legend class="visually-hidden">Membership tier</legend>
+            <div class="row g-3" role="radiogroup" aria-label="Membership tier">
+              <div class="col-12 col-sm-6"><input type="radio" class="btn-check" name="tier" id="t-bronze" value="Bronze"><label class="tier-select d-block" for="t-bronze"><span style="color:var(--bronze);font-family:var(--serif);font-size:1.25rem;font-weight:700;">Bronze</span><span class="d-block" style="font-family:var(--serif);font-size:1.5rem;">Free</span><span class="d-block" style="font-size:.75rem;color:var(--text-muted);margin-top:6px;">1× points · 5% discount</span></label></div>
+              <div class="col-12 col-sm-6"><input type="radio" class="btn-check" name="tier" id="t-silver" value="Silver"><label class="tier-select d-block" for="t-silver"><span style="color:#C0C0C0;font-family:var(--serif);font-size:1.25rem;font-weight:700;">Silver</span><span class="d-block" style="font-family:var(--serif);font-size:1.5rem;">£9.99<span style="font-size:.875rem;color:var(--text-muted);">/mo</span></span><span class="d-block" style="font-size:.75rem;color:var(--text-muted);margin-top:6px;">1.5× points · 10% discount</span></label></div>
+              <div class="col-12 col-sm-6"><input type="radio" class="btn-check" name="tier" id="t-gold" value="Gold"><label class="tier-select d-block" for="t-gold"><span style="color:var(--gold-hi);font-family:var(--serif);font-size:1.25rem;font-weight:700;">Gold</span><span class="d-block" style="font-family:var(--serif);font-size:1.5rem;">£24.99<span style="font-size:.875rem;color:var(--text-muted);">/mo</span></span><span class="d-block" style="font-size:.75rem;color:var(--text-muted);margin-top:6px;">2× points · 15% discount</span></label></div>
+              <div class="col-12 col-sm-6"><input type="radio" class="btn-check" name="tier" id="t-black" value="Black Reserve"><label class="tier-select d-block" for="t-black"><span style="color:var(--gold-hi);font-family:var(--serif);font-size:1.25rem;font-weight:700;">Black Reserve</span><span class="d-block" style="font-family:var(--serif);font-size:1.5rem;">£54.99<span style="font-size:.875rem;color:var(--text-muted);">/mo</span></span><span class="d-block" style="font-size:.75rem;color:var(--text-muted);margin-top:6px;">3× points · 20% discount</span></label></div>
+            </div>
+          </fieldset>
+          <div id="su-billing" class="mt-3" hidden>
+            <span class="form-label d-block">Billing period</span>
+            <div class="d-flex gap-2" role="group" aria-label="Billing period">
+              <button type="button" class="btn btn-gold btn-sm" id="sb-monthly" data-sbilling="monthly" aria-pressed="true">Monthly</button>
+              <button type="button" class="btn btn-outline-gold btn-sm" id="sb-annual" data-sbilling="annual" aria-pressed="false">Annual (save 2 months)</button>
+            </div>
+          </div>
+          <p class="alert d-none mt-3" id="err-tier" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></p>
+          <button type="button" class="btn btn-gold w-100 mt-4" data-snext="2">Continue →</button>
+        </div>
+      </section>
+
+      <!-- Step 2: Account -->
+      <section id="su-2" class="su-step" aria-labelledby="su2h">
+        <div class="card-brand">
+          <h2 id="su2h" class="h3 mb-4">Create your account</h2>
+          <div class="alert d-none" id="err-account" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></div>
+          <form id="su-account-form" novalidate>
+            <div class="row g-3">
+              <div class="col-sm-6"><label class="form-label" for="su-fname">First name *</label><input class="form-control" id="su-fname" autocomplete="given-name" required></div>
+              <div class="col-sm-6"><label class="form-label" for="su-lname">Last name *</label><input class="form-control" id="su-lname" autocomplete="family-name" required></div>
+              <div class="col-12"><label class="form-label" for="su-email">Email *</label><input class="form-control" type="email" id="su-email" autocomplete="email" required></div>
+              <div class="col-12"><label class="form-label" for="su-pw">Password *</label><input class="form-control" type="password" id="su-pw" autocomplete="new-password" minlength="8" required><span style="font-size:.75rem;color:var(--text-dim);">Minimum 8 characters.</span></div>
+              <div class="col-12"><label class="form-label" for="su-dob">Date of birth *</label><input class="form-control" type="date" id="su-dob" autocomplete="bday" required><span style="font-size:.75rem;color:var(--text-dim);">You must be 18 or over to join.</span></div>
+              <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="su-terms" required><label class="form-check-label" for="su-terms" style="font-size:.8125rem;color:var(--text-muted);">I am 18+ and agree to the <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.</label></div></div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+              <button type="button" class="btn btn-outline-gold" data-snext="1">← Back</button>
+              <button type="submit" class="btn btn-gold flex-grow-1">Continue →</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Step 3: Payment -->
+      <section id="su-3" class="su-step" aria-labelledby="su3h">
+        <div class="card-brand">
+          <h2 id="su3h" class="h3 mb-3">Payment</h2>
+          <div style="background:var(--gold-lt);border:1px solid var(--gold-md);border-radius:12px;padding:16px;margin-bottom:20px;">
+            <div class="d-flex justify-content-between"><span style="font-size:.8125rem;color:var(--text-muted);"><span id="su-tier-name">Gold</span> Membership</span><span id="su-price" style="font-family:var(--serif);font-size:1.25rem;font-weight:700;color:var(--gold-hi);">£24.99</span></div>
+            <p id="su-period" style="font-size:.75rem;color:var(--text-dim);margin:4px 0 0;">per month</p>
+          </div>
+          <div id="su-free-note" class="d-none"><p>Bronze is free — no payment needed. Click continue to finish.</p></div>
+          <div id="su-pay-fields">
+            <div class="alert d-none" id="err-pay" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></div>
+            <form id="su-pay-form" novalidate>
+              <div class="mb-3"><label class="form-label" for="su-card">Card number *</label><input class="form-control" id="su-card" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456" required></div>
+              <div class="mb-3"><label class="form-label" for="su-cardname">Name on card *</label><input class="form-control" id="su-cardname" autocomplete="cc-name" required></div>
+              <div class="row g-3"><div class="col-6"><label class="form-label" for="su-exp">Expiry *</label><input class="form-control" id="su-exp" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" required></div><div class="col-6"><label class="form-label" for="su-cvv">CVV *</label><input class="form-control" type="password" id="su-cvv" inputmode="numeric" maxlength="4" autocomplete="cc-csc" required></div></div>
+              <p style="font-size:.6875rem;color:var(--text-dim);margin:16px 0;">🔒 Payment is simulated in this demo. No card is charged.</p>
+            </form>
+          </div>
+          <div class="d-flex gap-2 mt-2">
+            <button type="button" class="btn btn-outline-gold" data-snext="1">← Back</button>
+            <button type="button" class="btn btn-gold flex-grow-1" data-finish>Complete Sign-Up</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4: Done -->
+      <section id="su-4" class="su-step" aria-labelledby="su4h">
+        <div class="card-brand text-center" style="padding:48px 24px;">
+          <div style="font-size:3rem;margin-bottom:16px;color:var(--gold);" aria-hidden="true">✦</div>
+          <p style="font-size:.6875rem;letter-spacing:.3em;color:var(--gold-hi);margin-bottom:12px;">WELCOME TO THE INNER CIRCLE</p>
+          <h2 id="su4h" class="mb-3">You're all set!</h2>
+          <p style="max-width:420px;margin:0 auto 28px;">Your <strong style="color:var(--gold-hi);" id="su-final-tier">Gold</strong> membership is active. We've sent a confirmation to your email — check your inbox to verify your account.</p>
+          <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <a href="membership.html" class="btn btn-gold">Go to Member Portal</a>
+            <a href="shop.html" class="btn btn-outline-gold">Start Shopping →</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-5">
+          <div class="footer-logo">
+            <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="200" height="27">
+          </div>
+          <p style="font-size:.875rem;max-width:300px;">Premium Caribbean rum &amp; luxury lifestyle brand. From the canefields of Jamaica to your glass.</p>
+          <p style="font-size:.75rem;color:var(--text-dim);">Please drink responsibly. You must be 18 or over to buy alcohol. Age verified at checkout and on delivery.</p>
+        </div>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Shop">
+          <h2>Shop</h2>
+          <a href="shop-rum.html">Rum Collection</a>
+          <a href="shop-men.html">Men's Apparel</a>
+          <a href="shop-women.html">Women's Apparel</a>
+          <a href="cart.html">Cart</a>
+        </nav>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Discover">
+          <h2>Discover</h2>
+          <a href="cocktails.html">Cocktail Recipes</a>
+          <a href="blog.html">Blog &amp; Stories</a>
+          <a href="join.html">Membership</a>
+          <a href="membership.html">Member Portal</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="gift-cards.html">Gift Cards</a>
+          <a href="about.html">About Us</a>
+        </nav>
+        <nav class="col-6 col-lg-3 footer-col" aria-label="Business and legal">
+          <h2>Help &amp; Business</h2>
+          <a href="faq.html">FAQ</a>
+          <a href="trade.html">Trade Portal</a>
+          <a href="press.html">Press</a>
+          <a href="where-to-buy.html">Where to buy</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="account.html">My Account</a>
+          <a href="delivery.html">Delivery Policy</a>
+        </nav>
+      </div>
+      <!-- Partners + socials strip -->
+      <div class="footer-meta-row">
+        <div class="footer-partners">
+          <a class="footer-drinkaware" href="https://www.drinkaware.co.uk/" rel="noopener" target="_blank" aria-label="Drinkaware — open in new tab">
+            <img src="assets/img/drinkaware-logo.png" alt="Drinkaware.co.uk" width="160" height="16" loading="lazy">
+          </a>
+          <span class="footer-accreditation" aria-label="International Drinks Specialists — score 92, Sincere Evaluation and Feedback">
+            <img src="assets/img/intl-drinks-specialists-92.png" alt="International Drinks Specialists — 92 / 100" width="90" height="50" loading="lazy">
+          </span>
+        </div>
+
+        <ul class="footer-socials list-unstyled" aria-label="Rumbaclaat on social media">
+          <li><a href="https://www.facebook.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12H16l-.4 2.9h-2.2v7A10 10 0 0 0 22 12Z"/></svg>
+          </a></li>
+          <li><a href="https://www.instagram.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.5.5.7.9.9 1.4.2.5.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.5.5-.9.7-1.4.9-.5.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4a3.7 3.7 0 0 1-1.4-.9 3.7 3.7 0 0 1-.9-1.4c-.2-.5-.4-1.1-.4-2.2-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.5-.5.9-.7 1.4-.9.5-.2 1.1-.4 2.2-.4 1.3-.1 1.6-.1 4.8-.1ZM12 0C8.7 0 8.3 0 7.1.1 5.8.1 5 .3 4.2.6c-.8.3-1.5.7-2.2 1.4A6.1 6.1 0 0 0 .6 4.2C.3 5 .1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.1.5 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.8.3 1.6.5 2.9.5 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.1-.2 2.9-.5a6.1 6.1 0 0 0 2.2-1.4 6.1 6.1 0 0 0 1.4-2.2c.3-.8.5-1.6.5-2.9.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.1-.5-2.9a6.1 6.1 0 0 0-1.4-2.2A6.1 6.1 0 0 0 19.8.6C19 .3 18.2.1 16.9.1 15.7 0 15.3 0 12 0Zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9Z"/></svg>
+          </a></li>
+          <li><a href="https://www.linkedin.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5V9h3v10Zm-1.5-11.3A1.7 1.7 0 1 1 6.5 4.3a1.7 1.7 0 0 1 0 3.4ZM19 19h-3v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3V9h2.9v1.4h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7V19Z"/></svg>
+          </a></li>
+          <li><a href="https://www.tiktok.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 8.6a8.4 8.4 0 0 1-4.9-1.6v7.5a6.2 6.2 0 1 1-5.4-6.1v3a3.2 3.2 0 1 0 2.4 3.1V2h2.9a5.5 5.5 0 0 0 5 5v3.6Z"/></svg>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>© <span id="year">2026</span> Rumbaclaat Limited. All rights reserved.</span>
+        <span class="d-flex gap-4 flex-wrap">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="cookies.html">Cookies</a>
+          <a href="cookie-preferences.html">Cookie preferences</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <div aria-live="polite" class="visually-hidden" id="sr-announcer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script>window.RC_DEV_BYPASS = true; /* TESTING ONLY — strip before launch */</script>
+  <script src="assets/js/main.js" defer></script>
+
+  <script>
+  (function(){
+    'use strict';
+    const $=(s)=>document.querySelector(s),$$=(s)=>Array.from(document.querySelectorAll(s));
+    const announce=(m)=>{const r=$('#sr-announcer');if(r){r.textContent='';setTimeout(()=>r.textContent=m,50);}};
+    const prices={'Bronze':{monthly:0,annual:0},'Silver':{monthly:9.99,annual:89.99},'Gold':{monthly:24.99,annual:224.99},'Black Reserve':{monthly:54.99,annual:499.99}};
+    let billing='monthly';
+    const circles=[null,'ss1','ss2','ss3','ss4'];
+
+    // Preselect tier from ?tier=
+    const param=new URLSearchParams(location.search).get('tier');
+    if(param){ const map={'Bronze':'t-bronze','Silver':'t-silver','Gold':'t-gold','Black Reserve':'t-black'}; const el=$('#'+map[param]); if(el){el.checked=true; updateBillingVisibility();} }
+
+    function selectedTier(){ const r=$('input[name="tier"]:checked'); return r?r.value:''; }
+    function updateBillingVisibility(){ const t=selectedTier(); $('#su-billing').hidden = !(t && prices[t].monthly>0); }
+
+    function go(n){
+      $$('.su-step').forEach(s=>s.classList.remove('active'));
+      $('#su-'+n).classList.add('active');
+      for(let i=1;i<=4;i++){ const el=$('#'+circles[i]); el.className='step-circle '+(i<n?'done':i===n?'active':'pending'); if(i===n)el.setAttribute('aria-current','step');else el.removeAttribute('aria-current'); }
+      if(n===3) renderPay();
+      if(n===4){ const t=selectedTier(); $('#su-final-tier').textContent=t; }
+      const h=$('#su-'+n).querySelector('h2'); if(h){h.setAttribute('tabindex','-1');h.focus();}
+      announce('Step '+n+' of 4');
+    }
+    function renderPay(){
+      const t=selectedTier(); const p=prices[t]; const free=p.monthly===0;
+      $('#su-tier-name').textContent=t;
+      $('#su-price').textContent='£'+p[billing].toFixed(2);
+      $('#su-period').textContent=free?'No charge':(billing==='monthly'?'per month':'per year — 2 months free');
+      $('#su-free-note').classList.toggle('d-none', !free);
+      $('#su-pay-fields').classList.toggle('d-none', free);
+    }
+    function validate(form,err){
+      const missing=[];
+      form.querySelectorAll('[required]').forEach(f=>{const ok=f.type==='checkbox'?f.checked:f.value.trim()!=='';f.setAttribute('aria-invalid',ok?'false':'true');if(!ok){const l=form.querySelector('label[for="'+f.id+'"]');missing.push(l?l.textContent.replace(' *',''):f.id);}});
+      if(missing.length){err.classList.remove('d-none');err.textContent='Please complete: '+missing.join(', ')+'.';err.focus();return false;}
+      err.classList.add('d-none');return true;
+    }
+
+    document.addEventListener('change',(e)=>{ if(e.target.name==='tier') updateBillingVisibility(); });
+    document.addEventListener('click',(e)=>{
+      const b=e.target.closest('[data-sbilling]');
+      if(b){ billing=b.dataset.sbilling; const m=$('#sb-monthly'),a=$('#sb-annual'); [m,a].forEach(x=>{x.classList.remove('btn-gold');x.classList.add('btn-outline-gold');x.setAttribute('aria-pressed','false');}); b.classList.add('btn-gold');b.classList.remove('btn-outline-gold');b.setAttribute('aria-pressed','true'); }
+      const n=e.target.closest('[data-snext]');
+      if(n){ const to=+n.dataset.snext;
+        if(to===2){ if(!selectedTier()){const er=$('#err-tier');er.classList.remove('d-none');er.textContent='Please choose a membership tier.';er.focus();return;} }
+        go(to);
+      }
+      if(e.target.closest('[data-finish]')){
+        const t=selectedTier();
+        if(prices[t].monthly>0){ if(!validate($('#su-pay-form'),$('#err-pay'))) return; }
+        go(4); announce('Sign-up complete. Welcome to '+t+'.');
+      }
+    });
+    $('#su-account-form').addEventListener('submit',(e)=>{e.preventDefault(); if(validate(e.target,$('#err-account'))) go(3);});
+    document.addEventListener('input',(e)=>{
+      if(e.target.id==='su-card'){e.target.value=e.target.value.replace(/\D/g,'').slice(0,16).replace(/(.{4})/g,'$1 ').trim();}
+      if(e.target.id==='su-exp'){const d=e.target.value.replace(/\D/g,'').slice(0,4);e.target.value=d.length>2?d.slice(0,2)+'/'+d.slice(2):d;}
+    });
+
+    // Deep-link support (for testing): ?step=4 jumps straight to the completion screen.
+    const __p = new URLSearchParams(location.search);
+    const __s = parseInt(__p.get('step'));
+    if (__s >= 1 && __s <= 4) go(__s);
+  })();
+  </script>
+
+</body>
+</html>

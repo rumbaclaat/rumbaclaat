@@ -1,0 +1,159 @@
+// Rumbaclaat — Prisma schema (Prisma 7, new `prisma-client` generator).
+// Starter core models; expanded to the full §4 model before the first migration.
+// Run `npm run db:push` (or db:migrate) once Supabase DATABASE_URL/DIRECT_URL are set.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ----------------------------------------------------------------------------
+// Catalogue
+// ----------------------------------------------------------------------------
+
+enum ProductType {
+  rum
+  apparel
+  cap
+  gift_card
+}
+
+enum PublishStatus {
+  draft
+  published
+  archived
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  heroImage   String?
+  parentId    String?
+  parent      Category? @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  sortOrder   Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  sku         String        @unique
+  type        ProductType
+  name        String
+  subtitle    String?
+  description String?
+  categoryId  String?
+  category    Category?     @relation(fields: [categoryId], references: [id])
+  basePrice   Decimal       @db.Decimal(10, 2)
+  onSale      Boolean       @default(false)
+  salePrice   Decimal?      @db.Decimal(10, 2)
+  saleEndDate DateTime?
+  basePoints  Int           @default(0)
+  // Rum-specific
+  abv         Decimal?      @db.Decimal(5, 2)
+  volume      String?
+  origin      String?
+  // Apparel-specific
+  material    String?
+  // Display
+  ratingAvg   Decimal?      @db.Decimal(3, 2)
+  reviewCount Int           @default(0)
+  stockQty    Int           @default(0)
+  maxQtyPerOrder Int?
+  status      PublishStatus @default(draft)
+  variants    ProductVariant[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model ProductVariant {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  colourName  String?
+  colourHex   String?
+  size        String?
+  sku         String   @unique
+  priceDelta  Decimal  @default(0) @db.Decimal(10, 2)
+  stockQty    Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Customers & membership
+// ----------------------------------------------------------------------------
+
+model MembershipTier {
+  id              String     @id @default(cuid())
+  name            String     @unique // Bronze | Silver | Gold | Black Reserve
+  slug            String     @unique
+  priceMonthly    Decimal    @default(0) @db.Decimal(10, 2)
+  priceAnnual     Decimal    @default(0) @db.Decimal(10, 2)
+  pointsMultiplier Decimal   @default(1) @db.Decimal(4, 2)
+  memberDiscountPct Int      @default(0)
+  isFree          Boolean    @default(false)
+  benefits        String[]
+  sortOrder       Int        @default(0)
+  customers       Customer[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Customer {
+  id              String          @id @default(cuid())
+  authUserId      String?         @unique // Supabase auth.users id
+  firstName       String?
+  lastName        String?
+  email           String          @unique
+  phone           String?
+  dateOfBirth     DateTime?
+  membershipTierId String?
+  membershipTier  MembershipTier? @relation(fields: [membershipTierId], references: [id])
+  pointsBalance   Int             @default(0)
+  lifetimeSpend   Decimal         @default(0) @db.Decimal(12, 2)
+  referralCode    String?         @unique
+  ghlContactId    String?
+  addresses       Address[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  name       String?
+  line1      String
+  line2      String?
+  city       String
+  postcode   String
+  country    String   @default("United Kingdom")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Site settings (singleton)
+// ----------------------------------------------------------------------------
+
+model Settings {
+  id                   String  @id @default("default")
+  shippingStandardCost Decimal @default(4.99) @db.Decimal(10, 2)
+  shippingExpressCost  Decimal @default(9.99) @db.Decimal(10, 2)
+  freeShippingThreshold Decimal @default(50) @db.Decimal(10, 2)
+  pointsPerPound       Int     @default(100) // 100 points = £1 on redemption
+  vatRatePct           Int     @default(20)
+  currency             String  @default("GBP")
+  ageThreshold         Int     @default(18)
+  ghlConfig            Json?
+  updatedAt            DateTime @updatedAt
+}

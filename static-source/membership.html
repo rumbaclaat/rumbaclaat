@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico"><link rel="icon" type="image/png" sizes="256x256" href="assets/img/favicon-256.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Member Portal — Rumbaclaat</title>
+  <meta name="description" content="Your Rumbaclaat loyalty dashboard: points, tier management, rewards, referrals and preferences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .nav-pills .nav-link{color:var(--text-muted);} .nav-pills .nav-link.active{background:var(--gold-lt);color:var(--gold-hi);}
+    .m-table{width:100%;border-collapse:collapse;}
+    .m-table th{padding:12px 16px;text-align:left;font-size:.75rem;color:var(--text-muted);background:var(--bg-card);border-bottom:1px solid var(--gold-bdr);}
+    .m-table td{padding:12px 16px;font-size:.875rem;color:var(--text);border-bottom:1px solid rgba(198,167,94,.05);}
+    .reward-card{background:var(--bg-card);border:1px solid var(--gold-bdr);border-radius:var(--radius-lg);padding:20px;height:100%;}
+    .reward-card:hover{border-color:rgba(198,167,94,.3);}
+    .notif-item{background:var(--bg-card2);border:1px solid var(--gold-bdr);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;}
+    .notif-item.unread{border-color:rgba(198,167,94,.3);}
+    .modal-content{background:var(--bg-card);border:1px solid var(--gold-md);color:var(--text);}
+  </style>
+  <link rel="canonical" href="https://rumbaclaat.com/membership.html">
+  <meta name="robots" content="index,follow">
+  <meta name="author" content="Rumbaclaat">
+  <meta name="theme-color" content="#0E0E0E">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Rumbaclaat">
+  <meta property="og:title" content="Member Portal — Rumbaclaat">
+  <meta property="og:description" content="Your Rumbaclaat loyalty dashboard: points, tier management, rewards, referrals and preferences.">
+  <meta property="og:url" content="https://rumbaclaat.com/membership.html">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:secure_url" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+  <!-- Twitter / X cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Member Portal — Rumbaclaat">
+  <meta name="twitter:description" content="Your Rumbaclaat loyalty dashboard: points, tier management, rewards, referrals and preferences.">
+  <meta name="twitter:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta name="twitter:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-brand-rc fixed-top" aria-label="Primary">
+      <div class="container">
+        <a class="navbar-brand" href="index.html" aria-label="Rumbaclaat — home">
+          <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="170" height="23">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
+                aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="primaryNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="cocktails.html">Cocktails</a></li>
+            <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="join.html">Membership</a></li>
+            <li class="nav-item"><a class="nav-link" href="trade.html">Trade</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            <a class="nav-join-btn" href="join.html">★ Join Free</a>
+            <a class="nav-icon-btn" href="search.html" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </a>
+            <a class="nav-icon-btn" href="cart.html" data-cart-link aria-label="Cart, 0 items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span class="cart-count" hidden>0</span>
+            </a>
+            <a class="nav-icon-btn" href="account.html" aria-label="My account">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="has-fixed-nav">
+
+    <div class="container section">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+        <div><span class="eyebrow">LOYALTY PORTAL</span><h1 style="font-size:2rem;">Welcome, James</h1></div>
+        <div class="d-flex gap-2 align-items-center"><span class="badge-brand">⚡ 4,450 pts</span><span class="badge-brand badge-gold">✦ Gold</span></div>
+      </div>
+
+      <div class="row g-3 reveal">
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Total Points</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">4,450</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">2× multiplier active</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Tier Discount</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">15% off</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">Applied at checkout</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Points to Next Tier</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">550</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">Reach Black Reserve</div></div></div>
+        <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Lifetime Spend</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">£312.40</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">+£87 this month</div></div></div>
+      </div>
+
+      <div class="reveal mt-3 mb-2">
+        <div class="d-flex justify-content-between" style="font-size:.75rem;color:var(--text-muted);margin-bottom:6px;"><span>Progress to Black Reserve</span><span style="color:var(--gold-hi);">550 pts to go</span></div>
+        <div class="progress" role="progressbar" aria-label="Progress to Black Reserve" aria-valuenow="4450" aria-valuemin="0" aria-valuemax="5000" style="height:6px;background:#2A2520;"><div class="progress-bar" style="width:89%;background:linear-gradient(90deg,var(--gold),#D4B96B);"></div></div>
+      </div>
+
+      <ul class="nav nav-pills gap-2 my-4 reveal" role="tablist" aria-label="Member portal sections">
+        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#mbr-overview" type="button" role="tab" aria-selected="true">Overview</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#mbr-tiers" type="button" role="tab" aria-selected="false">Tiers</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#mbr-manage" type="button" role="tab" aria-selected="false">Manage Tier</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#mbr-earn" type="button" role="tab" aria-selected="false">Earn Points</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#mbr-rewards" type="button" role="tab" aria-selected="false">Rewards</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#mbr-refer" type="button" role="tab" aria-selected="false">Refer & Earn</button></li><li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#mbr-settings" type="button" role="tab" aria-selected="false">Preferences</button></li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- OVERVIEW -->
+        <div id="mbr-overview" class="tab-pane fade show active" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12 col-lg-8"><div class="card-brand h-100">
+              <h2 class="h4 mb-3">Membership Status</h2>
+              <div style="background:linear-gradient(135deg,#1C1A14,#161310);border:1px solid rgba(198,167,94,.2);border-radius:var(--radius);padding:20px;margin-bottom:16px;" class="d-flex justify-content-between flex-wrap gap-3">
+                <div><p style="font-size:.75rem;color:var(--text-muted);margin-bottom:4px;">Welcome back,</p><h3 style="font-size:1.5rem;">James Whitfield</h3><div class="d-flex align-items-end gap-2 mt-2"><span style="font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--gold-hi);line-height:1;">4,450</span><span style="color:var(--text-muted);font-size:.875rem;">points</span></div></div>
+                <div class="d-flex flex-column gap-2 align-items-end"><span class="badge-brand badge-gold">✦ Gold</span><span class="badge-brand">⚡ 2× multiplier</span></div>
+              </div>
+              <div class="row g-3">
+                <div class="col-4"><p style="font-size:.75rem;color:var(--text-muted);">Tier Discount</p><p style="font-family:var(--serif);font-size:1rem;font-weight:700;color:var(--gold-hi);">15%</p></div>
+                <div class="col-4"><p style="font-size:.75rem;color:var(--text-muted);">Points Rate</p><p style="font-family:var(--serif);font-size:1rem;font-weight:700;color:var(--gold-hi);">2×</p></div>
+                <div class="col-4"><p style="font-size:.75rem;color:var(--text-muted);">Referral Code</p><p style="font-family:var(--serif);font-size:1rem;font-weight:700;color:var(--gold-hi);">RB-JW22</p></div>
+              </div>
+            </div></div>
+            <div class="col-12 col-lg-4"><div class="card-brand h-100">
+              <div class="d-flex justify-content-between mb-3"><h2 class="h4 mb-0">Notifications</h2><span class="badge-brand">2 new</span></div>
+              <div class="notif-item unread"><p style="font-size:.8125rem;font-weight:600;color:var(--text);margin-bottom:2px;">550 pts away from Black Reserve</p><p style="font-size:.6875rem;color:var(--text-dim);margin:0;">2h ago</p></div>
+              <div class="notif-item unread"><p style="font-size:.8125rem;font-weight:600;color:var(--text);margin-bottom:2px;">Your annual gift bottle ships this week</p><p style="font-size:.6875rem;color:var(--text-dim);margin:0;">1d ago</p></div>
+              <div class="notif-item"><p style="font-size:.8125rem;color:var(--text-muted);margin-bottom:2px;">Earned 250 pts from recent order</p><p style="font-size:.6875rem;color:var(--text-dim);margin:0;">3d ago</p></div>
+            </div></div>
+          </div>
+          <div class="row g-4 mt-1">
+            <div class="col-12 col-md-4"><div class="card-brand h-100"><p style="font-family:var(--serif);font-size:1.0625rem;font-weight:600;margin-bottom:4px;">Redeem Rewards</p><p style="font-size:.875rem;margin-bottom:14px;">Use points for credits, discounts and experiences.</p><button type="button" class="btn btn-ghost btn-sm" data-goto="mbr-rewards">Go →</button></div></div>
+            <div class="col-12 col-md-4"><div class="card-brand h-100"><p style="font-family:var(--serif);font-size:1.0625rem;font-weight:600;margin-bottom:4px;">Refer a Friend</p><p style="font-size:.875rem;margin-bottom:14px;">Share your code — earn 500 points each.</p><button type="button" class="btn btn-ghost btn-sm" data-goto="mbr-refer">Go →</button></div></div>
+            <div class="col-12 col-md-4"><div class="card-brand h-100"><p style="font-family:var(--serif);font-size:1.0625rem;font-weight:600;margin-bottom:4px;">Shop &amp; Earn</p><p style="font-size:.875rem;margin-bottom:14px;">Every purchase earns toward your next tier.</p><a href="shop.html" class="btn btn-ghost btn-sm">Shop Now →</a></div></div>
+          </div>
+        </div>
+
+        <!-- TIERS -->
+        <div id="mbr-tiers" class="tab-pane fade" role="tabpanel">
+          <div class="card-brand reveal mb-3" style="border-color:var(--gold-md);"><p style="font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-hi);margin-bottom:6px;">✦ Gold — Your Current Tier</p><p style="margin:0;">You need <strong>550 more points</strong> to reach Black Reserve. Keep shopping and referring to advance your tier.</p></div>
+          <div class="row g-4">
+            <div class="col-6 col-lg-3"><div class="card-brand reveal h-100" style="background:linear-gradient(135deg,#2A1800,#1A1200);border-color:rgba(205,127,50,.25);"><div style="color:#CD7F32;font-size:1.5rem;margin-bottom:10px;">✦</div><h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:700;color:#CD7F32;margin-bottom:4px;">Bronze</h3><p style="font-size:.7rem;color:var(--text-dim);">0+ pts</p><span class="badge-brand my-2" style="color:var(--bronze);border-color:rgba(205,127,50,.3);background:rgba(205,127,50,.1)">1× points</span><ul style="font-size:.75rem;color:var(--text-muted);list-style:none;padding:0;"><li class="mb-1">5% member discount</li><li class="mb-1">Birthday bonus</li><li>Early email access</li></ul></div></div>
+            <div class="col-6 col-lg-3"><div class="card-brand reveal h-100" style="border-color:rgba(192,192,192,.2);"><div style="color:#C0C0C0;font-size:1.5rem;margin-bottom:10px;">✦</div><h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:700;color:#C0C0C0;margin-bottom:4px;">Silver</h3><p style="font-size:.7rem;color:var(--text-dim);">1,000+ pts</p><span class="badge-brand my-2" style="color:#C0C0C0;border-color:rgba(192,192,192,.3);background:rgba(192,192,192,.1)">1.5× points</span><ul style="font-size:.75rem;color:var(--text-muted);list-style:none;padding:0;"><li class="mb-1">10% discount</li><li class="mb-1">Drop access (24h)</li><li class="mb-1">Free UK shipping</li><li>Cocktail recipes</li></ul></div></div>
+            <div class="col-6 col-lg-3"><div class="card-brand reveal h-100" style="border:2px solid var(--gold);position:relative;"><div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0E0E0E;font-size:.625rem;font-weight:700;padding:4px 12px;border-radius:999px;white-space:nowrap;">YOUR TIER</div><div style="color:var(--gold-hi);font-size:1.5rem;margin:8px 0 10px;">✦</div><h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:700;color:var(--gold-hi);margin-bottom:4px;">Gold</h3><p style="font-size:.7rem;color:var(--text-dim);">2,500+ pts</p><span class="badge-brand badge-gold my-2">2× points</span><ul style="font-size:.75rem;color:var(--text-muted);list-style:none;padding:0;"><li class="mb-1">15% discount</li><li class="mb-1">Drop access (48h)</li><li class="mb-1">Free express ship</li><li class="mb-1">Annual gift bottle</li><li>Tasting events</li></ul></div></div>
+            <div class="col-6 col-lg-3"><div class="card-brand reveal h-100" style="background:linear-gradient(135deg,#0A0A0A,#161208);border-color:rgba(198,167,94,.35);"><div style="color:var(--gold-hi);font-size:1.5rem;margin-bottom:10px;">✦</div><h3 style="font-family:var(--serif);font-size:1.25rem;font-weight:700;color:var(--gold-hi);margin-bottom:4px;">Black Reserve</h3><p style="font-size:.7rem;color:var(--text-dim);">5,000+ pts</p><span class="badge-brand badge-gold my-2">3× points</span><ul style="font-size:.75rem;color:var(--text-muted);list-style:none;padding:0;"><li class="mb-1">20% discount</li><li class="mb-1">Priority drop (72h)</li><li class="mb-1">Worldwide shipping</li><li class="mb-1">Distillery visits</li><li>Concierge service</li></ul></div></div>
+          </div>
+        </div>
+
+        <!-- MANAGE TIER -->
+        <div id="mbr-manage" class="tab-pane fade" role="tabpanel">
+          <div class="card-brand reveal mb-4 d-flex align-items-center gap-3 flex-wrap" style="border-color:var(--gold-md);">
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--gold-lt);border:1px solid var(--gold-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:var(--gold-hi);font-size:1.5rem;">✦</span></div>
+            <div class="flex-grow-1"><p style="font-size:.75rem;color:var(--text-muted);">YOUR CURRENT TIER</p><h2 class="h3" style="color:var(--gold-hi);">Gold — £24.99/mo</h2><p style="font-size:.75rem;margin:0;">2× points · 4,450 pts balance</p></div>
+          </div>
+          <p style="font-size:.6875rem;letter-spacing:.18em;color:var(--text-muted);margin-bottom:16px;">ALL TIERS — UPGRADE OR DOWNGRADE</p>
+          <div class="row g-4">
+            <div class="col-6 col-lg-3"><button type="button" class="card-brand reveal w-100 text-start h-100" data-tier="Bronze" style="background:linear-gradient(135deg,#2A1800,#1A1200);border-color:rgba(205,127,50,.25);"><div class="d-flex align-items-center justify-content-between mb-2"><span style="color:#CD7F32;font-family:var(--serif);font-weight:700;">Bronze</span><span style="font-family:var(--serif);font-weight:700;">Free</span></div><p style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px;">1× points · 5% discount</p><span style="font-size:.75rem;color:var(--text-dim);">↓ Downgrade</span></button></div>
+            <div class="col-6 col-lg-3"><button type="button" class="card-brand reveal w-100 text-start h-100" data-tier="Silver" style="border-color:rgba(192,192,192,.2);"><div class="d-flex align-items-center justify-content-between mb-2"><span style="color:#C0C0C0;font-family:var(--serif);font-weight:700;">Silver</span><span style="font-family:var(--serif);font-weight:700;">£9.99/mo</span></div><p style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px;">1.5× points · 10% discount</p><span style="font-size:.75rem;color:var(--text-dim);">↓ Downgrade</span></button></div>
+            <div class="col-6 col-lg-3"><div class="card-brand reveal h-100" style="border:2px solid var(--gold);position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0E0E0E;font-size:.5875rem;font-weight:700;padding:3px 10px;border-radius:999px;">CURRENT</div><div class="d-flex align-items-center justify-content-between mb-2 mt-2"><span style="color:var(--gold-hi);font-family:var(--serif);font-weight:700;">Gold</span><span style="font-family:var(--serif);font-weight:700;">£24.99/mo</span></div><p style="font-size:.75rem;color:var(--text-muted);margin:0;">2× points · 15% discount</p></div></div>
+            <div class="col-6 col-lg-3"><button type="button" class="card-brand reveal w-100 text-start h-100" data-tier="Black Reserve" style="background:linear-gradient(135deg,#0A0A0A,#161208);border-color:rgba(198,167,94,.35);"><div class="d-flex align-items-center justify-content-between mb-2"><span style="color:var(--gold-hi);font-family:var(--serif);font-weight:700;">Black Reserve</span><span style="font-family:var(--serif);font-weight:700;">£54.99/mo</span></div><p style="font-size:.75rem;color:var(--text-muted);margin-bottom:10px;">3× points · 20% discount</p><span style="font-size:.75rem;color:var(--gold-hi);">↑ Upgrade →</span></button></div>
+          </div>
+          <p style="font-size:.75rem;color:var(--text-dim);text-align:center;margin-top:20px;">Upgrades are immediate. Downgrades take effect at end of billing period. Cancel anytime.</p>
+        </div>
+
+        <!-- EARN -->
+        <div id="mbr-earn" class="tab-pane fade" role="tabpanel">
+          <div class="card-brand reveal mb-3" style="border-color:var(--gold-md);"><p style="font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-hi);">⚡ Your Multiplier: 2× — Gold Member</p><p style="font-size:.875rem;margin:4px 0 0;">Purchase points are multiplied by 2×. Upgrade your tier to earn faster.</p></div>
+          <div class="card-brand reveal"><div class="table-responsive"><table class="m-table"><caption class="visually-hidden">Ways to earn points</caption><thead><tr><th scope="col">Action</th><th scope="col">Base Points</th><th scope="col">Your Rate</th><th scope="col">Notes</th></tr></thead><tbody>
+            <tr><td>🥃 Purchase Rum</td><td><strong style="color:var(--gold-hi);font-family:var(--serif);">Up to 1,125 pts</strong></td><td>×2 applied</td><td>Per bottle, based on multiplier</td></tr>
+            <tr><td>👕 Buy Apparel</td><td><strong style="color:var(--gold-hi);font-family:var(--serif);">Up to 1,425 pts</strong></td><td>×2 applied</td><td>Per item multiplied by tier rate</td></tr>
+            <tr><td>👥 Refer a Friend</td><td><strong style="color:var(--gold-hi);font-family:var(--serif);">500 pts</strong></td><td>Fixed rate</td><td>When friend makes first purchase</td></tr>
+            <tr><td>⭐ Leave a Review</td><td><strong style="color:var(--gold-hi);font-family:var(--serif);">50 pts</strong></td><td>Fixed rate</td><td>On any verified purchase</td></tr>
+            <tr><td>📱 Follow on Social</td><td><strong style="color:var(--gold-hi);font-family:var(--serif);">100 pts</strong></td><td>Fixed rate</td><td>One-time bonus per platform</td></tr>
+            <tr><td>🎂 Birthday Bonus</td><td><strong style="color:var(--gold-hi);font-family:var(--serif);">200 pts</strong></td><td>Fixed rate</td><td>Credited on your birthday each year</td></tr>
+          </tbody></table></div></div>
+        </div>
+
+        <!-- REWARDS -->
+        <div id="mbr-rewards" class="tab-pane fade" role="tabpanel">
+          <div class="card-brand reveal mb-4 d-inline-flex align-items-center gap-3" style="padding:14px 20px;"><div><p style="font-size:.75rem;color:var(--text-muted);">Available to Redeem</p><p style="font-family:var(--serif);font-size:1.75rem;font-weight:700;color:var(--gold-hi);line-height:1;">4,450 pts</p></div></div>
+          <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4"><div class="reward-card reveal"><span class="badge-brand mb-2 d-inline-flex">Credit</span><p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;">£10 Store Credit</p><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);margin-bottom:14px;">500 pts</p><button type="button" class="btn btn-gold w-100 btn-sm" data-redeem="£10 store credit redeemed">Redeem Now</button></div></div><div class="col-12 col-md-6 col-lg-4"><div class="reward-card reveal"><span class="badge-brand mb-2 d-inline-flex">Product</span><p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;">Free Cocktail Kit</p><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);margin-bottom:14px;">750 pts</p><button type="button" class="btn btn-gold w-100 btn-sm" data-redeem="Cocktail kit redeemed">Redeem Now</button></div></div><div class="col-12 col-md-6 col-lg-4"><div class="reward-card reveal"><span class="badge-brand mb-2 d-inline-flex">Access</span><p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;">Early Drop Access</p><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);margin-bottom:14px;">1,000 pts</p><button type="button" class="btn btn-gold w-100 btn-sm" data-redeem="Early access activated">Redeem Now</button></div></div><div class="col-12 col-md-6 col-lg-4"><div class="reward-card reveal"><span class="badge-brand mb-2 d-inline-flex">Discount</span><p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;">20% Off Next Order</p><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);margin-bottom:14px;">1,200 pts</p><button type="button" class="btn btn-gold w-100 btn-sm" data-redeem="Discount code sent to your email">Redeem Now</button></div></div><div class="col-12 col-md-6 col-lg-4"><div class="reward-card reveal"><span class="badge-brand mb-2 d-inline-flex">Custom</span><p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;">Personalised Bottle Label</p><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);margin-bottom:14px;">800 pts</p><button type="button" class="btn btn-gold w-100 btn-sm" data-redeem="Label customiser unlocked">Redeem Now</button></div></div>
+            <div class="col-12 col-md-6 col-lg-4"><div class="reward-card reveal" style="opacity:.6;"><span class="badge-brand mb-2 d-inline-flex">Experience</span><p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;">Private Tasting Event</p><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);margin-bottom:14px;">2,000 pts</p><button type="button" class="btn btn-outline-gold w-100 btn-sm" disabled>Coming Soon</button></div></div>
+          </div>
+        </div>
+
+        <!-- REFER -->
+        <div id="mbr-refer" class="tab-pane fade" role="tabpanel">
+          <div class="card-brand reveal mb-3" style="border-color:var(--gold-md);"><p style="font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--gold-hi);margin-bottom:4px;">🎁 Refer a Friend — Earn 500 Points Each</p><p style="margin:0;">Share your unique code. When your friend makes their first purchase, you both receive 500 points instantly.</p></div>
+          <div class="card-brand reveal mb-3">
+            <div class="d-flex justify-content-between flex-wrap gap-3 pb-3 mb-3" style="border-bottom:1px solid var(--gold-bdr);">
+              <div><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);">RUMBACLAAT</p><p style="font-size:.75rem;margin:0;">Referral Programme · Earn together, earn more</p></div>
+              <div class="text-end"><p style="font-family:var(--serif);font-size:1.25rem;font-weight:600;">YOUR CODE</p><p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--gold-hi);letter-spacing:.06em;">RB-JW22</p></div>
+            </div>
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+              <label class="visually-hidden" for="ref-link">Your referral link</label>
+              <input id="ref-link" class="form-control flex-grow-1" value="https://rumbaclaat.com/ref/RB-JW22" readonly style="min-width:0;">
+              <button type="button" class="btn btn-gold btn-sm" id="copy-btn" data-copy>Copy Link</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREFERENCES -->
+        <div id="mbr-settings" class="tab-pane fade" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100">
+              <h2 class="h4 mb-3">Personal Details</h2>
+              <form id="form-prefs" novalidate>
+                <div class="row g-3"><div class="col-sm-6"><label class="form-label" for="p-name">Full name</label><input class="form-control" id="p-name" value="James Whitfield" autocomplete="name"></div><div class="col-sm-6"><label class="form-label" for="p-email">Email address</label><input class="form-control" type="email" id="p-email" value="james@example.com" autocomplete="email"></div></div>
+                <div class="row g-3 mt-1"><div class="col-sm-6"><label class="form-label" for="p-ref">Referral code</label><input class="form-control" id="p-ref" value="RB-JW22" readonly style="opacity:.6;"></div><div class="col-sm-6"><label class="form-label" for="p-tier">Membership tier</label><input class="form-control" id="p-tier" value="Gold" readonly style="opacity:.6;"></div></div>
+                <button type="submit" class="btn btn-gold mt-3">Save Details</button>
+              </form>
+            </div></div>
+            <div class="col-12 col-lg-6"><div class="card-brand reveal h-100">
+              <h2 class="h4 mb-3">Notifications</h2>
+              <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="n1" checked><label class="form-check-label" for="n1" style="font-size:.875rem;">New drop announcements</label></div>
+              <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="n2" checked><label class="form-check-label" for="n2" style="font-size:.875rem;">Points &amp; tier updates</label></div>
+              <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="n3"><label class="form-check-label" for="n3" style="font-size:.875rem;">Marketing emails</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" id="n4" checked><label class="form-check-label" for="n4" style="font-size:.875rem;">Order updates</label></div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upgrade/Downgrade Modal (Bootstrap) -->
+    <div class="modal fade" id="tier-modal" tabindex="-1" aria-labelledby="tier-modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius:var(--radius-xl);">
+          <div class="modal-header" style="border-bottom:1px solid var(--gold-bdr);">
+            <h2 class="modal-title h3" id="tier-modal-title">Change tier</h2>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="tier-modal-body"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-5">
+          <div class="footer-logo">
+            <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="200" height="27">
+          </div>
+          <p style="font-size:.875rem;max-width:300px;">Premium Caribbean rum &amp; luxury lifestyle brand. From the canefields of Jamaica to your glass.</p>
+          <p style="font-size:.75rem;color:var(--text-dim);">Please drink responsibly. You must be 18 or over to buy alcohol. Age verified at checkout and on delivery.</p>
+        </div>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Shop">
+          <h2>Shop</h2>
+          <a href="shop-rum.html">Rum Collection</a>
+          <a href="shop-men.html">Men's Apparel</a>
+          <a href="shop-women.html">Women's Apparel</a>
+          <a href="cart.html">Cart</a>
+        </nav>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Discover">
+          <h2>Discover</h2>
+          <a href="cocktails.html">Cocktail Recipes</a>
+          <a href="blog.html">Blog &amp; Stories</a>
+          <a href="join.html">Membership</a>
+          <a href="membership.html">Member Portal</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="gift-cards.html">Gift Cards</a>
+          <a href="about.html">About Us</a>
+        </nav>
+        <nav class="col-6 col-lg-3 footer-col" aria-label="Business and legal">
+          <h2>Help &amp; Business</h2>
+          <a href="faq.html">FAQ</a>
+          <a href="trade.html">Trade Portal</a>
+          <a href="press.html">Press</a>
+          <a href="where-to-buy.html">Where to buy</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="account.html">My Account</a>
+          <a href="delivery.html">Delivery Policy</a>
+        </nav>
+      </div>
+      <!-- Partners + socials strip -->
+      <div class="footer-meta-row">
+        <div class="footer-partners">
+          <a class="footer-drinkaware" href="https://www.drinkaware.co.uk/" rel="noopener" target="_blank" aria-label="Drinkaware — open in new tab">
+            <img src="assets/img/drinkaware-logo.png" alt="Drinkaware.co.uk" width="160" height="16" loading="lazy">
+          </a>
+          <span class="footer-accreditation" aria-label="International Drinks Specialists — score 92, Sincere Evaluation and Feedback">
+            <img src="assets/img/intl-drinks-specialists-92.png" alt="International Drinks Specialists — 92 / 100" width="90" height="50" loading="lazy">
+          </span>
+        </div>
+
+        <ul class="footer-socials list-unstyled" aria-label="Rumbaclaat on social media">
+          <li><a href="https://www.facebook.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12H16l-.4 2.9h-2.2v7A10 10 0 0 0 22 12Z"/></svg>
+          </a></li>
+          <li><a href="https://www.instagram.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.5.5.7.9.9 1.4.2.5.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.5.5-.9.7-1.4.9-.5.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4a3.7 3.7 0 0 1-1.4-.9 3.7 3.7 0 0 1-.9-1.4c-.2-.5-.4-1.1-.4-2.2-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.5-.5.9-.7 1.4-.9.5-.2 1.1-.4 2.2-.4 1.3-.1 1.6-.1 4.8-.1ZM12 0C8.7 0 8.3 0 7.1.1 5.8.1 5 .3 4.2.6c-.8.3-1.5.7-2.2 1.4A6.1 6.1 0 0 0 .6 4.2C.3 5 .1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.1.5 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.8.3 1.6.5 2.9.5 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.1-.2 2.9-.5a6.1 6.1 0 0 0 2.2-1.4 6.1 6.1 0 0 0 1.4-2.2c.3-.8.5-1.6.5-2.9.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.1-.5-2.9a6.1 6.1 0 0 0-1.4-2.2A6.1 6.1 0 0 0 19.8.6C19 .3 18.2.1 16.9.1 15.7 0 15.3 0 12 0Zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9Z"/></svg>
+          </a></li>
+          <li><a href="https://www.linkedin.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5V9h3v10Zm-1.5-11.3A1.7 1.7 0 1 1 6.5 4.3a1.7 1.7 0 0 1 0 3.4ZM19 19h-3v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3V9h2.9v1.4h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7V19Z"/></svg>
+          </a></li>
+          <li><a href="https://www.tiktok.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 8.6a8.4 8.4 0 0 1-4.9-1.6v7.5a6.2 6.2 0 1 1-5.4-6.1v3a3.2 3.2 0 1 0 2.4 3.1V2h2.9a5.5 5.5 0 0 0 5 5v3.6Z"/></svg>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>© <span id="year">2026</span> Rumbaclaat Limited. All rights reserved.</span>
+        <span class="d-flex gap-4 flex-wrap">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="cookies.html">Cookies</a>
+          <a href="cookie-preferences.html">Cookie preferences</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <div aria-live="polite" class="visually-hidden" id="sr-announcer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script>window.RC_DEV_BYPASS = true; /* TESTING ONLY — strip before launch */</script>
+  <script src="assets/js/main.js" defer></script>
+
+  <script>
+  (function(){
+    'use strict';
+    const $=(s)=>document.querySelector(s);
+    const announce=(m)=>{const r=$('#sr-announcer');if(r){r.textContent='';setTimeout(()=>r.textContent=m,50);}};
+    const prices={'Bronze':{monthly:0,annual:0},'Silver':{monthly:9.99,annual:89.99},'Gold':{monthly:24.99,annual:224.99},'Black Reserve':{monthly:54.99,annual:499.99}};
+    const order=['Bronze','Silver','Gold','Black Reserve'];
+    const current='Gold';
+    let target='', billing='monthly';
+    const modalEl=$('#tier-modal');
+    const modal=new bootstrap.Modal(modalEl);
+
+    // Quick-nav cards on overview -> switch pill
+    document.addEventListener('click',(e)=>{
+      const g=e.target.closest('[data-goto]');
+      if(g){ const btn=document.querySelector('[data-bs-target="#'+g.dataset.goto+'"]'); if(btn) bootstrap.Tab.getOrCreateInstance(btn).show(); }
+      const r=e.target.closest('[data-redeem]'); if(r) announce(r.dataset.redeem);
+      const c=e.target.closest('[data-copy]');
+      if(c){ const inp=$('#ref-link'); navigator.clipboard?.writeText(inp.value); c.textContent='✓ Copied!'; announce('Referral link copied'); setTimeout(()=>c.textContent='Copy Link',2000); }
+      const t=e.target.closest('[data-tier]'); if(t) openTier(t.dataset.tier);
+      if(e.target.closest('[data-complete]')){ modal.hide(); announce('Welcome to '+target+'! Your new benefits are now active.'); }
+      if(e.target.closest('[data-confirm-down]')){ modal.hide(); announce('Downgrade to '+target+' scheduled for end of billing period.'); }
+      const mb=e.target.closest('[data-mbilling]'); if(mb){ setBilling(mb.dataset.mbilling); }
+    });
+    $('#form-prefs').addEventListener('submit',(e)=>{e.preventDefault();announce('Preferences saved');});
+
+    function setBilling(p){
+      billing=p; const price=prices[target][p];
+      const mm=$('#mb-monthly'), ma=$('#mb-annual');
+      if(mm&&ma){mm.classList.toggle('btn-gold',p==='monthly');mm.classList.toggle('btn-outline-gold',p!=='monthly');ma.classList.toggle('btn-gold',p==='annual');ma.classList.toggle('btn-outline-gold',p!=='annual');}
+      const mp=$('#modal-price'); if(mp) mp.textContent='£'+price.toFixed(2);
+      const per=$('#modal-period'); if(per) per.textContent=p==='monthly'?'per month':'per year — 2 months free';
+      const pb=$('#pay-btn-modal'); if(pb) pb.textContent='🔒 Pay £'+price.toFixed(2);
+    }
+
+    function openTier(tier){
+      target=tier; billing='monthly';
+      const isUp = order.indexOf(tier)>order.indexOf(current);
+      $('#tier-modal-title').textContent=(isUp?'Upgrade to ':'Downgrade to ')+tier;
+      const p=prices[tier];
+      if(isUp){
+        $('#tier-modal-body').innerHTML=`
+          <div class="d-flex gap-2 mb-3" role="group" aria-label="Billing period">
+            <button type="button" class="btn btn-gold btn-sm" id="mb-monthly" data-mbilling="monthly">Monthly</button>
+            <button type="button" class="btn btn-outline-gold btn-sm" id="mb-annual" data-mbilling="annual">Annual (save 2 months)</button>
+          </div>
+          <div style="background:var(--gold-lt);border:1px solid var(--gold-md);border-radius:12px;padding:16px;margin-bottom:20px;">
+            <div class="d-flex justify-content-between"><span style="font-size:.8125rem;color:var(--text-muted);">${tier} Membership</span><span id="modal-price" style="font-family:var(--serif);font-size:1.25rem;font-weight:700;color:var(--gold-hi);">£${p.monthly.toFixed(2)}</span></div>
+            <p id="modal-period" style="font-size:.75rem;color:var(--text-dim);margin:4px 0 0;">per month</p>
+          </div>
+          <p style="font-size:.6875rem;color:var(--text-dim);margin-bottom:16px;">Payment is simulated in this demo. No card is charged.</p>
+          <button type="button" class="btn btn-gold w-100 btn-lg" id="pay-btn-modal" data-complete>🔒 Pay £${p.monthly.toFixed(2)}</button>
+          <p style="font-size:.6875rem;color:var(--text-dim);text-align:center;margin-top:12px;">Cancel anytime · 14-day refund guarantee</p>`;
+      } else {
+        $('#tier-modal-body').innerHTML=`
+          <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);border-radius:12px;padding:16px;margin-bottom:20px;">
+            <p style="color:var(--yellow);font-weight:600;margin-bottom:4px;">⚠ Downgrade from Gold to ${tier}</p>
+            <p style="font-size:.8125rem;color:var(--yellow);margin:0;">This change takes effect at end of current billing period. You retain Gold benefits until then.</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn flex-grow-1 btn-danger-soft" data-confirm-down>Confirm Downgrade</button>
+            <button type="button" class="btn btn-outline-gold flex-grow-1" data-bs-dismiss="modal">Keep Gold</button>
+          </div>`;
+      }
+      modal.show();
+    }
+  })();
+  </script>
+
+</body>
+</html>

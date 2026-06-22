@@ -1,0 +1,9 @@
+RUMBACLAAT — WCAG 2.2 contrast verification (text vs background)
+Background #0E0E0E / cards #161616. AA requires 4.5:1 for normal text.
+
+  17.02:1  PASS  Body text #F5F0E8
+   8.37:1  PASS  Muted text #B8A98F (was #9A8A72, failed)
+   4.65:1  PASS  Dim text #8A7A66 (was #5A4A3A, failed)
+  10.65:1  PASS  Gold text/links #D8BE7E
+   6.60:1  PASS  Error red #F26D6D (was #EF4444)
+   8.36:1  PASS  Button text #0E0E0E on gold #C6A75E

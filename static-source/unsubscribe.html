@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico"><link rel="icon" type="image/png" sizes="256x256" href="assets/img/favicon-256.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Email preferences — Rumbaclaat</title>
+  <meta name="description" content="Manage your Rumbaclaat email preferences or unsubscribe from marketing emails.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>
+    .unsub-card{background:var(--bg-card);border:1px solid var(--gold-bdr);border-radius:var(--radius-xl);padding:36px;margin-bottom:24px;}
+    .unsub-card.danger{border-color:rgba(242,109,109,.25);}
+    .pref-row{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:14px 0;border-bottom:1px solid var(--gold-bdr);}
+    .pref-row:last-child{border-bottom:0;}
+    .pref-row .form-check{margin:0;}
+    .pref-row .form-check-input{margin-top:6px;}
+    .pref-meta{font-size:.8125rem;color:var(--text-muted);margin-top:4px;}
+    .lock{display:inline-flex;align-items:center;gap:4px;font-size:.6875rem;color:var(--text-dim);background:var(--bg-card2);padding:3px 8px;border-radius:999px;margin-left:8px;}
+  </style>
+  <link rel="canonical" href="https://rumbaclaat.com/unsubscribe.html">
+  <meta name="robots" content="index,follow">
+  <meta name="author" content="Rumbaclaat">
+  <meta name="theme-color" content="#0E0E0E">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Rumbaclaat">
+  <meta property="og:title" content="Email preferences — Rumbaclaat">
+  <meta property="og:description" content="Manage your Rumbaclaat email preferences or unsubscribe from marketing emails.">
+  <meta property="og:url" content="https://rumbaclaat.com/unsubscribe.html">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:secure_url" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+  <!-- Twitter / X cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Email preferences — Rumbaclaat">
+  <meta name="twitter:description" content="Manage your Rumbaclaat email preferences or unsubscribe from marketing emails.">
+  <meta name="twitter:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta name="twitter:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-brand-rc fixed-top" aria-label="Primary">
+      <div class="container">
+        <a class="navbar-brand" href="index.html" aria-label="Rumbaclaat — home">
+          <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="170" height="23">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
+                aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="primaryNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="cocktails.html">Cocktails</a></li>
+            <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="join.html">Membership</a></li>
+            <li class="nav-item"><a class="nav-link" href="trade.html">Trade</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            <a class="nav-join-btn" href="join.html">★ Join Free</a>
+            <a class="nav-icon-btn" href="search.html" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </a>
+            <a class="nav-icon-btn" href="cart.html" data-cart-link aria-label="Cart, 0 items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span class="cart-count" hidden>0</span>
+            </a>
+            <a class="nav-icon-btn" href="account.html" aria-label="My account">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="has-fixed-nav">
+
+    <section class="section">
+      <div class="container" style="max-width:720px;">
+        <span class="eyebrow">EMAIL PREFERENCES</span>
+        <h1 style="font-size:clamp(2rem,4vw,2.75rem);">Manage your emails</h1>
+        <p style="color:var(--text-muted);max-width:540px;">You're managing preferences for <strong style="color:var(--text);" id="unsub-email">{{email}}</strong>. Changes apply right away.</p>
+
+        <!-- Confirmation banner (hidden until an action) -->
+        <div id="unsub-confirm" class="alert d-none" role="alert" tabindex="-1" style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.35);color:var(--green);border-radius:var(--radius);padding:14px 18px;margin-top:20px;"></div>
+
+        <!-- Granular preferences -->
+        <div class="unsub-card mt-4">
+          <h2 class="h3 mb-2">Subscription preferences</h2>
+          <p class="text-muted" style="color:var(--text-muted);font-size:.9rem;margin-bottom:18px;">Choose what you want to hear about. You can change this any time.</p>
+          <form id="unsub-prefs-form" novalidate>
+            <div class="pref-row">
+              <div class="flex-grow-1">
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="pref-drops" checked><label class="form-check-label" for="pref-drops" style="font-weight:600;">New rum drops &amp; releases</label></div>
+                <p class="pref-meta">Limited expressions, single casks, and members-first launches. Usually 1–2 emails a month.</p>
+              </div>
+            </div>
+            <div class="pref-row">
+              <div class="flex-grow-1">
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="pref-cocktails" checked><label class="form-check-label" for="pref-cocktails" style="font-weight:600;">Cocktail recipes &amp; serves</label></div>
+                <p class="pref-meta">Seasonal recipes, bartender tips, food pairings. About once a month.</p>
+              </div>
+            </div>
+            <div class="pref-row">
+              <div class="flex-grow-1">
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="pref-membership" checked><label class="form-check-label" for="pref-membership" style="font-weight:600;">Membership news &amp; perks</label></div>
+                <p class="pref-meta">Points balances, tier progress, member-only offers and events.</p>
+              </div>
+            </div>
+            <div class="pref-row">
+              <div class="flex-grow-1">
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="pref-marketing"><label class="form-check-label" for="pref-marketing" style="font-weight:600;">General marketing</label></div>
+                <p class="pref-meta">Promotions, brand stories, partner features. We try not to send too many.</p>
+              </div>
+            </div>
+            <div class="pref-row">
+              <div class="flex-grow-1">
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="pref-orders" checked disabled><label class="form-check-label" for="pref-orders" style="font-weight:600;">Order updates <span class="lock">🔒 required</span></label></div>
+                <p class="pref-meta">Order confirmations, dispatch and tracking, account security. Essential — these can't be turned off.</p>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-gold mt-4">Save preferences</button>
+          </form>
+        </div>
+
+        <!-- One-click unsubscribe -->
+        <div class="unsub-card danger">
+          <h2 class="h3 mb-2">Unsubscribe from everything</h2>
+          <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:0;">Turn off all marketing emails in one click. You'll still receive essential transactional emails (order confirmations, password resets, and security alerts) so we can run your account safely.</p>
+          <button type="button" class="btn btn-outline-gold mt-3" id="unsub-all-btn" data-unsub-all>Unsubscribe from all marketing</button>
+        </div>
+
+        <p style="font-size:.8125rem;color:var(--text-dim);margin-top:24px;">Wrong account? <a href="contact.html">Contact us</a> and we'll sort it. We process your data under our <a href="privacy.html">Privacy Policy</a>.</p>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-5">
+          <div class="footer-logo">
+            <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="200" height="27">
+          </div>
+          <p style="font-size:.875rem;max-width:300px;">Premium Caribbean rum &amp; luxury lifestyle brand. From the canefields of Jamaica to your glass.</p>
+          <p style="font-size:.75rem;color:var(--text-dim);">Please drink responsibly. You must be 18 or over to buy alcohol. Age verified at checkout and on delivery.</p>
+        </div>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Shop">
+          <h2>Shop</h2>
+          <a href="shop-rum.html">Rum Collection</a>
+          <a href="shop-men.html">Men's Apparel</a>
+          <a href="shop-women.html">Women's Apparel</a>
+          <a href="cart.html">Cart</a>
+        </nav>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Discover">
+          <h2>Discover</h2>
+          <a href="cocktails.html">Cocktail Recipes</a>
+          <a href="blog.html">Blog &amp; Stories</a>
+          <a href="join.html">Membership</a>
+          <a href="membership.html">Member Portal</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="gift-cards.html">Gift Cards</a>
+          <a href="about.html">About Us</a>
+        </nav>
+        <nav class="col-6 col-lg-3 footer-col" aria-label="Business and legal">
+          <h2>Help &amp; Business</h2>
+          <a href="faq.html">FAQ</a>
+          <a href="trade.html">Trade Portal</a>
+          <a href="press.html">Press</a>
+          <a href="where-to-buy.html">Where to buy</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="account.html">My Account</a>
+          <a href="delivery.html">Delivery Policy</a>
+        </nav>
+      </div>
+      <!-- Partners + socials strip -->
+      <div class="footer-meta-row">
+        <div class="footer-partners">
+          <a class="footer-drinkaware" href="https://www.drinkaware.co.uk/" rel="noopener" target="_blank" aria-label="Drinkaware — open in new tab">
+            <img src="assets/img/drinkaware-logo.png" alt="Drinkaware.co.uk" width="160" height="16" loading="lazy">
+          </a>
+          <span class="footer-accreditation" aria-label="International Drinks Specialists — score 92, Sincere Evaluation and Feedback">
+            <img src="assets/img/intl-drinks-specialists-92.png" alt="International Drinks Specialists — 92 / 100" width="90" height="50" loading="lazy">
+          </span>
+        </div>
+
+        <ul class="footer-socials list-unstyled" aria-label="Rumbaclaat on social media">
+          <li><a href="https://www.facebook.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12H16l-.4 2.9h-2.2v7A10 10 0 0 0 22 12Z"/></svg>
+          </a></li>
+          <li><a href="https://www.instagram.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.5.5.7.9.9 1.4.2.5.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.5.5-.9.7-1.4.9-.5.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4a3.7 3.7 0 0 1-1.4-.9 3.7 3.7 0 0 1-.9-1.4c-.2-.5-.4-1.1-.4-2.2-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.5-.5.9-.7 1.4-.9.5-.2 1.1-.4 2.2-.4 1.3-.1 1.6-.1 4.8-.1ZM12 0C8.7 0 8.3 0 7.1.1 5.8.1 5 .3 4.2.6c-.8.3-1.5.7-2.2 1.4A6.1 6.1 0 0 0 .6 4.2C.3 5 .1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.1.5 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.8.3 1.6.5 2.9.5 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.1-.2 2.9-.5a6.1 6.1 0 0 0 2.2-1.4 6.1 6.1 0 0 0 1.4-2.2c.3-.8.5-1.6.5-2.9.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.1-.5-2.9a6.1 6.1 0 0 0-1.4-2.2A6.1 6.1 0 0 0 19.8.6C19 .3 18.2.1 16.9.1 15.7 0 15.3 0 12 0Zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9Z"/></svg>
+          </a></li>
+          <li><a href="https://www.linkedin.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5V9h3v10Zm-1.5-11.3A1.7 1.7 0 1 1 6.5 4.3a1.7 1.7 0 0 1 0 3.4ZM19 19h-3v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3V9h2.9v1.4h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7V19Z"/></svg>
+          </a></li>
+          <li><a href="https://www.tiktok.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 8.6a8.4 8.4 0 0 1-4.9-1.6v7.5a6.2 6.2 0 1 1-5.4-6.1v3a3.2 3.2 0 1 0 2.4 3.1V2h2.9a5.5 5.5 0 0 0 5 5v3.6Z"/></svg>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>© <span id="year">2026</span> Rumbaclaat Limited. All rights reserved.</span>
+        <span class="d-flex gap-4 flex-wrap">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="cookies.html">Cookies</a>
+          <a href="cookie-preferences.html">Cookie preferences</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <div aria-live="polite" class="visually-hidden" id="sr-announcer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script>window.RC_DEV_BYPASS = true; /* TESTING ONLY — strip before launch */</script>
+  <script src="assets/js/main.js" defer></script>
+
+  <script>
+  (function(){
+    'use strict';
+    const $=(s)=>document.querySelector(s),$$=(s)=>Array.from(document.querySelectorAll(s));
+    const announce=(m)=>{const r=$('#sr-announcer');if(r){r.textContent='';setTimeout(()=>r.textContent=m,50);}};
+    // Read email from query string for display (token-driven flow handled server-side in PW)
+    const params = new URLSearchParams(location.search);
+    const emailParam = params.get('email');
+    if (emailParam) $('#unsub-email').textContent = decodeURIComponent(emailParam);
+    function showConfirm(msg){
+      const c = $('#unsub-confirm'); c.textContent = msg; c.classList.remove('d-none'); c.focus(); announce(msg);
+    }
+    $('#unsub-prefs-form').addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const on = $$('#unsub-prefs-form input[type=checkbox]:checked:not([disabled])').length;
+      showConfirm('Preferences saved. You\'re subscribed to '+on+' email '+(on===1?'type':'types')+'.');
+    });
+    document.addEventListener('click',(e)=>{
+      if (e.target.closest('[data-unsub-all]')){
+        $$('#unsub-prefs-form input[type=checkbox]:not([disabled])').forEach(c=>c.checked=false);
+        showConfirm('You\'ve been unsubscribed from all marketing emails. You\'ll still receive order updates and security messages.');
+      }
+    });
+  })();
+  </script>
+
+</body>
+</html>

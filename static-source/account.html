@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico"><link rel="icon" type="image/png" sizes="256x256" href="assets/img/favicon-256.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account — Rumbaclaat</title>
+  <meta name="description" content="Sign in to your Rumbaclaat account or create one free. Manage orders, details, addresses, and loyalty membership.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/theme.css">
+  <style>.account-view{display:none;}.account-view.active{display:block;}.auth-card{max-width:460px;margin:0 auto;}</style>
+  <link rel="canonical" href="https://rumbaclaat.com/account.html">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="author" content="Rumbaclaat">
+  <meta name="theme-color" content="#0E0E0E">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Rumbaclaat">
+  <meta property="og:title" content="Account — Rumbaclaat">
+  <meta property="og:description" content="Sign in to your Rumbaclaat account or create one free. Manage orders, details, addresses, and loyalty membership.">
+  <meta property="og:url" content="https://rumbaclaat.com/account.html">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:secure_url" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+  <!-- Twitter / X cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Account — Rumbaclaat">
+  <meta name="twitter:description" content="Sign in to your Rumbaclaat account or create one free. Manage orders, details, addresses, and loyalty membership.">
+  <meta name="twitter:image" content="https://rumbaclaat.com/assets/img/og-default.png">
+  <meta name="twitter:image:alt" content="Rumbaclaat — Premium Caribbean Rum">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-brand-rc fixed-top" aria-label="Primary">
+      <div class="container">
+        <a class="navbar-brand" href="index.html" aria-label="Rumbaclaat — home">
+          <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="170" height="23">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
+                aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="primaryNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
+            <li class="nav-item"><a class="nav-link" href="cocktails.html">Cocktails</a></li>
+            <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+            <li class="nav-item"><a class="nav-link" href="join.html">Membership</a></li>
+            <li class="nav-item"><a class="nav-link" href="trade.html">Trade</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-3">
+            <a class="nav-join-btn" href="join.html">★ Join Free</a>
+            <a class="nav-icon-btn" href="search.html" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </a>
+            <a class="nav-icon-btn" href="cart.html" data-cart-link aria-label="Cart, 0 items">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              <span class="cart-count" hidden>0</span>
+            </a>
+            <a class="nav-icon-btn" href="account.html" aria-label="My account">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="has-fixed-nav">
+    <h1 class="visually-hidden">My Account</h1>
+
+    <div class="container section">
+
+      <!-- Login -->
+      <section id="view-login" class="account-view active" aria-labelledby="login-h">
+        <div class="auth-card">
+          <div class="text-center mb-4 reveal">
+            <span class="eyebrow">MEMBER ACCESS</span>
+            <h2 id="login-h" style="font-size:2.25rem;">Welcome back</h2>
+            <p>Sign in to access your account and loyalty dashboard.</p>
+          </div>
+          <div class="card-brand reveal">
+            <div class="alert d-none" id="err-login" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></div>
+            <form id="form-login" novalidate>
+              <div class="mb-3"><label class="form-label" for="login-email">Email address *</label><input class="form-control" type="email" id="login-email" autocomplete="email" required></div>
+              <div class="mb-2"><label class="form-label" for="login-pw">Password *</label><input class="form-control" type="password" id="login-pw" autocomplete="current-password" required></div>
+              <div class="d-flex justify-content-end mb-3"><a href="#" style="font-size:.8125rem;color:var(--gold-hi);">Forgot password?</a></div>
+              <button type="submit" class="btn btn-gold w-100">Sign In</button>
+              <hr style="border-color:var(--gold-bdr);">
+              <button type="button" class="btn btn-outline-gold w-100" data-view="register">Create Account</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Register -->
+      <section id="view-register" class="account-view" aria-labelledby="reg-h">
+        <div class="auth-card">
+          <div class="text-center mb-4 reveal">
+            <span class="eyebrow">JOIN FREE</span>
+            <h2 id="reg-h" style="font-size:2.25rem;">Create your account</h2>
+            <p>Free Bronze membership included — instant discounts and points from day one.</p>
+          </div>
+          <div class="card-brand reveal">
+            <div class="alert d-none" id="err-reg" role="alert" tabindex="-1" style="background:rgba(242,109,109,.12);border:1px solid rgba(242,109,109,.35);color:var(--red);border-radius:var(--radius);"></div>
+            <form id="form-register" novalidate>
+              <div class="row g-3">
+                <div class="col-sm-6"><label class="form-label" for="r-fname">First name *</label><input class="form-control" id="r-fname" autocomplete="given-name" required></div>
+                <div class="col-sm-6"><label class="form-label" for="r-lname">Last name *</label><input class="form-control" id="r-lname" autocomplete="family-name" required></div>
+                <div class="col-12"><label class="form-label" for="r-email">Email *</label><input class="form-control" type="email" id="r-email" autocomplete="email" required></div>
+                <div class="col-12"><label class="form-label" for="r-pw">Password *</label><input class="form-control" type="password" id="r-pw" autocomplete="new-password" minlength="8" required><span style="font-size:.75rem;color:var(--text-dim);">Minimum 8 characters.</span></div>
+                <div class="col-12"><label class="form-label" for="r-dob">Date of birth *</label><input class="form-control" type="date" id="r-dob" autocomplete="bday" required><span style="font-size:.75rem;color:var(--text-dim);">You must be 18 or over.</span></div>
+                <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" id="r-terms" required><label class="form-check-label" for="r-terms" style="font-size:.8125rem;color:var(--text-muted);">I am 18+ and agree to the <a href="terms.html">Terms &amp; Conditions</a> and <a href="privacy.html">Privacy Policy</a>.</label></div></div>
+              </div>
+              <button type="submit" class="btn btn-gold w-100 mt-4">Create Account — Join Free</button>
+              <hr style="border-color:var(--gold-bdr);">
+              <button type="button" class="btn btn-outline-gold w-100" data-view="login">Already a member? Sign In</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard -->
+      <section id="view-dashboard" class="account-view" aria-labelledby="dash-h">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+          <div><span class="eyebrow">MY ACCOUNT</span><h2 id="dash-h" style="font-size:2rem;">Welcome back, James</h2></div>
+          <div class="d-flex gap-2 align-items-center">
+            <span class="badge-brand badge-gold">✦ Gold Member</span>
+            <span class="badge-brand">4,450 pts</span>
+            <button type="button" class="btn btn-outline-gold btn-sm" data-view="login" data-logout>Sign Out</button>
+          </div>
+        </div>
+
+        <div class="row g-3 reveal">
+          <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Loyalty Points</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">4,450</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">+250 from last order</div></div></div>
+          <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Tier Discount</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">15% off</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">Applied at checkout</div></div></div>
+          <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Lifetime Spend</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">£312.40</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">+£87 this month</div></div></div>
+          <div class="col-6 col-lg-3"><div class="card-brand h-100"><div style="font-size:.75rem;color:var(--text-muted);margin-bottom:8px;">Points to Black Reserve</div><div style="font-family:var(--serif);font-size:1.75rem;font-weight:700;">550</div><div style="font-size:.6875rem;color:var(--green);margin-top:4px;">Keep shopping!</div></div></div>
+        </div>
+
+        <div class="mt-3">
+          <div class="progress" role="progressbar" aria-label="Progress to Black Reserve tier" aria-valuenow="4450" aria-valuemin="0" aria-valuemax="5000" style="height:6px;background:#2A2520;"><div class="progress-bar" style="width:89%;background:linear-gradient(90deg,var(--gold),#D4B96B);"></div></div>
+          <div class="d-flex justify-content-between mt-1" style="font-size:.75rem;color:var(--text-dim);"><span>Gold — 4,450 pts</span><span>Black Reserve — 5,000 pts</span></div>
+        </div>
+
+        <ul class="nav nav-pills gap-2 mt-4 mb-3" role="tablist" aria-label="Account sections">
+          <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#acct-orders" type="button" role="tab" aria-selected="true" style="background:var(--gold-lt);color:var(--gold-hi);">Orders</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#acct-details" type="button" role="tab" aria-selected="false" style="color:var(--text-muted);">Details</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#acct-addresses" type="button" role="tab" aria-selected="false" style="color:var(--text-muted);">Addresses</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#acct-membership" type="button" role="tab" aria-selected="false" style="color:var(--text-muted);">Membership</button></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="acct-orders" role="tabpanel">
+            <div class="card-brand reveal">
+              <h2 class="h4 mb-3"><a href="order.html" style="color:var(--gold-hi);text-decoration:none;">Order History →</a></h2>
+              <div class="table-responsive">
+                <table class="table" style="--bs-table-bg:transparent;--bs-table-color:var(--text);color:var(--text);">
+                  <thead><tr style="color:var(--text-dim);font-size:.6875rem;letter-spacing:.1em;"><th scope="col">Order</th><th scope="col">Items</th><th scope="col">Status</th><th scope="col">Total</th></tr></thead>
+                  <tbody style="font-size:.875rem;">
+                    <tr><th scope="row" style="color:var(--gold-hi);">#RC-2025-0041</th><td>Original Reserve × 1</td><td><span class="badge-brand" style="color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.1)">Delivered</span></td><td style="font-family:var(--serif);color:var(--gold-hi);">£49.99</td></tr>
+                    <tr><th scope="row" style="color:var(--gold-hi);">#RC-2025-0038</th><td>Gold Label Hoodie × 1, Reserve Cap × 1</td><td><span class="badge-brand" style="color:var(--yellow);border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.1)">In Transit</span></td><td style="font-family:var(--serif);color:var(--gold-hi);">£130.00</td></tr>
+                    <tr><th scope="row" style="color:var(--gold-hi);">#RC-2025-0029</th><td>Spiced Gold × 2</td><td><span class="badge-brand" style="color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.1)">Delivered</span></td><td style="font-family:var(--serif);color:var(--gold-hi);">£77.98</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="acct-details" role="tabpanel">
+            <div class="card-brand reveal">
+              <h2 class="h4 mb-3">Personal Details</h2>
+              <form id="form-details" novalidate>
+                <div class="row g-3">
+                  <div class="col-sm-6"><label class="form-label" for="d-fname">First name</label><input class="form-control" id="d-fname" value="James" autocomplete="given-name"></div>
+                  <div class="col-sm-6"><label class="form-label" for="d-lname">Last name</label><input class="form-control" id="d-lname" value="Whitfield" autocomplete="family-name"></div>
+                  <div class="col-12"><label class="form-label" for="d-email">Email address</label><input class="form-control" type="email" id="d-email" value="james@example.com" autocomplete="email"></div>
+                  <div class="col-12"><label class="form-label" for="d-phone">Phone</label><input class="form-control" type="tel" id="d-phone" value="+44 7700 123456" autocomplete="tel"></div>
+                </div>
+                <button type="submit" class="btn btn-gold mt-3">Save Changes</button>
+              </form>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="acct-addresses" role="tabpanel">
+            <div class="card-brand reveal">
+              <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h4 mb-0">Saved Addresses</h2><button type="button" class="btn btn-ghost btn-sm">+ Add Address</button></div>
+              <div style="background:var(--bg-card2);border:1px solid var(--gold-md);border-radius:var(--radius);padding:16px;">
+                <div class="d-flex justify-content-between mb-2"><span style="font-size:.75rem;font-weight:600;color:var(--gold-hi);">DEFAULT</span><button type="button" class="btn btn-outline-gold btn-sm" style="padding:4px 12px;">Edit</button></div>
+                <p style="font-size:.875rem;color:var(--text);margin-bottom:2px;">James Whitfield</p>
+                <p style="font-size:.875rem;margin:0;">14 Rum Yard, London, EC1A 1AA, UK</p>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="acct-membership" role="tabpanel">
+
+            <!-- A) Current plan summary -->
+            <div class="card-brand reveal mb-4" id="plan-current" data-current-tier="Gold">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div>
+                  <span class="badge-brand badge-gold mb-2" id="plan-current-badge" style="font-size:.8125rem;padding:6px 14px;">✦ <span data-current-tier-label>Gold</span> Member</span>
+                  <h2 class="h3 mb-1">You're on the <span data-current-tier-label>Gold</span> tier</h2>
+                  <p style="margin:0;max-width:520px;" id="plan-current-blurb">15% off all orders, 2× points, free UK express shipping, annual gift bottle, and tasting event invitations.</p>
+                </div>
+                <div class="text-end" style="font-size:.8125rem;color:var(--text-muted);">
+                  <p style="margin:0;">Next charge: <strong style="color:var(--text);">14 Jan 2026</strong></p>
+                  <p style="margin:2px 0 0;">£<span data-current-tier-price>24.99</span>/<span id="plan-current-period">month</span></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- B) Compare and change plans -->
+            <section aria-labelledby="plans-title">
+              <div class="d-flex justify-content-between align-items-end mb-3 flex-wrap gap-2">
+                <div>
+                  <h2 id="plans-title" class="h4 mb-1">Compare and change plan</h2>
+                  <p style="font-size:.875rem;margin:0;color:var(--text-muted);">Upgrades are immediate and pro-rated. Downgrades take effect at the end of your current billing period.</p>
+                </div>
+                <div class="d-inline-flex gap-1" role="group" aria-label="Billing period">
+                  <button type="button" class="btn btn-sm btn-gold" id="bill-monthly" aria-pressed="true">Monthly</button>
+                  <button type="button" class="btn btn-sm btn-outline-gold" id="bill-annual" aria-pressed="false">Annual <span style="font-size:.6875rem;opacity:.7;">(2 months free)</span></button>
+                </div>
+              </div>
+
+              <div class="row g-3" id="plan-grid">
+                <!-- Bronze -->
+                <div class="col-12 col-md-6 col-lg-3">
+                  <article class="card-brand reveal h-100 d-flex flex-column" data-tier-card="Bronze" style="border-color:rgba(205,127,50,.3);">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h3 style="color:#CD7F32;font-family:var(--serif);font-size:1.25rem;margin:0;">Bronze</h3>
+                      <span class="plan-status-pill" hidden>Current</span>
+                    </div>
+                    <p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--text);margin:0;">Free</p>
+                    <p style="font-size:.6875rem;color:var(--text-dim);margin:2px 0 12px;">always free</p>
+                    <ul class="list-unstyled" style="font-size:.8125rem;color:var(--text-muted);">
+                      <li>· 5% member discount</li>
+                      <li>· 1× points</li>
+                      <li>· Birthday bonus</li>
+                      <li>· Member newsletter</li>
+                    </ul>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-outline-gold btn-sm w-100" data-change-tier="Bronze">Switch to Bronze</button>
+                    </div>
+                  </article>
+                </div>
+                <!-- Silver -->
+                <div class="col-12 col-md-6 col-lg-3">
+                  <article class="card-brand reveal h-100 d-flex flex-column" data-tier-card="Silver" style="border-color:rgba(192,192,192,.25);">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h3 style="color:#C0C0C0;font-family:var(--serif);font-size:1.25rem;margin:0;">Silver</h3>
+                      <span class="plan-status-pill" hidden>Current</span>
+                    </div>
+                    <p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--text);margin:0;">£<span data-monthly>9.99</span>/<span data-period>mo</span></p>
+                    <p style="font-size:.6875rem;color:var(--text-dim);margin:2px 0 12px;" data-annual-note hidden>£99.90/yr — 2 months free</p>
+                    <ul class="list-unstyled" style="font-size:.8125rem;color:var(--text-muted);">
+                      <li>· 10% member discount</li>
+                      <li>· 1.5× points</li>
+                      <li>· Early access (24hrs)</li>
+                      <li>· Free UK standard ship</li>
+                    </ul>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-outline-gold btn-sm w-100" data-change-tier="Silver">Choose Silver</button>
+                    </div>
+                  </article>
+                </div>
+                <!-- Gold (current by default) -->
+                <div class="col-12 col-md-6 col-lg-3">
+                  <article class="card-brand reveal h-100 d-flex flex-column" data-tier-card="Gold" style="border:2px solid var(--gold-md);">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h3 style="color:var(--gold-hi);font-family:var(--serif);font-size:1.25rem;margin:0;">Gold</h3>
+                      <span class="plan-status-pill">Current</span>
+                    </div>
+                    <p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--text);margin:0;">£<span data-monthly>24.99</span>/<span data-period>mo</span></p>
+                    <p style="font-size:.6875rem;color:var(--text-dim);margin:2px 0 12px;" data-annual-note hidden>£249.90/yr — 2 months free</p>
+                    <ul class="list-unstyled" style="font-size:.8125rem;color:var(--text-muted);">
+                      <li>· 15% member discount</li>
+                      <li>· 2× points</li>
+                      <li>· Early access (48hrs)</li>
+                      <li>· Free UK express ship</li>
+                      <li>· Annual gift bottle</li>
+                    </ul>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-ghost btn-sm w-100" data-change-tier="Gold" disabled aria-disabled="true">Current plan</button>
+                    </div>
+                  </article>
+                </div>
+                <!-- Black Reserve -->
+                <div class="col-12 col-md-6 col-lg-3">
+                  <article class="card-brand reveal h-100 d-flex flex-column" data-tier-card="Black Reserve" style="background:linear-gradient(135deg,#0A0A0A,#161208);border-color:rgba(198,167,94,.35);">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h3 style="color:var(--gold-hi);font-family:var(--serif);font-size:1.25rem;margin:0;">Black Reserve</h3>
+                      <span class="plan-status-pill" hidden>Current</span>
+                    </div>
+                    <p style="font-family:var(--serif);font-size:1.5rem;font-weight:700;color:var(--text);margin:0;">£<span data-monthly>54.99</span>/<span data-period>mo</span></p>
+                    <p style="font-size:.6875rem;color:var(--text-dim);margin:2px 0 12px;" data-annual-note hidden>£549.90/yr — 2 months free</p>
+                    <ul class="list-unstyled" style="font-size:.8125rem;color:var(--text-muted);">
+                      <li>· 20% member discount</li>
+                      <li>· 3× points</li>
+                      <li>· Priority access (72hrs)</li>
+                      <li>· Free worldwide ship</li>
+                      <li>· Concierge service</li>
+                    </ul>
+                    <div class="mt-auto pt-3">
+                      <button type="button" class="btn btn-gold btn-sm w-100" data-change-tier="Black Reserve">Upgrade ↑</button>
+                    </div>
+                  </article>
+                </div>
+              </div>
+
+              <p style="font-size:.75rem;color:var(--text-dim);text-align:center;margin-top:20px;">14-day money-back guarantee on paid tiers · Cancel anytime · GBP incl. VAT</p>
+            </section>
+
+            <!-- ── My reviews ───────────────────────────────────── -->
+            <section style="margin-top:48px;" aria-labelledby="my-reviews-h" id="my-reviews">
+              <h2 id="my-reviews-h" class="h4 mb-3" style="font-family:var(--serif);font-weight:600;">My reviews</h2>
+              <p style="font-size:.875rem;color:var(--text-muted);">Reviews you've written, with their moderation status. <strong>Pending</strong> reviews aren't public yet; <strong>Live</strong> reviews appear on the product page; <strong>Denied</strong> reviews can be queried with the moderation team.</p>
+              <div id="rc-history-reviews" style="margin-top:14px;"></div>
+              <script type="application/json" data-rc-history-reviews>
+[
+  { "id": "demo-rev-live-1",
+    "productId": "rum-original-reserve",
+    "productName": "Rumbaclaat Original Reserve",
+    "status": "live",
+    "rating": 5,
+    "title": "A serious sipping rum",
+    "body": "Picked this up after a tasting in Soho. Honestly the best rum I've had under £60. The oak is well-judged, none of that over-sweet finish you get with younger spirits.",
+    "created": "2026-04-12T14:00:00Z" },
+  { "id": "demo-rev-denied-1",
+    "productId": "tee-black-reserve",
+    "productName": "Black Reserve Tee",
+    "status": "denied",
+    "rating": 1,
+    "title": "Don't bother",
+    "body": "Sizing is way off and the print smudged. Total waste of money frankly.",
+    "denialReason": "Your review includes language we don't publish (\"total waste of money frankly\"). Please re-submit with the substantive feedback only — we genuinely want to hear it.",
+    "created": "2026-03-30T09:15:00Z" }
+]
+              </script>
+            </section>
+
+            <!-- ── My cocktail ratings ──────────────────────────── -->
+            <section style="margin-top:48px;" aria-labelledby="my-ratings-h" id="my-ratings">
+              <h2 id="my-ratings-h" class="h4 mb-3" style="font-family:var(--serif);font-weight:600;">My cocktail ratings</h2>
+              <p style="font-size:.875rem;color:var(--text-muted);">Cocktails you've rated. One rating per cocktail — tap a star on the recipe page to update.</p>
+              <div id="rc-history-ratings" style="margin-top:14px;"></div>
+              <script type="application/json" data-rc-history-ratings>
+[
+  { "cocktailId": "old-fashioned",      "cocktailName": "Old Fashioned",      "cocktailHref": "cocktail-old-fashioned.html",      "rating": 5, "created": "2026-05-09T20:00:00Z" },
+  { "cocktailId": "rumbaclaat-sour",    "cocktailName": "Rumbaclaat Sour",    "cocktailHref": "cocktail-rumbaclaat-sour.html",    "rating": 4, "created": "2026-04-28T19:30:00Z" },
+  { "cocktailId": "spiced-mule",        "cocktailName": "Spiced Mule",        "cocktailHref": "cocktail-spiced-mule.html",        "rating": 5, "created": "2026-04-14T21:15:00Z" }
+]
+              </script>
+            </section>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-5">
+          <div class="footer-logo">
+            <img src="assets/img/rumbaclaat-wordmark.png" alt="Rumbaclaat" class="brand-logo" width="200" height="27">
+          </div>
+          <p style="font-size:.875rem;max-width:300px;">Premium Caribbean rum &amp; luxury lifestyle brand. From the canefields of Jamaica to your glass.</p>
+          <p style="font-size:.75rem;color:var(--text-dim);">Please drink responsibly. You must be 18 or over to buy alcohol. Age verified at checkout and on delivery.</p>
+        </div>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Shop">
+          <h2>Shop</h2>
+          <a href="shop-rum.html">Rum Collection</a>
+          <a href="shop-men.html">Men's Apparel</a>
+          <a href="shop-women.html">Women's Apparel</a>
+          <a href="cart.html">Cart</a>
+        </nav>
+        <nav class="col-6 col-lg-2 footer-col" aria-label="Discover">
+          <h2>Discover</h2>
+          <a href="cocktails.html">Cocktail Recipes</a>
+          <a href="blog.html">Blog &amp; Stories</a>
+          <a href="join.html">Membership</a>
+          <a href="membership.html">Member Portal</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="gift-cards.html">Gift Cards</a>
+          <a href="about.html">About Us</a>
+        </nav>
+        <nav class="col-6 col-lg-3 footer-col" aria-label="Business and legal">
+          <h2>Help &amp; Business</h2>
+          <a href="faq.html">FAQ</a>
+          <a href="trade.html">Trade Portal</a>
+          <a href="press.html">Press</a>
+          <a href="where-to-buy.html">Where to buy</a>
+          <a href="contact.html">Contact Us</a>
+          <a href="account.html">My Account</a>
+          <a href="delivery.html">Delivery Policy</a>
+        </nav>
+      </div>
+      <!-- Partners + socials strip -->
+      <div class="footer-meta-row">
+        <div class="footer-partners">
+          <a class="footer-drinkaware" href="https://www.drinkaware.co.uk/" rel="noopener" target="_blank" aria-label="Drinkaware — open in new tab">
+            <img src="assets/img/drinkaware-logo.png" alt="Drinkaware.co.uk" width="160" height="16" loading="lazy">
+          </a>
+          <span class="footer-accreditation" aria-label="International Drinks Specialists — score 92, Sincere Evaluation and Feedback">
+            <img src="assets/img/intl-drinks-specialists-92.png" alt="International Drinks Specialists — 92 / 100" width="90" height="50" loading="lazy">
+          </span>
+        </div>
+
+        <ul class="footer-socials list-unstyled" aria-label="Rumbaclaat on social media">
+          <li><a href="https://www.facebook.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12H16l-.4 2.9h-2.2v7A10 10 0 0 0 22 12Z"/></svg>
+          </a></li>
+          <li><a href="https://www.instagram.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.5.5.7.9.9 1.4.2.5.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.5.5-.9.7-1.4.9-.5.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4a3.7 3.7 0 0 1-1.4-.9 3.7 3.7 0 0 1-.9-1.4c-.2-.5-.4-1.1-.4-2.2-.1-1.3-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.5-.5.9-.7 1.4-.9.5-.2 1.1-.4 2.2-.4 1.3-.1 1.6-.1 4.8-.1ZM12 0C8.7 0 8.3 0 7.1.1 5.8.1 5 .3 4.2.6c-.8.3-1.5.7-2.2 1.4A6.1 6.1 0 0 0 .6 4.2C.3 5 .1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.1.5 2.9.3.8.7 1.5 1.4 2.2.7.7 1.4 1.1 2.2 1.4.8.3 1.6.5 2.9.5 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c1.3-.1 2.1-.2 2.9-.5a6.1 6.1 0 0 0 2.2-1.4 6.1 6.1 0 0 0 1.4-2.2c.3-.8.5-1.6.5-2.9.1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.1-.5-2.9a6.1 6.1 0 0 0-1.4-2.2A6.1 6.1 0 0 0 19.8.6C19 .3 18.2.1 16.9.1 15.7 0 15.3 0 12 0Zm0 5.8a6.2 6.2 0 1 0 0 12.4 6.2 6.2 0 0 0 0-12.4ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.4-11.8a1.4 1.4 0 1 0 0 2.9 1.4 1.4 0 0 0 0-2.9Z"/></svg>
+          </a></li>
+          <li><a href="https://www.linkedin.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on LinkedIn">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 2h-17A1.5 1.5 0 0 0 2 3.5v17A1.5 1.5 0 0 0 3.5 22h17a1.5 1.5 0 0 0 1.5-1.5v-17A1.5 1.5 0 0 0 20.5 2ZM8 19H5V9h3v10Zm-1.5-11.3A1.7 1.7 0 1 1 6.5 4.3a1.7 1.7 0 0 1 0 3.4ZM19 19h-3v-5c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3V9h2.9v1.4h.1a3.2 3.2 0 0 1 2.9-1.6c3.1 0 3.7 2 3.7 4.7V19Z"/></svg>
+          </a></li>
+          <li><a href="https://www.tiktok.com/" rel="noopener" target="_blank" aria-label="Rumbaclaat on TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21 8.6a8.4 8.4 0 0 1-4.9-1.6v7.5a6.2 6.2 0 1 1-5.4-6.1v3a3.2 3.2 0 1 0 2.4 3.1V2h2.9a5.5 5.5 0 0 0 5 5v3.6Z"/></svg>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>© <span id="year">2026</span> Rumbaclaat Limited. All rights reserved.</span>
+        <span class="d-flex gap-4 flex-wrap">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="cookies.html">Cookies</a>
+          <a href="cookie-preferences.html">Cookie preferences</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <div aria-live="polite" class="visually-hidden" id="sr-announcer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script>window.RC_DEV_BYPASS = true; /* TESTING ONLY — strip before launch */</script>
+  <script src="assets/js/main.js" defer></script>
+
+  <script>
+  (function(){
+    'use strict';
+    const $=(s)=>document.querySelector(s),$$=(s)=>Array.from(document.querySelectorAll(s));
+    const announce=(m)=>{const r=$('#sr-announcer');if(r){r.textContent='';setTimeout(()=>r.textContent=m,50);}};
+    function show(view){ $$('.account-view').forEach(v=>v.classList.remove('active')); const el=$('#view-'+view); el.classList.add('active'); const h=el.querySelector('h2'); if(h){h.setAttribute('tabindex','-1');h.focus();} }
+    function validate(form,err){
+      const missing=[];
+      form.querySelectorAll('[required]').forEach(f=>{const ok=f.type==='checkbox'?f.checked:f.value.trim()!=='';f.setAttribute('aria-invalid',ok?'false':'true');if(!ok){const l=form.querySelector('label[for="'+f.id+'"]');missing.push(l?l.textContent.replace(' *',''):f.id);}});
+      if(missing.length){err.classList.remove('d-none');err.textContent='Please complete: '+missing.join(', ')+'.';err.focus();return false;}
+      err.classList.add('d-none');return true;
+    }
+    document.addEventListener('click',(e)=>{
+      const v=e.target.closest('[data-view]'); if(v){show(v.dataset.view); if(v.hasAttribute('data-logout')) announce('Signed out');}
+    });
+    $('#form-login').addEventListener('submit',(e)=>{e.preventDefault(); if(validate(e.target,$('#err-login'))){
+      const email = (document.getElementById('login-email')||{}).value || 'james@example.com';
+      if (window.RC && window.RC.Auth) window.RC.Auth.signIn(email);
+      show('dashboard');announce('Signed in successfully');
+    }});
+    $('#form-register').addEventListener('submit',(e)=>{e.preventDefault(); if(validate(e.target,$('#err-reg'))){
+      const email = (document.getElementById('reg-email')||{}).value || 'james@example.com';
+      if (window.RC && window.RC.Auth) window.RC.Auth.signIn(email);
+      show('dashboard');announce('Account created — welcome to Bronze');
+    }});
+    $('#form-details').addEventListener('submit',(e)=>{e.preventDefault();announce('Details saved successfully');});
+
+    // Sign-out via any [data-logout] click
+    document.addEventListener('click',(e)=>{
+      if (e.target.closest('[data-logout]')) {
+        if (window.RC && window.RC.Auth) window.RC.Auth.signOut();
+      }
+    });
+
+    // Deep-link support (for testing): ?view=dashboard|login|register|reset
+    const __p = new URLSearchParams(location.search);
+    const __v = __p.get('view');
+    if (__v && document.getElementById('view-' + __v)) show(__v);
+    // Also support hash: #created → dashboard with toast
+    if (location.hash === '#created') { show('dashboard'); announce('Account created — welcome to Bronze'); }
+    if (location.hash === '#dashboard') show('dashboard');
+  })();
+  </script>
+
+
+  <!-- Plan-change modal (payment-only, since user is logged in) -->
+  <div class="modal fade" id="plan-modal" tabindex="-1" aria-labelledby="plan-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background:var(--bg-card);border:1px solid var(--gold-md);border-radius:var(--radius-xl);color:var(--text);">
+        <div class="modal-header" style="border-bottom:1px solid var(--gold-bdr);">
+          <h2 class="modal-title h4" id="plan-modal-title">Change plan</h2>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="plan-modal-body">
+          <!-- Filled dynamically -->
+        </div>
+        <div class="modal-footer" style="border-top:1px solid var(--gold-bdr);">
+          <button type="button" class="btn btn-outline-gold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-gold" id="plan-modal-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    'use strict';
+    const $ = (s, root) => (root || document).querySelector(s);
+    const $$ = (s, root) => Array.from((root || document).querySelectorAll(s));
+    const announce = (m) => { const r = $('#sr-announcer'); if (r) { r.textContent = ''; setTimeout(() => r.textContent = m, 50); } };
+
+    // Tier metadata. Keep prices in sync with join.html / membership.html.
+    const TIERS = {
+      'Bronze':        { rank: 0, monthly: 0,     annual: 0,     blurb: 'Always free — 5% off, 1× points and birthday bonus.', benefits: '5% off, 1× points, member newsletter' },
+      'Silver':        { rank: 1, monthly: 9.99,  annual: 99.90, blurb: '£9.99/mo — 10% off, 1.5× points, free UK standard shipping.', benefits: '10% off, 1.5× points, free UK standard shipping' },
+      'Gold':          { rank: 2, monthly: 24.99, annual: 249.90,blurb: '£24.99/mo — 15% off, 2× points, free UK express + annual gift bottle.', benefits: '15% off, 2× points, free express shipping, annual gift bottle' },
+      'Black Reserve': { rank: 3, monthly: 54.99, annual: 549.90,blurb: '£54.99/mo — 20% off, 3× points, worldwide shipping + concierge.', benefits: '20% off, 3× points, free worldwide shipping, concierge' }
+    };
+
+    const planCard = $('#plan-current');
+    let currentTier = (planCard && planCard.dataset.currentTier) || 'Gold';
+    let billing = 'monthly';
+    let pendingTier = null;
+
+    // Bootstrap modal might not be loaded yet — defer the constructor.
+    let modal = null;
+    function getModal() {
+      if (!modal && window.bootstrap) modal = new bootstrap.Modal($('#plan-modal'));
+      return modal;
+    }
+
+    // ── Billing toggle ─────────────────────────────────────────
+    function setBilling(period) {
+      billing = period;
+      const m = $('#bill-monthly'), a = $('#bill-annual');
+      m.classList.toggle('btn-gold', period === 'monthly');
+      m.classList.toggle('btn-outline-gold', period !== 'monthly');
+      m.setAttribute('aria-pressed', period === 'monthly');
+      a.classList.toggle('btn-gold', period === 'annual');
+      a.classList.toggle('btn-outline-gold', period !== 'annual');
+      a.setAttribute('aria-pressed', period === 'annual');
+
+      $$('[data-tier-card]').forEach(card => {
+        const tier = card.dataset.tierCard;
+        const t = TIERS[tier];
+        const priceEl = card.querySelector('[data-monthly]');
+        const periodEl = card.querySelector('[data-period]');
+        const note = card.querySelector('[data-annual-note]');
+        if (!t || !priceEl) return;
+        if (tier === 'Bronze') { return; } // free always
+        if (period === 'monthly') {
+          priceEl.textContent = t.monthly.toFixed(2);
+          periodEl.textContent = 'mo';
+          if (note) note.hidden = true;
+        } else {
+          priceEl.textContent = (t.annual / 12).toFixed(2);
+          periodEl.textContent = 'mo';
+          if (note) { note.hidden = false; }
+        }
+      });
+
+      // Current-plan summary line
+      const curT = TIERS[currentTier];
+      if (curT) {
+        const curPriceEl = $('[data-current-tier-price]');
+        const curPeriodEl = $('#plan-current-period');
+        if (curPriceEl) curPriceEl.textContent = period === 'monthly' ? curT.monthly.toFixed(2) : (curT.annual / 12).toFixed(2);
+        if (curPeriodEl) curPeriodEl.textContent = period === 'monthly' ? 'month' : 'month (annual)';
+      }
+    }
+    $('#bill-monthly').addEventListener('click', () => setBilling('monthly'));
+    $('#bill-annual').addEventListener('click', () => setBilling('annual'));
+
+    // ── Mark current tier across the grid ──────────────────────
+    function refreshCurrentMarkers() {
+      $$('[data-tier-card]').forEach(card => {
+        const isCurrent = card.dataset.tierCard === currentTier;
+        const pill = card.querySelector('.plan-status-pill');
+        const btn = card.querySelector('[data-change-tier]');
+        if (pill) pill.hidden = !isCurrent;
+        if (btn) {
+          if (isCurrent) {
+            btn.disabled = true;
+            btn.setAttribute('aria-disabled', 'true');
+            btn.textContent = 'Current plan';
+            btn.classList.remove('btn-gold', 'btn-outline-gold');
+            btn.classList.add('btn-ghost');
+          } else {
+            btn.disabled = false;
+            btn.removeAttribute('aria-disabled');
+            const tier = card.dataset.tierCard;
+            const dir = TIERS[tier].rank > TIERS[currentTier].rank ? 'up' : 'down';
+            if (tier === 'Bronze') {
+              btn.textContent = 'Switch to Bronze';
+              btn.classList.remove('btn-gold', 'btn-ghost');
+              btn.classList.add('btn-outline-gold');
+            } else if (dir === 'up') {
+              btn.textContent = 'Upgrade ↑';
+              btn.classList.remove('btn-outline-gold', 'btn-ghost');
+              btn.classList.add('btn-gold');
+            } else {
+              btn.textContent = 'Downgrade ↓';
+              btn.classList.remove('btn-gold', 'btn-ghost');
+              btn.classList.add('btn-outline-gold');
+            }
+          }
+        }
+      });
+      // Sync the labels and price on the current-plan card
+      $$('[data-current-tier-label]').forEach(el => { el.textContent = currentTier; });
+      const blurbEl = $('#plan-current-blurb');
+      if (blurbEl && TIERS[currentTier]) blurbEl.textContent = TIERS[currentTier].benefits + '.';
+      setBilling(billing); // refresh prices in case current changed
+    }
+
+    // ── Open the change-plan modal ─────────────────────────────
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-change-tier]');
+      if (!btn || btn.disabled) return;
+      const targetTier = btn.dataset.changeTier;
+      if (targetTier === currentTier) return;
+      pendingTier = targetTier;
+      buildModal(targetTier);
+      const m = getModal();
+      if (m) m.show();
+    });
+
+    function buildModal(targetTier) {
+      const t = TIERS[targetTier], cur = TIERS[currentTier];
+      const isUpgrade = t.rank > cur.rank;
+      const isFreeSwitch = targetTier === 'Bronze';
+      const price = billing === 'monthly' ? t.monthly : t.annual;
+      const priceLine = billing === 'monthly' ? '£' + price.toFixed(2) + ' / month' : '£' + price.toFixed(2) + ' / year (2 months free)';
+      const today = new Date();
+      const periodEnd = new Date(today.getFullYear(), today.getMonth() + 1, 14);
+      const endDate = periodEnd.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      $('#plan-modal-title').textContent = (isFreeSwitch ? 'Switch to ' : (isUpgrade ? 'Upgrade to ' : 'Downgrade to ')) + targetTier;
+
+      let body = '';
+      if (isFreeSwitch) {
+        body = `
+          <p style="color:var(--text);">You're switching from <strong>${currentTier}</strong> to <strong>Bronze</strong> (free).</p>
+          <div style="background:var(--bg-card2);border:1px solid var(--gold-bdr);border-radius:10px;padding:14px;margin:14px 0;">
+            <p style="font-size:.875rem;margin:0 0 6px;color:var(--text-muted);">Your ${currentTier} benefits remain active until:</p>
+            <p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;color:var(--gold-hi);margin:0;">${endDate}</p>
+          </div>
+          <p style="font-size:.8125rem;color:var(--text-muted);margin:0;">No charge today. You can rejoin a paid tier at any time.</p>`;
+      } else if (isUpgrade) {
+        body = `
+          <p style="color:var(--text);">You're upgrading from <strong>${currentTier}</strong> to <strong>${targetTier}</strong>.</p>
+          <div style="background:var(--bg-card2);border:1px solid var(--gold-bdr);border-radius:10px;padding:14px;margin:14px 0;">
+            <div class="d-flex justify-content-between align-items-baseline">
+              <span style="font-size:.875rem;color:var(--text-muted);">${targetTier} membership</span>
+              <span style="font-family:var(--serif);font-size:1.25rem;font-weight:700;color:var(--gold-hi);">${priceLine}</span>
+            </div>
+            <p style="font-size:.75rem;color:var(--text-dim);margin:8px 0 0;">Charged today, pro-rated against your current ${currentTier} billing period. Next renewal: ${endDate}.</p>
+          </div>
+          <fieldset style="border:0;padding:0;margin:0;">
+            <legend style="font-size:.8125rem;color:var(--text);margin-bottom:8px;">Payment method</legend>
+            <div style="background:var(--bg-card2);border:1px solid var(--gold-bdr);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:.875rem;">Visa ending <strong>4242</strong> · expires 03/28</span>
+              <button type="button" class="btn btn-ghost btn-sm" id="change-card" style="font-size:.75rem;">Change</button>
+            </div>
+          </fieldset>
+          <p style="font-size:.6875rem;color:var(--text-dim);margin:12px 0 0;">By confirming you authorise Rumbaclaat Limited to charge your saved card. 14-day money-back guarantee applies.</p>`;
+      } else {
+        // Downgrade between paid tiers
+        body = `
+          <p style="color:var(--text);">You're downgrading from <strong>${currentTier}</strong> to <strong>${targetTier}</strong>.</p>
+          <div style="background:var(--bg-card2);border:1px solid var(--gold-bdr);border-radius:10px;padding:14px;margin:14px 0;">
+            <p style="font-size:.875rem;margin:0 0 6px;color:var(--text-muted);">Current benefits remain active until end of period:</p>
+            <p style="font-family:var(--serif);font-size:1.125rem;font-weight:600;color:var(--gold-hi);margin:0 0 10px;">${endDate}</p>
+            <div class="d-flex justify-content-between" style="font-size:.875rem;">
+              <span style="color:var(--text-muted);">Next charge (${targetTier}):</span>
+              <span style="font-family:var(--serif);font-weight:600;color:var(--gold-hi);">${priceLine}</span>
+            </div>
+          </div>
+          <p style="font-size:.8125rem;color:var(--text-muted);margin:0;">No charge today. You can switch back any time.</p>`;
+      }
+      $('#plan-modal-body').innerHTML = body;
+
+      // Confirm button label
+      const conf = $('#plan-modal-confirm');
+      if (isFreeSwitch) conf.textContent = 'Confirm downgrade';
+      else if (isUpgrade) conf.textContent = '🔒 Pay ' + priceLine.split(' / ')[0] + ' and upgrade';
+      else conf.textContent = 'Confirm downgrade';
+    }
+
+    $('#plan-modal-confirm').addEventListener('click', () => {
+      if (!pendingTier) return;
+      const targetTier = pendingTier;
+      const t = TIERS[targetTier], cur = TIERS[currentTier];
+      const isUpgrade = t.rank > cur.rank;
+      const isFreeSwitch = targetTier === 'Bronze';
+
+      // In the static mock, upgrades take effect immediately and downgrades take effect at period end.
+      const m = getModal(); if (m) m.hide();
+      if (isUpgrade) {
+        currentTier = targetTier;
+        // Swap badge color for the new tier
+        const badge = $('#plan-current-badge');
+        if (badge) {
+          badge.classList.remove('badge-gold');
+          const tierClass = targetTier === 'Silver' ? 'badge-silver' : (targetTier === 'Black Reserve' ? 'badge-black' : 'badge-gold');
+          badge.classList.add(tierClass);
+          // Fallback inline colour if those classes don't exist in CSS
+          const colour = targetTier === 'Silver' ? '#C0C0C0' : (targetTier === 'Black Reserve' ? 'var(--gold-hi)' : '#CD7F32');
+          if (targetTier !== 'Gold') badge.style.color = colour;
+          else badge.style.color = '';
+        }
+        refreshCurrentMarkers();
+        announce('Upgraded to ' + targetTier + '. New benefits active immediately.');
+      } else if (isFreeSwitch) {
+        announce('Downgrade to Bronze scheduled. ' + currentTier + ' benefits remain active until end of billing period.');
+      } else {
+        announce('Downgrade to ' + targetTier + ' scheduled for end of current billing period.');
+      }
+      pendingTier = null;
+    });
+
+    // ── Init ──────────────────────────────────────────────────
+    refreshCurrentMarkers();
+  })();
+  </script>
+
+  <style>
+    .plan-status-pill {
+      font-size: .625rem; letter-spacing: .08em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px;
+      background: var(--gold); color: #0E0E0E; font-weight: 700;
+    }
+    #plan-grid .card-brand { padding: 18px; }
+    #plan-grid .card-brand h3 { margin-bottom: 8px; }
+  </style>
+
+</body>
+</html>
