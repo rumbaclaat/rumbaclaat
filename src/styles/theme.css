@@ -378,6 +378,13 @@ em { font-style: italic; }
 .ck-method-list .step-num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--gold-lt); border: 1px solid var(--gold-md); display: flex; align-items: center; justify-content: center; font-family: var(--serif); color: var(--gold-hi); font-size: 1rem; font-weight: 600; }
 .ck-method-list p { margin: 0; font-size: .9375rem; line-height: 1.7; color: var(--text); padding-top: 4px; }
 .recipe-tip { background: var(--gold-lt); border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0; padding: 16px 18px; margin-top: 20px; }
+.ck-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ck-rel-card { display: block; text-decoration: none; background: var(--bg-card); border: 1px solid var(--gold-bdr); border-radius: var(--radius-lg); overflow: hidden; color: var(--text); transition: transform .2s, border-color .2s; }
+.ck-rel-card:hover, .ck-rel-card:focus-visible { transform: translateY(-3px); border-color: var(--gold-md); color: var(--text); text-decoration: none; }
+.ck-rel-img { aspect-ratio: 4 / 5; overflow: hidden; }
+.ck-rel-img img { width: 100%; height: 100%; object-fit: cover; }
+.ck-rel-meta { padding: 12px 14px 4px; font-size: .6875rem; color: var(--text-muted); }
+.ck-rel-card h3 { padding: 4px 14px 14px; margin: 0; font-size: 1.0625rem; font-family: var(--serif); }
 
 /* checkout / signup steps */
 .checkout-step { display: none; } .checkout-step.active { display: block; }

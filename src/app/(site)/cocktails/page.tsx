@@ -108,6 +108,21 @@ export default async function CocktailsIndex() {
           )}
         </div>
       </section>
+
+      {/* CTA — static-source/cocktails.html */}
+      <section
+        className="parallax-section"
+        style={{ minHeight: 360, backgroundImage: "url('https://images.unsplash.com/photo-1744730850457-8795330490df?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80')" }}
+        aria-labelledby="ck-cta"
+      >
+        <div className="parallax-overlay" />
+        <div className="parallax-content reveal">
+          <span className="eyebrow eyebrow-center">The Bottle Behind the Bar</span>
+          <h2 id="ck-cta">Shop the Collection</h2>
+          <p style={{ color: "var(--text-muted)" }}>Every great cocktail starts with exceptional rum. Explore our premium range.</p>
+          <Link href="/shop?category=rum" className="btn btn-gold mt-4">Shop Rum ›</Link>
+        </div>
+      </section>
     </>
   );
 }

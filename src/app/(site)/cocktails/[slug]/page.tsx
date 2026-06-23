@@ -33,6 +33,11 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
   const featured = cocktail.featuredProductId
     ? await prisma.product.findUnique({ where: { id: cocktail.featuredProductId } })
     : null;
+  const related = await prisma.cocktail.findMany({
+    where: { status: "published", id: { not: cocktail.id } },
+    orderBy: { name: "asc" },
+    take: 3,
+  });
   const dc = cocktail.difficulty ? diffClass[cocktail.difficulty] ?? "diff-easy" : "diff-easy";
 
   return (
@@ -121,6 +126,31 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
             )}
           </div>
         </div>
+
+        {related.length > 0 && (
+          <div className="mt-5 pt-4" style={{ borderTop: "1px solid var(--gold-bdr)" }}>
+            <h2 className="h4 mb-4">Try next</h2>
+            <div className="row g-4">
+              {related.map((r) => (
+                <div className="col-12 col-md-4" key={r.id}>
+                  <Link href={`/cocktails/${r.slug}`} className="ck-rel-card">
+                    <div className="ck-rel-img">
+                      {r.image ? (
+                        <img src={r.image} alt={r.name} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#1a1a1a,#0f0f0f)" }} />
+                      )}
+                    </div>
+                    <div className="ck-rel-meta">
+                      {r.difficulty}{r.difficulty && r.timeMins ? " · " : ""}{r.timeMins ? `${r.timeMins} mins` : ""}
+                    </div>
+                    <h3>{r.name}</h3>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
