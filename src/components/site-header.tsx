@@ -6,6 +6,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { useCart } from "@/components/cart/cart-provider";
+import BrandImage from "@/components/brand-image";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -32,9 +33,16 @@ export default function SiteHeader() {
       >
         <Container>
           <Navbar.Brand as={Link} href="/" aria-label="Rumbaclaat — home">
-            <span className="brand-wordmark">
-              Rumbaclaat<span className="dot">.</span>
-            </span>
+            <BrandImage
+              src="/brand/wordmark.png"
+              alt="Rumbaclaat"
+              className="brand-logo-img"
+              fallback={
+                <span className="brand-wordmark">
+                  Rumbaclaat<span className="dot">.</span>
+                </span>
+              }
+            />
           </Navbar.Brand>
 
           <Navbar.Toggle aria-controls="primaryNav" />

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import HeroCarousel from "@/components/home/hero-carousel";
+import BrandImage from "@/components/brand-image";
 
 const U = (id: string, w = 800) =>
   `https://images.unsplash.com/${id}?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=${w}`;
@@ -8,7 +8,21 @@ const U = (id: string, w = 800) =>
 export default function HomePage() {
   return (
     <>
-      <HeroCarousel />
+      {/* Static hero banner */}
+      <section className="hero">
+        <div className="hero-bg" style={{ backgroundImage: `url('${U("photo-1758871993077-e084cc7eca86", 1800)}')` }} />
+        <div className="hero-overlay" />
+        <div className="hero-content">
+          <BrandImage src="/brand/logo.png" alt="Rumbaclaat Rum" className="hero-logo" />
+          <span className="eyebrow eyebrow-center">Premium Caribbean Rum</span>
+          <h1>Born in the Caribbean.<br /><em className="gold">Bottled for the Bold.</em></h1>
+          <p className="hero-lede">Aged in American oak. Crafted with heritage. Rumbaclaat rum is a tribute to Caribbean culture, distilled into every drop.</p>
+          <div className="d-flex gap-3 justify-content-center flex-wrap mt-4">
+            <Link href="/shop" className="btn btn-gold btn-lg">Shop Rum</Link>
+            <Link href="/join" className="btn btn-outline-gold btn-lg">Join the Inner Circle</Link>
+          </div>
+        </div>
+      </section>
 
       {/* Announcement ticker */}
       <section className="announcement-ticker" role="region" aria-label="Site announcements">

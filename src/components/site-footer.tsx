@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandImage from "@/components/brand-image";
 
 const COLUMNS = [
   {
@@ -49,9 +50,16 @@ export default function SiteFooter() {
       <div className="container">
         <div className="row g-4 mb-4">
           <div className="col-12 col-lg-5">
-            <div className="brand-wordmark mb-3" style={{ fontSize: "1.6rem", display: "inline-block" }}>
-              Rumbaclaat<span className="dot">.</span>
-            </div>
+            <BrandImage
+              src="/brand/wordmark.png"
+              alt="Rumbaclaat"
+              className="footer-logo-img mb-3"
+              fallback={
+                <div className="brand-wordmark mb-3" style={{ fontSize: "1.6rem", display: "inline-block" }}>
+                  Rumbaclaat<span className="dot">.</span>
+                </div>
+              }
+            />
             <p style={{ fontSize: ".875rem", maxWidth: 300 }}>
               Premium Caribbean rum &amp; luxury lifestyle brand. From the canefields of Jamaica to your glass.
             </p>
@@ -76,9 +84,16 @@ export default function SiteFooter() {
             <a className="footer-drinkaware" href="https://www.drinkaware.co.uk/" rel="noopener" target="_blank" style={{ color: "var(--text-muted)", textDecoration: "none", fontSize: ".8125rem", letterSpacing: ".05em" }}>
               Drinkaware.co.uk
             </a>
-            <span className="footer-accreditation" style={{ color: "var(--text-dim)", fontSize: ".75rem" }}>
-              International Drinks Specialists — 92 / 100
-            </span>
+            <BrandImage
+              src="/brand/intl-drinks-specialist.png"
+              alt="International Drinks Specialists — 92 / 100"
+              className="footer-accreditation-img"
+              fallback={
+                <span className="footer-accreditation" style={{ color: "var(--text-dim)", fontSize: ".75rem" }}>
+                  International Drinks Specialists — 92 / 100
+                </span>
+              }
+            />
           </div>
           <ul className="footer-socials list-unstyled m-0" aria-label="Rumbaclaat on social media">
             {SOCIALS.map((s) => (

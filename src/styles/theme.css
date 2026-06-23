@@ -467,3 +467,10 @@ mark { background: var(--gold-lt); color: var(--gold-hi); padding: 0 2px; border
 .rte-content .ProseMirror h3 { font-size: 1.15rem; margin: .4em 0 .3em; }
 .rte-content .ProseMirror blockquote { border-left: 3px solid var(--gold); padding-left: 12px; color: var(--text-muted); margin: .5em 0; }
 .rte-content .ProseMirror ul, .rte-content .ProseMirror ol { padding-left: 1.4em; margin: 0 0 .6em; }
+
+/* ---------- Brand logos ---------- */
+.brand-logo-img { height: 26px; width: auto; display: block; }
+.hero-logo { max-width: 340px; width: 70%; height: auto; display: block; margin: 0 auto 18px; }
+.footer-logo-img { height: 30px; width: auto; display: block; }
+.footer-accreditation-img { height: 46px; width: auto; display: block; }
+@media (max-width: 575.98px) { .hero-logo { width: 80%; max-width: 260px; } }
