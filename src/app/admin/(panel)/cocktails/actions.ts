@@ -28,6 +28,9 @@ function readCocktail(fd: FormData) {
     bartenderTip: str("bartenderTip"),
     image: str("image"),
     featuredProductId: str("featuredProductId"),
+    ratingAvg: String(fd.get("ratingAvg") ?? "").trim() ? Number(fd.get("ratingAvg")) : null,
+    ratingCount: parseInt(String(fd.get("ratingCount") ?? "0"), 10) || 0,
+    tags: parseLines(fd.get("tags")),
     status: String(fd.get("status") ?? "draft") as PublishStatus,
   };
 }

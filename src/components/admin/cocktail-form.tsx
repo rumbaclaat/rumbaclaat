@@ -100,6 +100,19 @@ export default function CocktailForm({
             {products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </div>
+
+        <div className="col-md-3">
+          <label className="form-label" htmlFor="ratingAvg">Rating (0–5)</label>
+          <input id="ratingAvg" name="ratingAvg" type="number" step="0.1" min="0" max="5" className="form-control" defaultValue={cocktail?.ratingAvg != null ? String(cocktail.ratingAvg) : ""} />
+        </div>
+        <div className="col-md-3">
+          <label className="form-label" htmlFor="ratingCount">Rating count</label>
+          <input id="ratingCount" name="ratingCount" type="number" className="form-control" defaultValue={cocktail?.ratingCount ?? 0} />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label" htmlFor="tags">Tags (one per line)</label>
+          <textarea id="tags" name="tags" rows={2} className="form-control" defaultValue={(cocktail?.tags ?? []).join("\n")} placeholder={"Citrus\nClassic"} />
+        </div>
       </div>
 
       <div className="d-flex gap-2 mt-4">

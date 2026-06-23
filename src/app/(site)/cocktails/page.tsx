@@ -90,7 +90,8 @@ export default async function CocktailsIndex() {
                       <div className="ck-card-body">
                         <div className="d-flex align-items-center gap-3 pb-2 mb-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}>
                           {c.timeMins && <span style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>⏱ {c.timeMins} mins</span>}
-                          {c.occasion && <span style={{ fontSize: ".6875rem", color: "var(--text-dim)" }}>{c.occasion}</span>}
+                          {c.ratingAvg != null && <span style={{ fontSize: ".75rem", color: "var(--gold-hi)" }}>★ {Number(c.ratingAvg).toFixed(1)}</span>}
+                          {c.tags.length > 0 && <span style={{ fontSize: ".6875rem", color: "var(--text-dim)" }}>{c.tags.slice(0, 2).map((t) => `#${t}`).join(" ")}</span>}
                         </div>
                         <div className="flex-grow-1 mb-3">
                           {ings.slice(0, 3).map((ing, i) => <p className="ck-ing" key={i}>{ing}</p>)}
