@@ -38,6 +38,8 @@ const NAV: NavItem[] = [
   { href: "/admin/shipping-zones", label: "Shipping zones", icon: "bi-globe", group: "Site" },
   { href: "/admin/currencies", label: "Currencies", icon: "bi-currency-exchange", group: "Site" },
   { href: "/admin/settings", label: "Settings", icon: "bi-gear", group: "Site" },
+  { href: "/admin/staff", label: "Staff", icon: "bi-person-badge", group: "Access" },
+  { href: "/admin/audit", label: "Audit log", icon: "bi-clipboard-check", group: "Access" },
 ];
 
 const GROUPS = Array.from(new Set(NAV.filter((n) => n.group).map((n) => n.group as string)));

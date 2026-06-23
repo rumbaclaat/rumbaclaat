@@ -1,84 +1,111 @@
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/ui/page-header";
+import AdminTabs from "@/components/admin/ui/tabs";
+import FormSection from "@/components/admin/ui/form-section";
+import SaveBar from "@/components/admin/ui/save-bar";
+import { TextField, TextareaField, SelectField, CheckField } from "@/components/admin/ui/field";
 import { updateSettings } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-const FIELDS: { name: string; label: string; step?: string; suffix?: string }[] = [
-  { name: "shippingStandardCost", label: "Standard shipping cost (£)", step: "0.01" },
-  { name: "shippingExpressCost", label: "Express shipping cost (£)", step: "0.01" },
-  { name: "freeShippingThreshold", label: "Free shipping over (£)", step: "0.01" },
-  { name: "pointsPerPound", label: "Points per £1 (redemption)", step: "1" },
-  { name: "vatRatePct", label: "VAT rate (%)", step: "1" },
-  { name: "ageThreshold", label: "Minimum age", step: "1" },
-];
-
-export default async function SettingsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ saved?: string }>;
-}) {
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string }> }) {
   const { saved } = await searchParams;
-  const settings =
-    (await prisma.settings.findUnique({ where: { id: "default" } })) ??
-    (await prisma.settings.create({ data: { id: "default" } }));
-
-  const val = (k: keyof typeof settings) => String(settings[k] ?? "");
+  const settings = (await prisma.settings.findUnique({ where: { id: "default" } })) ?? (await prisma.settings.create({ data: { id: "default" } }));
+  const pay = (settings.paymentConfig ?? {}) as Record<string, unknown>;
+  const em = (settings.emailConfig ?? {}) as Record<string, unknown>;
+  const ghl = (settings.ghlConfig ?? {}) as Record<string, unknown>;
+  const s = (v: unknown) => (v == null ? "" : String(v));
 
   return (
     <>
-      <div className="admin-page-head">
-        <h1>Settings</h1>
-      </div>
+      <PageHeader title="Store settings" breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Settings" }]} />
+      {saved && <div className="admin-badge admin-badge--success mb-3" role="status">✓ Settings saved</div>}
 
-      {saved && (
-        <div
-          className="mb-3"
-          role="status"
-          style={{
-            background: "rgba(74,222,128,.12)",
-            border: "1px solid rgba(74,222,128,.35)",
-            color: "var(--green)",
-            borderRadius: 8,
-            padding: "8px 12px",
-            fontSize: ".875rem",
-          }}
-        >
-          ✓ Settings saved.
-        </div>
-      )}
-
-      <form action={updateSettings} className="admin-card" style={{ maxWidth: 640 }}>
-        <div className="row g-3">
-          {FIELDS.map((f) => (
-            <div className="col-sm-6" key={f.name}>
-              <label className="form-label" htmlFor={f.name}>
-                {f.label}
-              </label>
-              <input
-                id={f.name}
-                name={f.name}
-                type="number"
-                step={f.step}
-                className="form-control"
-                defaultValue={val(f.name as keyof typeof settings)}
-              />
-            </div>
-          ))}
-          <div className="col-sm-6">
-            <label className="form-label" htmlFor="currency">
-              Currency
-            </label>
-            <input
-              id="currency"
-              name="currency"
-              className="form-control"
-              defaultValue={settings.currency}
-            />
-          </div>
-        </div>
-        <button type="submit" className="btn btn-gold mt-4">
-          Save settings
-        </button>
+      <form action={updateSettings}>
+        <AdminTabs
+          tabs={[
+            {
+              id: "store", label: "Store",
+              content: (
+                <FormSection title="Shipping, tax & loyalty">
+                  <TextField name="shippingStandardCost" label="Standard shipping (£)" type="number" step="0.01" defaultValue={Number(settings.shippingStandardCost)} col="col-md-4" />
+                  <TextField name="shippingExpressCost" label="Express shipping (£)" type="number" step="0.01" defaultValue={Number(settings.shippingExpressCost)} col="col-md-4" />
+                  <TextField name="freeShippingThreshold" label="Free shipping over (£)" type="number" step="0.01" defaultValue={Number(settings.freeShippingThreshold)} col="col-md-4" />
+                  <TextField name="vatRatePct" label="VAT rate (%)" type="number" defaultValue={settings.vatRatePct} col="col-md-3" />
+                  <TextField name="pointsPerPound" label="Points per £1 (redeem)" type="number" defaultValue={settings.pointsPerPound} col="col-md-3" />
+                  <TextField name="loyaltyEarnRate" label="Points earned per £" type="number" defaultValue={settings.loyaltyEarnRate} col="col-md-3" />
+                  <TextField name="currency" label="Display currency" defaultValue={settings.currency} col="col-md-3" />
+                  <TextField name="baseCurrency" label="Base currency" defaultValue={settings.baseCurrency} col="col-md-3" />
+                </FormSection>
+              ),
+            },
+            {
+              id: "business", label: "Business",
+              content: (
+                <FormSection title="Business details (used on invoices)">
+                  <TextField name="businessName" label="Business name" defaultValue={settings.businessName ?? ""} col="col-md-6" />
+                  <TextField name="businessVat" label="VAT number" defaultValue={settings.businessVat ?? ""} col="col-md-3" />
+                  <TextField name="supportEmail" label="Support email" defaultValue={settings.supportEmail ?? ""} col="col-md-3" />
+                  <TextareaField name="businessAddress" label="Registered address" defaultValue={settings.businessAddress ?? ""} rows={2} />
+                </FormSection>
+              ),
+            },
+            {
+              id: "compliance", label: "Compliance",
+              content: (
+                <FormSection title="Age gate & maintenance">
+                  <TextField name="ageThreshold" label="Minimum age" type="number" defaultValue={settings.ageThreshold} col="col-md-4" />
+                  <CheckField name="ageGateEnabled" label="Show age gate on the storefront" defaultChecked={settings.ageGateEnabled} col="col-md-4" />
+                  <CheckField name="maintenanceMode" label="Maintenance mode (storefront closed)" defaultChecked={settings.maintenanceMode} col="col-md-4" />
+                </FormSection>
+              ),
+            },
+            {
+              id: "seo", label: "SEO",
+              content: (
+                <FormSection title="Default SEO">
+                  <TextField name="seoDefaultTitle" label="Default page title" defaultValue={settings.seoDefaultTitle ?? ""} col="col-12" />
+                  <TextareaField name="seoDefaultDescription" label="Default meta description" defaultValue={settings.seoDefaultDescription ?? ""} rows={2} />
+                </FormSection>
+              ),
+            },
+            {
+              id: "payments", label: "Payments",
+              content: (
+                <FormSection title="Payment gateways" description="Publishable keys + toggles. Secret keys live in environment variables (STRIPE_SECRET_KEY, PAYPAL_SECRET).">
+                  <SelectField name="paymentMode" label="Mode" options={["sandbox", "live"]} defaultValue={s(pay.mode) || "sandbox"} col="col-md-4" />
+                  <CheckField name="stripeEnabled" label="Stripe (cards)" defaultChecked={Boolean(pay.stripeEnabled)} col="col-md-3" />
+                  <CheckField name="paypalEnabled" label="PayPal" defaultChecked={Boolean(pay.paypalEnabled)} col="col-md-2" />
+                  <CheckField name="googlePayEnabled" label="Google Pay" defaultChecked={Boolean(pay.googlePayEnabled)} col="col-md-3" />
+                  <TextField name="stripePublishableKey" label="Stripe publishable key" defaultValue={s(pay.stripePublishableKey)} col="col-md-6" />
+                  <TextField name="paypalClientId" label="PayPal client id" defaultValue={s(pay.paypalClientId)} col="col-md-6" />
+                </FormSection>
+              ),
+            },
+            {
+              id: "email", label: "Email",
+              content: (
+                <FormSection title="Transactional email" description="Sender details. The API key lives in the RESEND_API_KEY environment variable.">
+                  <SelectField name="emailProvider" label="Provider" options={["resend", "postmark"]} defaultValue={s(em.provider) || "resend"} col="col-md-4" />
+                  <TextField name="emailFromName" label="From name" defaultValue={s(em.fromName)} col="col-md-4" />
+                  <TextField name="emailFromEmail" label="From email" defaultValue={s(em.fromEmail)} col="col-md-4" />
+                </FormSection>
+              ),
+            },
+            {
+              id: "ghl", label: "GoHighLevel",
+              content: (
+                <FormSection title="CRM sync" description="Pipeline + location ids. The API token lives in the GHL_TOKEN environment variable.">
+                  <CheckField name="ghlSyncEnabled" label="Enable two-way sync" defaultChecked={Boolean(ghl.syncEnabled)} col="col-12" />
+                  <TextField name="ghlLocationId" label="Location id" defaultValue={s(ghl.locationId)} col="col-md-4" />
+                  <TextField name="ghlCustomerPipeline" label="Customer pipeline id" defaultValue={s(ghl.customerPipelineId)} col="col-md-4" />
+                  <TextField name="ghlTradePipeline" label="Trade pipeline id" defaultValue={s(ghl.tradePipelineId)} col="col-md-4" />
+                </FormSection>
+              ),
+            },
+          ]}
+        />
+        <SaveBar submitLabel="Save settings" />
       </form>
     </>
   );
