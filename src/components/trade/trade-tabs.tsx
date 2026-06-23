@@ -11,13 +11,13 @@ export default function TradeTabs({
 
   return (
     <>
-      <ul className="nav nav-pills gap-2 my-4" role="tablist" aria-label="Trade portal sections">
+      <ul className="nav nav-pills gap-2 my-4" aria-label="Trade portal sections">
         {tabs.map((t) => (
-          <li className="nav-item" key={t.id} role="presentation">
+          <li className="nav-item" key={t.id}>
             <button
               type="button"
               className={`nav-link ${active === t.id ? "active" : ""}`}
-              aria-selected={active === t.id}
+              aria-current={active === t.id ? "true" : undefined}
               onClick={() => setActive(t.id)}
             >
               {t.label}
@@ -27,7 +27,7 @@ export default function TradeTabs({
         ))}
       </ul>
       {tabs.map((t) => (
-        <div key={t.id} hidden={active !== t.id} role="tabpanel">
+        <div key={t.id} hidden={active !== t.id}>
           {t.content}
         </div>
       ))}
