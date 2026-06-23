@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import BrandingStyle from "@/components/branding-style";
 
 // Order matters: Bootstrap first, then brand theme overrides it.
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -40,6 +41,19 @@ export default function RootLayout({
       className={`${serif.variable} ${sans.variable}`}
     >
       <body>
+        <BrandingStyle />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Rumbaclaat",
+              url: "https://rumbaclaat.com",
+              description: "Premium Caribbean rum, aged in American oak.",
+            }),
+          }}
+        />
         {children}
         <Analytics />
       </body>

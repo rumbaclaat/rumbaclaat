@@ -38,6 +38,7 @@ const NAV: NavItem[] = [
   { href: "/admin/redirects", label: "Redirects", icon: "bi-signpost-split", group: "Site" },
   { href: "/admin/shipping-zones", label: "Shipping zones", icon: "bi-globe", group: "Site" },
   { href: "/admin/currencies", label: "Currencies", icon: "bi-currency-exchange", group: "Site" },
+  { href: "/admin/appearance", label: "Appearance", icon: "bi-palette", group: "Site" },
   { href: "/admin/settings", label: "Settings", icon: "bi-gear", group: "Site" },
   { href: "/admin/staff", label: "Staff", icon: "bi-person-badge", group: "Access" },
   { href: "/admin/audit", label: "Audit log", icon: "bi-clipboard-check", group: "Access" },
