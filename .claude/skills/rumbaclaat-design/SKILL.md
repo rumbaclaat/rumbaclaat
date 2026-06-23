@@ -72,8 +72,9 @@ Every storefront page goes through this gate before it's "done":
 2. **Design** — reproduce it (yourself, or via the `rumbaclaat-designer` agent): same structure, classes, inline styles, copy, image URLs. Wire dynamic data via props/DB only where the data is genuinely dynamic.
 3. **Design review (gate)** — run the `rumbaclaat-design-reviewer` agent on the result. It compares the build against the source and returns PASS/FAIL + DEVIATIONS + NEEDS CLARIFICATION. **A page is not done until it PASSES.**
 4. **Accessibility gate (WCAG 2.2 AA)** — run the installed **`accessibility`** skill's checklist over the page AND the automated scan `npm run a11y` (axe-core against localhost) — use `npm run a11y:prod` for the deployed pages. Fix every Critical/Serious finding: form labels, image alt text, colour contrast (4.5:1 text / 3:1 large & UI), visible focus, keyboard operability, valid ARIA roles, landmarks, one `<h1>`. **A page is not done until axe reports 0 violations.** (Run the dev server first; deleting `.next` under a running dev server makes it serve error pages and gives false positives — scan production if unsure.)
-5. **Ask, don't guess** — anything under NEEDS CLARIFICATION (e.g. a class whose CSS lived only in the absent `theme.css`, or a missing brand image) goes back to the human. Never invent the missing styling.
-6. **Test design** — deploy the page to the live Vercel preview and share the URL so the human can eyeball it before it's accepted.
+5. **Responsive gate (mobile-first)** — run the **`responsive-design`** skill's checklist. No horizontal scroll at 320px, grids reflow to 1–2 columns, wide tables scroll inside `.table-responsive`, tap targets ≥44px, header collapses to a working hamburger. **A page is not done until it passes at 320 / 375 / 768 / 1024 / 1440.**
+6. **Ask, don't guess** — anything under NEEDS CLARIFICATION (e.g. a class whose CSS lived only in the absent `theme.css`, or a missing brand image) goes back to the human. Never invent the missing styling.
+7. **Test design** — deploy the page to the live Vercel preview and share the URL so the human can eyeball it before it's accepted.
 
 ### Known unrecoverable gaps (always NEEDS CLARIFICATION, never guess)
 The source folder was HTML-only. These were referenced but absent, so they cannot be reproduced verbatim and must be supplied/confirmed by the client:

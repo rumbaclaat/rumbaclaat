@@ -56,6 +56,10 @@
   --bs-emphasis-color: var(--text);
   --bs-link-color: var(--gold-hi);
   --bs-link-hover-color: var(--gold);
+  /* Bootstrap reboot styles links via the *-rgb vars — without these, links
+     fall back to Bootstrap's default blue. Set them to the brand gold. */
+  --bs-link-color-rgb: 228, 199, 123;       /* #E4C77B (--gold-hi) */
+  --bs-link-hover-color-rgb: 198, 167, 94;  /* #C6A75E (--gold) */
   --bs-border-color: var(--gold-bdr);
 }
 
@@ -474,3 +478,45 @@ mark { background: var(--gold-lt); color: var(--gold-hi); padding: 0 2px; border
 .footer-logo-img { height: 30px; width: auto; display: block; }
 .footer-accreditation-img { height: 46px; width: auto; display: block; }
 @media (max-width: 575.98px) { .hero-logo { width: 80%; max-width: 260px; } }
+
+/* ============================================================================
+ * Pixel polish — links, dots, dead-centred numbers/icons
+ * ========================================================================== */
+
+/* No blue links anywhere — brand gold, underline only on hover */
+a { color: var(--gold-hi); text-decoration: none; }
+a:hover, a:focus-visible { color: var(--gold); text-decoration: underline; }
+
+/* Breadcrumbs */
+.breadcrumb { --bs-breadcrumb-divider-color: var(--text-dim); margin-bottom: 0; }
+.breadcrumb a { color: var(--gold-hi); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb-item.active { color: var(--text-muted); }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--text-dim); }
+
+/* Difficulty dots — give breathing room from the label + sit on the text centre */
+.diff-dot { margin-right: 7px; vertical-align: middle; position: relative; top: -1px; }
+.meta-pill .diff-dot { margin-right: 0; top: 0; }
+
+/* Dead-centre every circular badge: icon/number perfectly centred */
+.nav-icon-btn,
+.qty-btn,
+.info-icon,
+.step-circle,
+.hc-arrow,
+.ck-method-list .step-num,
+.rc-overlay-card .badge-brand {
+  line-height: 1;
+}
+.ck-method-list .step-num,
+.step-circle,
+.info-icon,
+.nav-icon-btn,
+.qty-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+/* Filter pills: dot + label centred as a unit */
+.btn .diff-dot { position: static; top: 0; }
