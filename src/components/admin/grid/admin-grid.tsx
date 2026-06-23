@@ -35,6 +35,7 @@ export default function AdminGrid<T extends { id: string }>({
   bulkActions,
   enableExport = true,
   exportFileName = "export",
+  onReorder,
 }: {
   rowData: T[];
   columnDefs: ColDef<T>[];
@@ -47,6 +48,7 @@ export default function AdminGrid<T extends { id: string }>({
   bulkActions?: BulkAction[];
   enableExport?: boolean;
   exportFileName?: string;
+  onReorder?: (orderedIds: string[]) => void | Promise<void>;
 }) {
   const router = useRouter();
   const gridRef = useRef<AgGridReact<T>>(null);
@@ -60,6 +62,17 @@ export default function AdminGrid<T extends { id: string }>({
   );
   const getRowId = useMemo(() => (p: GetRowIdParams<T>) => p.data.id, []);
   const selectable = Boolean(bulkActions?.length);
+
+  const cols = useMemo<ColDef<T>[]>(() => {
+    if (!onReorder) return columnDefs;
+    return [{ rowDrag: true, headerName: "", width: 42, maxWidth: 42, sortable: false, filter: false, resizable: false } as ColDef<T>, ...columnDefs];
+  }, [columnDefs, onReorder]);
+
+  function handleRowDragEnd(e: { api: { forEachNodeAfterFilterAndSort: (cb: (n: { data?: T }) => void) => void } }) {
+    const ids: string[] = [];
+    e.api.forEachNodeAfterFilterAndSort((n) => { if (n.data) ids.push(n.data.id); });
+    void onReorder?.(ids);
+  }
 
   function onSelectionChanged(e: SelectionChangedEvent<T>) {
     setSelected(e.api.getSelectedRows().map((r) => r.id));
@@ -132,7 +145,7 @@ export default function AdminGrid<T extends { id: string }>({
           ref={gridRef}
           theme={adminGridTheme}
           rowData={rowData}
-          columnDefs={columnDefs}
+          columnDefs={cols}
           defaultColDef={defaultColDef}
           quickFilterText={quick}
           getRowId={getRowId}
@@ -140,6 +153,8 @@ export default function AdminGrid<T extends { id: string }>({
           headerHeight={46}
           rowSelection={selectable ? { mode: "multiRow", enableClickSelection: false } : undefined}
           onSelectionChanged={selectable ? onSelectionChanged : undefined}
+          rowDragManaged={Boolean(onReorder)}
+          onRowDragEnd={onReorder ? handleRowDragEnd : undefined}
           pagination
           paginationPageSize={pageSize}
           paginationPageSizeSelector={[25, 50, 100]}

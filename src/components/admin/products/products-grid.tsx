@@ -52,9 +52,13 @@ function PriceCell(p: CustomCellRendererProps<ProductRow>) {
 export default function ProductsGrid({
   rows,
   deleteAction,
+  bulkStatus,
+  bulkDelete,
 }: {
   rows: ProductRow[];
   deleteAction: (fd: FormData) => void | Promise<void>;
+  bulkStatus?: (ids: string[], status: string) => Promise<void>;
+  bulkDelete?: (ids: string[]) => Promise<void>;
 }) {
   const columnDefs = useMemo<ColDef<ProductRow>[]>(
     () => [
@@ -85,12 +89,25 @@ export default function ProductsGrid({
     [deleteAction]
   );
 
+  const bulkActions = [];
+  if (bulkStatus) {
+    bulkActions.push(
+      { label: "Publish", icon: "bi-eye", run: (ids: string[]) => bulkStatus(ids, "published") },
+      { label: "Archive", icon: "bi-archive", run: (ids: string[]) => bulkStatus(ids, "archived") }
+    );
+  }
+  if (bulkDelete) {
+    bulkActions.push({ label: "Delete", icon: "bi-trash", danger: true, confirm: "Delete {n} products?", run: (ids: string[]) => bulkDelete(ids) });
+  }
+
   return (
     <AdminGrid<ProductRow>
       rowData={rows}
       columnDefs={columnDefs}
       quickFilterPlaceholder="Search products…"
       resultsLabel="products"
+      exportFileName="products"
+      bulkActions={bulkActions.length ? bulkActions : undefined}
     />
   );
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { deleteProduct } from "./actions";
+import { deleteProduct, bulkProductStatus, bulkDeleteProducts, importProductsCsv } from "./actions";
 import PageHeader from "@/components/admin/ui/page-header";
 import ProductsGrid, { type ProductRow } from "@/components/admin/products/products-grid";
 
@@ -32,12 +32,22 @@ export default async function ProductsPage() {
         title="Products"
         breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Products" }]}
         action={
-          <Link href="/admin/products/new" className="btn btn-gold btn-sm">
-            <i className="bi bi-plus-lg me-1" aria-hidden="true" />New product
-          </Link>
+          <div className="d-flex gap-2">
+            <details className="admin-import">
+              <summary className="btn btn-ghost btn-sm"><i className="bi bi-upload me-1" aria-hidden="true" />Import CSV</summary>
+              <form action={importProductsCsv} className="admin-card mt-2" style={{ position: "absolute", zIndex: 20, width: 320 }}>
+                <p className="td-muted" style={{ fontSize: ".78rem" }}>Columns: name, sku, type, price, stock, status</p>
+                <input type="file" name="file" accept=".csv" className="form-control form-control-sm mb-2" required />
+                <button type="submit" className="btn btn-gold btn-sm w-100">Import</button>
+              </form>
+            </details>
+            <Link href="/admin/products/new" className="btn btn-gold btn-sm">
+              <i className="bi bi-plus-lg me-1" aria-hidden="true" />New product
+            </Link>
+          </div>
         }
       />
-      <ProductsGrid rows={rows} deleteAction={deleteProduct} />
+      <ProductsGrid rows={rows} deleteAction={deleteProduct} bulkStatus={bulkProductStatus} bulkDelete={bulkDeleteProducts} />
     </>
   );
 }
