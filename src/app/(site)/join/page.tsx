@@ -65,7 +65,7 @@ export default function JoinPage() {
             {STEPS.map((s) => (
               <div className="col-12 col-md-4" key={s.n}>
                 <div className="card-brand reveal text-center h-100">
-                  <div className="serif" style={{ fontSize: "3rem", fontWeight: 700, color: "rgba(198,167,94,.25)", lineHeight: 1, marginBottom: 12 }}>{s.n}</div>
+                  <div className="serif" style={{ fontSize: "3rem", fontWeight: 700, color: "rgba(212,184,120,.65)", lineHeight: 1, marginBottom: 12 }}>{s.n}</div>
                   <h3 style={{ fontSize: "1.375rem", marginBottom: 10 }}>{s.h}</h3>
                   <p style={{ color: "var(--text-muted)" }}>{s.p}</p>
                 </div>

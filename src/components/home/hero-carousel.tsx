@@ -68,7 +68,7 @@ export default function HeroCarousel() {
     <section className="hero-carousel" aria-roledescription="carousel" aria-label="Featured stories">
       <div className="hc-slides" aria-live="polite">
         {SLIDES.map((s, i) => (
-          <article
+          <div
             key={i}
             className={`hc-slide${i === active ? " active" : ""}`}
             role="group"
@@ -89,7 +89,7 @@ export default function HeroCarousel() {
                 ))}
               </div>
             </div>
-          </article>
+          </div>
         ))}
       </div>
 
@@ -100,14 +100,13 @@ export default function HeroCarousel() {
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
       </button>
 
-      <div className="hc-dots" role="tablist" aria-label="Choose a slide">
+      <div className="hc-dots" aria-label="Choose a slide">
         {SLIDES.map((_, i) => (
           <button
             key={i}
             type="button"
             className="hc-dot"
-            role="tab"
-            aria-current={i === active}
+            aria-current={i === active ? "true" : undefined}
             aria-label={`Slide ${i + 1}`}
             onClick={() => setActive(i)}
           />
