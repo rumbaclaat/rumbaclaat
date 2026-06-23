@@ -3,6 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { getCustomer } from "@/lib/auth";
+import { creditPoints } from "@/lib/points";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function registerCustomer(formData: FormData) {
@@ -46,4 +49,51 @@ export async function signOutCustomer() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/account");
+}
+
+export async function subscribeTier(formData: FormData) {
+  const session = await getCustomer();
+  if (!session) redirect("/account");
+  const tierId = String(formData.get("tierId"));
+  const billingCycle = String(formData.get("billingCycle") ?? "monthly");
+  const tier = await prisma.membershipTier.findUnique({ where: { id: tierId } });
+  if (!tier) redirect("/account");
+
+  await prisma.customer.update({
+    where: { id: session!.customer.id },
+    data: { membershipTierId: tier.id },
+  });
+
+  if (tier.isFree) {
+    await prisma.membershipSubscription.updateMany({
+      where: { customerId: session!.customer.id },
+      data: { status: "cancelled", cancelledAt: new Date() },
+    });
+  } else {
+    const price = billingCycle === "annual" ? tier.priceAnnual : tier.priceMonthly;
+    await prisma.membershipSubscription.upsert({
+      where: { customerId: session!.customer.id },
+      update: { tierId: tier.id, billingCycle, price, status: "active", cancelledAt: null },
+      create: { customerId: session!.customer.id, tierId: tier.id, billingCycle, price, status: "active" },
+    });
+  }
+
+  revalidatePath("/account");
+  redirect("/account?tier=1");
+}
+
+export async function redeemReward(formData: FormData) {
+  const session = await getCustomer();
+  if (!session) redirect("/account");
+  const rewardId = String(formData.get("rewardId"));
+  const reward = await prisma.reward.findUnique({ where: { id: rewardId } });
+  if (!reward || reward.availability !== "available") redirect("/account?error=reward");
+  if (session!.customer.pointsBalance < reward!.pointsCost) redirect("/account?error=points");
+
+  await creditPoints(session!.customer.id, -reward!.pointsCost, "redemption", {
+    relatedRewardId: reward!.id,
+    note: reward!.name,
+  });
+  revalidatePath("/account");
+  redirect("/account?redeemed=1");
 }

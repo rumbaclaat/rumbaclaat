@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { creditPoints } from "@/lib/points";
 import { revalidatePath } from "next/cache";
 
 export type CartLine = { productId: string; variantId?: string; qty: number };
@@ -30,7 +31,7 @@ export async function createOrder(input: OrderInput) {
   const expCost = Number(settings?.shippingExpressCost ?? 9.99);
 
   let subtotal = 0;
-  let pointsEarned = 0;
+  let basePointsSum = 0;
   const orderItems: {
     productId: string;
     variantId: string | null;
@@ -58,7 +59,7 @@ export async function createOrder(input: OrderInput) {
     const qty = Math.max(1, line.qty);
     const lineTotal = unit * qty;
     subtotal += lineTotal;
-    pointsEarned += product.basePoints * qty;
+    basePointsSum += product.basePoints * qty;
     orderItems.push({
       productId: product.id,
       variantId: variant?.id ?? null,
@@ -75,13 +76,25 @@ export async function createOrder(input: OrderInput) {
 
   if (orderItems.length === 0) throw new Error("No valid items in cart");
 
+  // Member pricing + points multiplier, if the email matches a member.
+  const customer = await prisma.customer.findUnique({ where: { email: input.email } });
+  const tier = customer?.membershipTierId
+    ? await prisma.membershipTier.findUnique({ where: { id: customer.membershipTierId } })
+    : null;
+  const memberDiscountPct = tier?.memberDiscountPct ?? 0;
+  const multiplier = tier ? Number(tier.pointsMultiplier) : 1;
+
+  const memberDiscount = Math.round(subtotal * (memberDiscountPct / 100) * 100) / 100;
+  const discountedSubtotal = subtotal - memberDiscount;
+  const pointsEarned = Math.round(basePointsSum * multiplier);
+
   const shipping =
     input.deliveryMethod === "express"
       ? expCost
       : subtotal >= freeThreshold
         ? 0
         : stdCost;
-  const total = subtotal + shipping;
+  const total = Math.round((discountedSubtotal + shipping) * 100) / 100;
   const ref = `RC-${new Date().getFullYear()}-${String(
     Math.floor(10000 + Math.random() * 90000)
   )}`;
@@ -105,6 +118,17 @@ export async function createOrder(input: OrderInput) {
     },
   });
 
+  if (customer) {
+    await creditPoints(customer.id, pointsEarned, "purchase", {
+      relatedOrderId: order.id,
+      note: `Order ${order.ref}`,
+    });
+    await prisma.customer.update({
+      where: { id: customer.id },
+      data: { lifetimeSpend: { increment: total } },
+    });
+  }
+
   revalidatePath("/admin/orders");
-  return { ref: order.ref, total, pointsEarned };
+  return { ref: order.ref, total, pointsEarned, memberDiscount };
 }

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 const NAV: { href: string; label: string; exact?: boolean; group?: string }[] = [
   { href: "/admin", label: "Dashboard", exact: true },
   { href: "/admin/orders", label: "Orders" },
+  { href: "/admin/customers", label: "Customers" },
   { href: "/admin/enquiries", label: "Enquiries" },
   { href: "/admin/products", label: "Products", group: "Catalogue" },
   { href: "/admin/categories", label: "Categories", group: "Catalogue" },
