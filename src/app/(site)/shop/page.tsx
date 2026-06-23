@@ -60,7 +60,9 @@ export default async function ShopPage({
                   <div className="col-12 col-md-6 col-lg-4" key={p.id}>
                     <article className="product-card reveal">
                       <Link href={`/product/${p.slug}`} className="product-card-img-link">
-                        <div className="product-card-img" />
+                        <div className="product-card-img">
+                          {p.imageUrl && <img src={p.imageUrl} alt={p.name} loading="lazy" />}
+                        </div>
                       </Link>
                       <div className="product-card-body">
                         <div className="stars" aria-label="Rated 5 out of 5">★★★★★</div>

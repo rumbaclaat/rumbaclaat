@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { DEV_OPEN_ACCESS } from "@/lib/dev-flags";
 
 /**
  * Refreshes the Supabase auth session on every request and guards /admin.
@@ -37,7 +38,7 @@ export async function updateSession(request: NextRequest) {
   const isAdmin = path.startsWith("/admin");
   const isLogin = path.startsWith("/admin/login");
 
-  if (isAdmin && !isLogin && !user) {
+  if (isAdmin && !isLogin && !user && !DEV_OPEN_ACCESS) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     url.searchParams.set("next", path);

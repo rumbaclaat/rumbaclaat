@@ -1,6 +1,24 @@
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import type { StaffUser } from "@/generated/prisma/client";
+import { DEV_OPEN_ACCESS } from "@/lib/dev-flags";
+
+function devStaffSession(): StaffSession {
+  return {
+    authUserId: "dev-open-access",
+    email: "admin@rumbaclaat.com",
+    staff: {
+      id: "dev-open-access",
+      authUserId: "dev-open-access",
+      email: "admin@rumbaclaat.com",
+      name: "Admin (open access)",
+      role: "super_admin",
+      active: true,
+      createdAt: new Date(0),
+      updatedAt: new Date(0),
+    } as StaffUser,
+  };
+}
 
 export type StaffSession = {
   authUserId: string;
@@ -14,14 +32,19 @@ export async function getStaffUser(): Promise<StaffSession | null> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return null;
 
-  const staff = await prisma.staffUser.findUnique({
-    where: { authUserId: user.id },
-  });
-  if (!staff || !staff.active) return null;
+  if (user) {
+    const staff = await prisma.staffUser.findUnique({
+      where: { authUserId: user.id },
+    });
+    if (staff && staff.active) {
+      return { authUserId: user.id, email: user.email ?? staff.email, staff };
+    }
+  }
 
-  return { authUserId: user.id, email: user.email ?? staff.email, staff };
+  // Build phase: allow admin access without a staff login.
+  if (DEV_OPEN_ACCESS) return devStaffSession();
+  return null;
 }
 
 /** Throws if the caller is not an active staff member. Use in server actions. */

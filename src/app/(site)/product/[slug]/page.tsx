@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -77,9 +78,26 @@ export default async function ProductPage({
         </nav>
 
         <div className="row g-5">
-          {/* Gallery placeholder */}
+          {/* Gallery */}
           <div className="col-12 col-lg-6">
-            <div style={{ aspectRatio: "1", borderRadius: "var(--radius-xl)", background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)" }} />
+            <div className="gallery-main mb-3">
+              {product.imageUrl ? (
+                <img src={product.imageUrl} alt={product.name} />
+              ) : (
+                <div style={{ width: "100%", height: "100%", background: "var(--bg-card2)" }} />
+              )}
+            </div>
+            {product.galleryImages.length > 0 && (
+              <div className="row g-2">
+                {[product.imageUrl, ...product.galleryImages].filter(Boolean).slice(0, 4).map((src, i) => (
+                  <div className="col-3" key={i}>
+                    <div className="thumb w-100">
+                      <img src={src as string} alt="" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Info */}

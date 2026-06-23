@@ -116,6 +116,15 @@ export default function ProductForm({
           <label className="form-label" htmlFor="material">Material (apparel)</label>
           <input id="material" name="material" className="form-control" defaultValue={product?.material ?? ""} />
         </div>
+
+        <div className="col-12">
+          <label className="form-label" htmlFor="imageUrl">Primary image URL <span style={{ color: "var(--text-dim)" }}>(upload in Media, paste the URL)</span></label>
+          <input id="imageUrl" name="imageUrl" className="form-control" defaultValue={product?.imageUrl ?? ""} placeholder="https://…" />
+        </div>
+        <div className="col-12">
+          <label className="form-label" htmlFor="galleryImages">Gallery image URLs <span style={{ color: "var(--text-dim)" }}>(one per line)</span></label>
+          <textarea id="galleryImages" name="galleryImages" rows={3} className="form-control" defaultValue={(product?.galleryImages ?? []).join("\n")} />
+        </div>
       </div>
 
       <div className="d-flex gap-2 mt-4">

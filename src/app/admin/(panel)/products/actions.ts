@@ -46,6 +46,11 @@ function readProduct(fd: FormData) {
     maxQtyPerOrder: String(fd.get("maxQtyPerOrder") ?? "").trim()
       ? int(fd, "maxQtyPerOrder")
       : null,
+    imageUrl: str(fd, "imageUrl"),
+    galleryImages: String(fd.get("galleryImages") ?? "")
+      .split(/[\n,]/)
+      .map((s) => s.trim())
+      .filter(Boolean),
     status: (String(fd.get("status") ?? "draft") as PublishStatus),
   };
 }
