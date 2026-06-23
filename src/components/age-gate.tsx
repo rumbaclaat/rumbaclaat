@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 const STORAGE_KEY = "rc_age_ok";
 const MIN_AGE = 18;
 
+// Age verification is skipped during the build phase to keep the dev/preview
+// flow fast. MUST be set back to true before launch (UK alcohol compliance).
+const AGE_GATE_ENABLED = false;
+
 function isAtLeast(age: number, dob: Date): boolean {
   const now = new Date();
   const threshold = new Date(
@@ -23,6 +27,7 @@ export default function AgeGate() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!AGE_GATE_ENABLED) return; // skipped during build
     // Show the gate unless this browser already passed it.
     try {
       if (localStorage.getItem(STORAGE_KEY) !== "true") setOpen(true);

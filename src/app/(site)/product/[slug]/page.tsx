@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import AddToCartButton from "@/components/cart/add-to-cart-button";
 
 export const dynamic = "force-dynamic";
 
@@ -129,9 +130,18 @@ export default async function ProductPage({
             )}
 
             <div className="d-flex gap-2 align-items-center mt-3">
-              <button type="button" className="btn btn-gold btn-lg" style={{ minWidth: 200 }}>
-                Add to Cart
-              </button>
+              {product.stockQty > 0 ? (
+                <AddToCartButton
+                  productId={product.id}
+                  name={product.name}
+                  price={price}
+                  className="btn btn-gold btn-lg"
+                />
+              ) : (
+                <button type="button" className="btn btn-gold btn-lg" disabled>
+                  Out of stock
+                </button>
+              )}
               <span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>
                 {product.stockQty > 0 ? `${product.stockQty} in stock` : "Out of stock"}
               </span>

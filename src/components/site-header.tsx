@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { useCart } from "@/components/cart/cart-provider";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -19,6 +20,7 @@ const NAV_LINKS = [
 
 export default function SiteHeader() {
   const pathname = usePathname();
+  const { count } = useCart();
 
   return (
     <header>
@@ -63,9 +65,10 @@ export default function SiteHeader() {
               <Link
                 className="nav-icon-btn"
                 href="/cart"
-                aria-label="Cart, 0 items"
+                aria-label={`Cart, ${count} item${count === 1 ? "" : "s"}`}
               >
                 <CartIcon />
+                {count > 0 && <span className="cart-count">{count}</span>}
               </Link>
               <Link
                 className="nav-icon-btn"
