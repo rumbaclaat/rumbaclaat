@@ -426,3 +426,24 @@ em { font-style: italic; }
 .search-result:hover, .search-result:focus { border-color: var(--gold-md); }
 .info-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--gold-lt); border: 1px solid var(--gold-md); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gold-hi); }
 mark { background: var(--gold-lt); color: var(--gold-hi); padding: 0 2px; border-radius: 2px; }
+
+/* ============================================================================
+ * RECONSTRUCTED — NEEDS CLIENT CONFIRMATION
+ * These classes are used in static-source markup (shop.html gift-card advert)
+ * but their CSS was ONLY in the absent assets/css/theme.css. The rules below
+ * are a faithful best-effort reconstruction, not verbatim source. Confirm with
+ * the client / replace when the original theme.css or assets are supplied.
+ * ========================================================================== */
+.sale-ends { font-size: .8125rem; color: var(--text-muted); }
+.gift-card-banner { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: center; background: linear-gradient(135deg, #1C1A14, #161310); border: 1px solid var(--gold-bdr); border-radius: var(--radius-xl); padding: 40px; }
+@media (max-width: 860px) { .gift-card-banner { grid-template-columns: 1fr; gap: 28px; } }
+.gift-card-mock { background: linear-gradient(135deg, #1A1610, #0E0E0E); border: 1px solid var(--gold); border-radius: 16px; padding: 28px; aspect-ratio: 1.586/1; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+.gift-card-mock::before { content: ""; position: absolute; top: 0; right: 0; width: 120px; height: 120px; background: radial-gradient(circle, var(--gold-lt) 0%, transparent 70%); }
+.gift-card-mock-eyebrow { font-size: .6875rem; letter-spacing: .24em; color: var(--gold-hi); }
+.gift-card-mock-value { font-family: var(--serif); font-size: 2.5rem; font-weight: 700; color: var(--gold-hi); }
+.gift-card-mock-label { font-size: .75rem; letter-spacing: .2em; color: var(--text-muted); }
+.gift-card-mock-code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .8125rem; color: var(--text-dim); letter-spacing: .1em; }
+.gift-card-banner-h { font-family: var(--serif); font-weight: 600; font-size: clamp(1.6rem, 3vw, 2.25rem); }
+.gift-card-banner-lede { color: var(--text-muted); }
+.gift-card-banner-feats li { display: flex; align-items: flex-start; gap: 8px; font-size: .875rem; color: var(--text-muted); margin-bottom: 8px; }
+.gift-card-banner-feats li span { color: var(--gold); }

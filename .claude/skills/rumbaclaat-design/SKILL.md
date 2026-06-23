@@ -63,3 +63,19 @@ The canonical visual reference is the **`static-source/` folder** (40 hand-built
 4. Verify against the source visually; the result must be indistinguishable in layout, colour, and type.
 
 When in doubt, the answer is in `static-source/`. Reproduce it — do not deviate.
+
+## The design pipeline (use for every page — new or rebuilt)
+
+Every storefront page goes through this gate before it's "done":
+
+1. **Scope** — identify the page and open its `static-source/*.html` (page→source map above). Read the full `<main>` + inline `<style>`.
+2. **Design** — reproduce it (yourself, or via the `rumbaclaat-designer` agent): same structure, classes, inline styles, copy, image URLs. Wire dynamic data via props/DB only where the data is genuinely dynamic.
+3. **Review (gate)** — run the `rumbaclaat-design-reviewer` agent on the result. It compares the build against the source and returns PASS/FAIL + DEVIATIONS + NEEDS CLARIFICATION. **A page is not done until it PASSES.**
+4. **Ask, don't guess** — anything under NEEDS CLARIFICATION (e.g. a class whose CSS lived only in the absent `theme.css`, or a missing brand image) goes back to the human. Never invent the missing styling.
+5. **Test design** — deploy the page to the live Vercel preview and share the URL so the human can eyeball it before it's accepted.
+
+### Known unrecoverable gaps (always NEEDS CLARIFICATION, never guess)
+The source folder was HTML-only. These were referenced but absent, so they cannot be reproduced verbatim and must be supplied/confirmed by the client:
+- `assets/css/theme.css` core classes — reconstructed in `src/styles/theme.css`; a few page-specific classes (e.g. `.gift-card-banner*`, `.gift-card-mock*`) had **no** source CSS at all and are marked `RECONSTRUCTED — NEEDS CLIENT CONFIRMATION` in `theme.css`.
+- `assets/js/main.js` — interactive behaviour (cart, carousels, filters) reimplemented in React, not copied.
+- `assets/img/*` — the brand wordmark logo, crest, and partner logos (Drinkaware, accreditation). Until supplied, use the `.brand-wordmark` text and text labels.
