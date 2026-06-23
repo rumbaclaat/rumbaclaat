@@ -30,7 +30,7 @@ export default function TradePage() {
             </div>
             <h2 className="h3" style={{ fontFamily: "var(--serif)", fontWeight: 600, marginBottom: 6 }}>Sign in to your trade account</h2>
             <p style={{ fontSize: ".9375rem", color: "var(--text-muted)", marginBottom: 20 }}>View your pricing, place new orders, message your account manager, and download invoices.</p>
-            <form action="/account">
+            <form action="/trade/portal">
               <div className="mb-3"><label className="form-label" htmlFor="ts-email">Business email *</label><input className="form-control" type="email" id="ts-email" autoComplete="email" /></div>
               <div className="mb-3"><label className="form-label" htmlFor="ts-password">Password *</label><input className="form-control" type="password" id="ts-password" autoComplete="current-password" /></div>
               <button type="submit" className="btn btn-gold w-100">Sign in to trade portal</button>
