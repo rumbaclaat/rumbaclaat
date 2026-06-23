@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 // Order matters: Bootstrap first, then brand theme overrides it.
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -38,7 +39,10 @@ export default function RootLayout({
       data-bs-theme="dark"
       className={`${serif.variable} ${sans.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

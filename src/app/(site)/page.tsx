@@ -1,11 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import BrandImage from "@/components/brand-image";
+import { prisma } from "@/lib/prisma";
+import BlockRenderer from "@/components/blocks/block-renderer";
+
+export const dynamic = "force-dynamic";
 
 const U = (id: string, w = 800) =>
   `https://images.unsplash.com/${id}?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=${w}`;
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Editable homepage: if a published "home" page with blocks exists, render it.
+  // Otherwise fall back to this hand-built design.
+  const homePage = await prisma.page.findFirst({
+    where: { slug: "home", status: "published" },
+    include: { blocks: { orderBy: { order: "asc" } } },
+  });
+  if (homePage && homePage.blocks.length > 0) {
+    return <>{homePage.blocks.map((b) => <BlockRenderer key={b.id} block={b} />)}</>;
+  }
+
   return (
     <>
       {/* Static hero banner */}

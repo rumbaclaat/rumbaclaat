@@ -11,6 +11,7 @@ type NavItem = { href: string; label: string; icon: string; exact?: boolean; gro
 
 const NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: "bi-speedometer2", exact: true },
+  { href: "/admin/analytics", label: "Analytics", icon: "bi-graph-up" },
   { href: "/admin/orders", label: "Orders", icon: "bi-bag" },
   { href: "/admin/customers", label: "Customers", icon: "bi-people" },
   { href: "/admin/trade", label: "Trade accounts", icon: "bi-briefcase" },

@@ -1,63 +1,113 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { formatMoney } from "@/lib/money";
+import PageHeader from "@/components/admin/ui/page-header";
+import AdminCard from "@/components/admin/ui/admin-card";
+import StatCard from "@/components/admin/ui/stat-card";
+import StatusBadge from "@/components/admin/ui/status-badge";
+import { BarChart, Donut } from "@/components/admin/analytics/charts";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [products, categories, tiers, pages, posts, cocktails, media] =
-    await Promise.all([
-      prisma.product.count(),
-      prisma.category.count(),
-      prisma.membershipTier.count(),
-      prisma.page.count(),
-      prisma.blogPost.count(),
-      prisma.cocktail.count(),
-      prisma.media.count(),
-    ]);
+  const now = new Date();
+  const since30 = new Date(now.getTime() - 30 * 86400000);
+  const since6m = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
-  const stats = [
-    { label: "Products", value: products, href: "/admin/products" },
-    { label: "Categories", value: categories, href: "/admin/categories" },
-    { label: "Membership tiers", value: tiers, href: "/admin/settings" },
-    { label: "Pages", value: pages, href: "/admin/pages" },
-    { label: "Blog posts", value: posts, href: "/admin/blog" },
-    { label: "Cocktails", value: cocktails, href: "/admin/cocktails" },
-    { label: "Media files", value: media, href: "/admin/media" },
-  ];
+  const [revAll, rev30, orderCount, pending, customers, new30, points, statusGroup, paidOrders, lowStockProducts, openInvoices, recentOrders, recentEnq] = await Promise.all([
+    prisma.order.aggregate({ _sum: { total: true }, where: { paymentStatus: "paid" } }),
+    prisma.order.aggregate({ _sum: { total: true }, where: { paymentStatus: "paid", placedAt: { gte: since30 } } }),
+    prisma.order.count(),
+    prisma.order.count({ where: { status: { in: ["received", "paid", "packed"] } } }),
+    prisma.customer.count(),
+    prisma.customer.count({ where: { createdAt: { gte: since30 } } }),
+    prisma.customer.aggregate({ _sum: { pointsBalance: true } }),
+    prisma.order.groupBy({ by: ["status"], _count: true }),
+    prisma.order.findMany({ where: { paymentStatus: "paid", placedAt: { gte: since6m } }, select: { placedAt: true, total: true } }),
+    prisma.product.findMany({ select: { stockQty: true, lowStockThreshold: true } }),
+    prisma.invoice.count({ where: { status: { in: ["open", "overdue"] } } }),
+    prisma.order.findMany({ orderBy: { placedAt: "desc" }, take: 8 }),
+    prisma.contactEnquiry.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
+  ]);
+
+  const months: { key: string; label: string; value: number }[] = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: `${d.getFullYear()}-${d.getMonth()}`, label: d.toLocaleDateString("en-GB", { month: "short" }), value: 0 });
+  }
+  paidOrders.forEach((o) => {
+    const d = new Date(o.placedAt);
+    const m = months.find((x) => x.key === `${d.getFullYear()}-${d.getMonth()}`);
+    if (m) m.value += Number(o.total);
+  });
+
+  const lowStock = lowStockProducts.filter((p) => p.stockQty <= (p.lowStockThreshold ?? 5)).length;
+  const statusSegments = statusGroup.map((g) => ({ label: g.status, value: g._count }));
 
   return (
     <>
-      <div className="admin-page-head">
-        <h1>Dashboard</h1>
+      <PageHeader title="Dashboard" subtitle={now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} />
+
+      <div className="admin-stat-grid">
+        <StatCard label="Revenue (30d)" value={formatMoney(Number(rev30._sum.total ?? 0))} icon="bi-graph-up-arrow" href="/admin/analytics" />
+        <StatCard label="Revenue (all)" value={formatMoney(Number(revAll._sum.total ?? 0))} icon="bi-cash-stack" />
+        <StatCard label="Orders" value={orderCount} icon="bi-bag" href="/admin/orders" />
+        <StatCard label="Pending orders" value={pending} icon="bi-hourglass-split" href="/admin/orders" />
+        <StatCard label="Customers" value={customers} icon="bi-people" href="/admin/customers" />
+        <StatCard label="New (30d)" value={new30} icon="bi-person-plus" />
+        <StatCard label="Points liability" value={(points._sum.pointsBalance ?? 0).toLocaleString()} icon="bi-coin" />
+        <StatCard label="Low stock" value={lowStock} icon="bi-exclamation-triangle" href="/admin/inventory" />
+        <StatCard label="Open invoices" value={openInvoices} icon="bi-receipt" href="/admin/trade" />
       </div>
 
-      <div className="row g-3">
-        {stats.map((s) => (
-          <div className="col-6 col-md-4 col-xl-3" key={s.label}>
-            <Link href={s.href} className="admin-stat d-block h-100 text-decoration-none">
-              <div className="admin-stat-num">{s.value}</div>
-              <div className="admin-stat-label">{s.label}</div>
-            </Link>
-          </div>
-        ))}
+      <div className="row g-4">
+        <div className="col-12 col-lg-7">
+          <AdminCard title="Revenue — last 6 months">
+            <BarChart data={months.map((m) => ({ label: m.label, value: m.value }))} money />
+          </AdminCard>
+        </div>
+        <div className="col-12 col-lg-5">
+          <AdminCard title="Orders by status">
+            {statusSegments.length ? <Donut segments={statusSegments} centerValue={orderCount} centerLabel="orders" /> : <p className="td-muted">No orders yet.</p>}
+          </AdminCard>
+        </div>
       </div>
 
-      <div className="admin-card mt-4">
-        <h2 className="h5">Quick start</h2>
-        <p style={{ color: "var(--text-muted)", marginBottom: 12 }}>
-          Manage your catalogue, build pages from content blocks, and edit
-          editorial content. Everything here is read live by the storefront.
-        </p>
-        <div className="d-flex gap-2 flex-wrap">
-          <Link href="/admin/products" className="btn btn-gold btn-sm">
-            Manage products
-          </Link>
-          <Link href="/admin/pages" className="btn btn-outline-gold btn-sm">
-            Edit pages
-          </Link>
-          <Link href="/admin/settings" className="btn btn-outline-gold btn-sm">
-            Settings
-          </Link>
+      <div className="row g-4 mt-0">
+        <div className="col-12 col-lg-8">
+          <AdminCard title="Recent orders" actions={<Link href="/admin/orders" className="btn btn-ghost btn-sm">All orders</Link>}>
+            <div className="table-responsive">
+              <table className="admin-table">
+                <thead><tr><th>Ref</th><th>Customer</th><th>Total</th><th>Status</th><th>Placed</th></tr></thead>
+                <tbody>
+                  {recentOrders.map((o) => (
+                    <tr key={o.id}>
+                      <td><Link href={`/admin/orders/${o.id}`} className="gold">{o.ref}</Link></td>
+                      <td className="td-muted">{o.customerName ?? o.email}</td>
+                      <td>{formatMoney(Number(o.total), o.currency)}</td>
+                      <td><StatusBadge status={o.status} /></td>
+                      <td className="td-muted">{new Date(o.placedAt).toLocaleDateString("en-GB")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </AdminCard>
+        </div>
+        <div className="col-12 col-lg-4">
+          <AdminCard title="Latest enquiries" actions={<Link href="/admin/enquiries" className="btn btn-ghost btn-sm">All</Link>}>
+            {recentEnq.length === 0 && <p className="td-muted mb-0">No enquiries.</p>}
+            {recentEnq.map((e) => (
+              <div key={e.id} className="mb-2 pb-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}>
+                <Link href={`/admin/enquiries/${e.id}`} className="gold">{e.subject || e.name}</Link>
+                <div className="td-muted" style={{ fontSize: ".78rem" }}>{e.name} · {new Date(e.createdAt).toLocaleDateString("en-GB")}</div>
+              </div>
+            ))}
+            <div className="d-flex gap-2 flex-wrap mt-3">
+              <Link href="/admin/products/new" className="btn btn-gold btn-sm">New product</Link>
+              <Link href="/admin/orders/new" className="btn btn-outline-gold btn-sm">New order</Link>
+            </div>
+          </AdminCard>
         </div>
       </div>
     </>
