@@ -454,3 +454,16 @@ mark { background: var(--gold-lt); color: var(--gold-hi); padding: 0 2px; border
 .gift-card-banner-lede { color: var(--text-muted); }
 .gift-card-banner-feats li { display: flex; align-items: flex-start; gap: 8px; font-size: .875rem; color: var(--text-muted); margin-bottom: 8px; }
 .gift-card-banner-feats li span { color: var(--gold); }
+
+/* ---------- Rich text editor (TipTap) ---------- */
+.rte { border: 1px solid var(--gold-bdr); border-radius: var(--radius); overflow: hidden; background: var(--bg-card); }
+.rte-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px; border-bottom: 1px solid var(--gold-bdr); background: var(--bg-card2); }
+.rte-btn { background: transparent; border: 1px solid var(--gold-bdr); color: var(--text-muted); border-radius: 6px; padding: 2px 8px; font-size: .8125rem; line-height: 1.4; }
+.rte-btn:hover { border-color: var(--gold); color: var(--gold-hi); }
+.rte-btn.active { background: var(--gold-lt); border-color: var(--gold-md); color: var(--gold-hi); }
+.rte-content .ProseMirror { min-height: 160px; padding: 12px 14px; color: var(--text); outline: none; }
+.rte-content .ProseMirror p { margin: 0 0 .6em; }
+.rte-content .ProseMirror h2 { font-size: 1.4rem; margin: .4em 0 .3em; }
+.rte-content .ProseMirror h3 { font-size: 1.15rem; margin: .4em 0 .3em; }
+.rte-content .ProseMirror blockquote { border-left: 3px solid var(--gold); padding-left: 12px; color: var(--text-muted); margin: .5em 0; }
+.rte-content .ProseMirror ul, .rte-content .ProseMirror ol { padding-left: 1.4em; margin: 0 0 .6em; }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { BLOCKS, BLOCK_TYPES, type BlockField } from "@/lib/blocks/registry";
+import RichTextEditor from "@/components/admin/rich-text-editor";
 import {
   updatePage,
   addBlock,
@@ -17,11 +18,14 @@ const TEXTAREA_TYPES = new Set(["textarea", "lines", "pairs", "richtext"]);
 
 function FieldInput({ field, value }: { field: BlockField; value: unknown }) {
   const v = value == null ? "" : String(value);
+  if (field.type === "richtext") {
+    return <RichTextEditor name={field.key} defaultValue={v} />;
+  }
   if (TEXTAREA_TYPES.has(field.type)) {
     return (
       <textarea
         name={field.key}
-        rows={field.type === "richtext" ? 5 : 3}
+        rows={3}
         className="form-control form-control-sm"
         defaultValue={v}
         placeholder={field.placeholder}

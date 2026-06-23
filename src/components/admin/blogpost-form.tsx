@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { BlogPost } from "@/generated/prisma/client";
+import RichTextEditor from "@/components/admin/rich-text-editor";
 
 function dateInput(d: Date | null | undefined): string {
   return d ? new Date(d).toISOString().slice(0, 10) : "";
@@ -61,8 +62,8 @@ export default function BlogPostForm({
           <textarea id="excerpt" name="excerpt" rows={2} className="form-control" defaultValue={post?.excerpt ?? ""} />
         </div>
         <div className="col-12">
-          <label className="form-label" htmlFor="body">Body (HTML)</label>
-          <textarea id="body" name="body" rows={10} className="form-control" defaultValue={post?.body ?? ""} />
+          <label className="form-label">Body</label>
+          <RichTextEditor name="body" defaultValue={post?.body ?? ""} />
         </div>
         <div className="col-md-6">
           <label className="form-label" htmlFor="seoTitle">SEO title</label>
