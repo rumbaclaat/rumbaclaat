@@ -1,6 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ProductForm from "@/components/admin/product-form";
+import PageHeader from "@/components/admin/ui/page-header";
+import AdminCard from "@/components/admin/ui/admin-card";
 import { updateProduct, addVariant, deleteVariant } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -22,9 +25,20 @@ export default async function EditProductPage({
 
   return (
     <>
-      <div className="admin-page-head">
-        <h1>Edit product</h1>
-      </div>
+      <PageHeader
+        title="Edit product"
+        subtitle={product.sku}
+        breadcrumb={[
+          { label: "Dashboard", href: "/admin" },
+          { label: "Products", href: "/admin/products" },
+          { label: product.name },
+        ]}
+        action={
+          <Link href={`/product/${product.slug}`} target="_blank" className="btn btn-outline-gold btn-sm">
+            View ↗
+          </Link>
+        }
+      />
 
       <ProductForm
         action={updateProduct}
@@ -34,9 +48,7 @@ export default async function EditProductPage({
       />
 
       {/* Variants */}
-      <div className="admin-card mt-4">
-        <h2 className="h5 mb-3">Variants ({product.variants.length})</h2>
-
+      <AdminCard title={`Variants (${product.variants.length})`} className="mt-4">
         <div className="table-responsive mb-3">
           <table className="admin-table">
             <thead>
@@ -52,14 +64,14 @@ export default async function EditProductPage({
             <tbody>
               {product.variants.length === 0 && (
                 <tr>
-                  <td colSpan={6} style={{ color: "var(--text-dim)" }}>
+                  <td colSpan={6} className="td-muted">
                     No variants.
                   </td>
                 </tr>
               )}
               {product.variants.map((v) => (
                 <tr key={v.id}>
-                  <td style={{ color: "var(--text-muted)" }}>{v.sku}</td>
+                  <td className="td-muted">{v.sku}</td>
                   <td>
                     {v.colourName ?? "—"}
                     {v.colourHex && (
@@ -120,7 +132,7 @@ export default async function EditProductPage({
             <button type="submit" className="btn btn-outline-gold btn-sm w-100">+ Add variant</button>
           </div>
         </form>
-      </div>
+      </AdminCard>
     </>
   );
 }

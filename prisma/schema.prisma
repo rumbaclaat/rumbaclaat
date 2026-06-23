@@ -34,6 +34,8 @@ model Category {
   name        String
   description String?
   heroImage   String?
+  taxClassId      String?
+  shippingClassId String?
   parentId    String?
   parent      Category? @relation("CategoryTree", fields: [parentId], references: [id])
   children    Category[] @relation("CategoryTree")
@@ -71,9 +73,21 @@ model Product {
   maxQtyPerOrder Int?
   imageUrl    String?
   galleryImages String[]
+  // Organisation / merchandising
+  taxClassId        String?
+  shippingClassId   String?
+  lowStockThreshold Int?      @default(5)
+  crossSellIds      String[]
+  publishAt         DateTime?
+  unpublishAt       DateTime?
+  // SEO
+  seoTitle       String?
+  seoDescription String?
+  canonical      String?
   status      PublishStatus @default(draft)
   variants    ProductVariant[]
   reviews     Review[]
+  collections ProductCollection[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -82,12 +96,16 @@ model ProductVariant {
   id          String   @id @default(cuid())
   productId   String
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name        String?
   colourName  String?
   colourHex   String?
   size        String?
   sku         String   @unique
   priceDelta  Decimal  @default(0) @db.Decimal(10, 2)
   stockQty    Int      @default(0)
+  imageUrl    String?
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
 }
 
@@ -125,7 +143,10 @@ model Customer {
   lifetimeSpend   Decimal         @default(0) @db.Decimal(12, 2)
   referralCode    String?         @unique
   ghlContactId    String?
+  notes           String?
+  tags            String[]
   addresses       Address[]
+  orders          Order[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 }
@@ -154,10 +175,26 @@ model Settings {
   shippingExpressCost  Decimal @default(9.99) @db.Decimal(10, 2)
   freeShippingThreshold Decimal @default(50) @db.Decimal(10, 2)
   pointsPerPound       Int     @default(100) // 100 points = £1 on redemption
+  loyaltyEarnRate      Int     @default(1) // points earned per £ spent
   vatRatePct           Int     @default(20)
   currency             String  @default("GBP")
+  baseCurrency         String  @default("GBP")
   ageThreshold         Int     @default(18)
+  ageGateEnabled       Boolean @default(true)
+  maintenanceMode      Boolean @default(false)
+  // Business
+  businessName         String?
+  businessAddress      String?
+  businessVat          String?
+  supportEmail         String?
+  // SEO defaults
+  seoDefaultTitle       String?
+  seoDefaultDescription String?
+  // Config blobs (filled in admin; live when keys/values set)
   ghlConfig            Json?
+  paymentConfig        Json?
+  emailConfig          Json?
+  branding             Json?
   updatedAt            DateTime @updatedAt
 }
 
@@ -176,14 +213,21 @@ enum StaffRole {
 }
 
 model StaffUser {
-  id         String    @id @default(cuid())
-  authUserId String    @unique
-  email      String    @unique
-  name       String?
-  role       StaffRole @default(content_editor)
-  active     Boolean   @default(true)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  authUserId  String    @unique
+  email       String    @unique
+  name        String?
+  role        StaffRole @default(content_editor)
+  permissions Json? // string[] of permission keys; null => role defaults
+  title       String?
+  photo       String?
+  active      Boolean   @default(true)
+  invitedById String?
+  invitedAt   DateTime?
+  acceptedAt  DateTime?
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 // ----------------------------------------------------------------------------
@@ -358,15 +402,21 @@ model Banner {
 }
 
 model Promotion {
-  id           String    @id @default(cuid())
-  name         String
-  discountType String
-  value        Decimal   @db.Decimal(10, 2)
-  appliesTo    String
-  startDate    DateTime?
-  endDate      DateTime?
-  badgeLabel   String?
-  active       Boolean   @default(true)
+  id               String    @id @default(cuid())
+  name             String
+  code             String? // coupon code (null = automatic promo); uniqueness enforced in app
+  discountType     String // percentage | fixed | free_shipping | bogo
+  value            Decimal   @db.Decimal(10, 2)
+  appliesTo        String // all | category | collection | product | tier | min_spend
+  targetId         String? // category/collection/product/tier id when scoped
+  minSpend         Decimal?  @db.Decimal(10, 2)
+  usageLimit       Int?
+  perCustomerLimit Int?
+  usedCount        Int       @default(0)
+  startDate        DateTime?
+  endDate          DateTime?
+  badgeLabel       String?
+  active           Boolean   @default(true)
 }
 
 model Redirect {
@@ -383,11 +433,14 @@ model Review {
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   authorName String
   memberTier String?
-  rating     Int
-  title      String?
-  body       String?
-  status     String   @default("live")
-  createdAt  DateTime @default(now())
+  rating      Int
+  title       String?
+  body        String?
+  status      String    @default("live") // live | pending | denied
+  featured    Boolean   @default(false)
+  moderatedBy String?
+  moderatedAt DateTime?
+  createdAt   DateTime  @default(now())
 }
 
 // ----------------------------------------------------------------------------
@@ -398,23 +451,37 @@ model Order {
   id              String      @id @default(cuid())
   ref             String      @unique
   email           String
+  customerId      String?
+  customer        Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
   customerName    String?
   phone           String?
   status          String      @default("received") // received|paid|packed|dispatched|delivered|cancelled
   subtotal        Decimal     @db.Decimal(10, 2)
   shipping        Decimal     @db.Decimal(10, 2)
   total           Decimal     @db.Decimal(10, 2)
+  currency        String      @default("GBP")
   pointsEarned    Int         @default(0)
   deliveryMethod  String?
   paymentMethod   String?
   paymentStatus   String      @default("simulated") // simulated|paid|pending|refunded
+  stripePaymentIntentId String?
   shippingAddress Json?
+  internalNotes   String?
+  estDeliveryAt   DateTime?
+  createdById     String?
+  trackingCarrier String?
+  trackingNumber  String?
+  refundedAmount  Decimal?    @db.Decimal(10, 2)
+  refundedAt      DateTime?
   items           OrderItem[]
+  timeline        OrderTimeline[]
+  returns         Return[]
   placedAt        DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
   @@index([email])
   @@index([placedAt])
+  @@index([customerId])
 }
 
 model OrderItem {
@@ -442,6 +509,7 @@ model ContactEnquiry {
   subject   String?
   message   String
   status    String   @default("new") // new | read | replied | closed
+  messages  EnquiryMessage[]
   createdAt DateTime @default(now())
 
   @@index([createdAt])
@@ -571,4 +639,212 @@ model TradeMessage {
   body           String
   read           Boolean      @default(false)
   createdAt      DateTime     @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Collections (curated product sets — M2M with Product)
+// ----------------------------------------------------------------------------
+
+model Collection {
+  id          String              @id @default(cuid())
+  slug        String              @unique
+  name        String
+  description String?
+  image       String?
+  heroImage   String?
+  sortOrder   Int                 @default(0)
+  active      Boolean             @default(true)
+  products    ProductCollection[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model ProductCollection {
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  sortOrder    Int        @default(0)
+
+  @@id([productId, collectionId])
+}
+
+// ----------------------------------------------------------------------------
+// Tax / shipping classes + zones + currencies (assignable to products/categories)
+// ----------------------------------------------------------------------------
+
+model TaxClass {
+  id        String  @id @default(cuid())
+  name      String
+  ratePct   Decimal @default(20) @db.Decimal(5, 2)
+  isDefault Boolean @default(false)
+  sortOrder Int     @default(0)
+}
+
+model ShippingClass {
+  id        String   @id @default(cuid())
+  name      String
+  price     Decimal  @default(0) @db.Decimal(10, 2)
+  freeOver  Decimal? @db.Decimal(10, 2)
+  isDefault Boolean  @default(false)
+  sortOrder Int      @default(0)
+}
+
+model ShippingZone {
+  id        String   @id @default(cuid())
+  name      String
+  countries String[]
+  price     Decimal  @default(0) @db.Decimal(10, 2)
+  freeOver  Decimal? @db.Decimal(10, 2)
+  sortOrder Int      @default(0)
+}
+
+model Currency {
+  code      String  @id // GBP, EUR, USD
+  symbol    String
+  rate      Decimal @default(1) @db.Decimal(12, 6) // vs base GBP
+  isBase    Boolean @default(false)
+  active    Boolean @default(true)
+  sortOrder Int     @default(0)
+}
+
+// ----------------------------------------------------------------------------
+// Gift cards
+// ----------------------------------------------------------------------------
+
+model GiftCard {
+  id               String          @id @default(cuid())
+  code             String          @unique
+  initialAmount    Decimal         @db.Decimal(10, 2)
+  balance          Decimal         @db.Decimal(10, 2)
+  recipient        String?
+  sender           String?
+  message          String?
+  status           String          @default("active") // active | redeemed | disabled
+  purchaserOrderId String?
+  txns             GiftCardTxn[]
+  createdAt        DateTime        @default(now())
+}
+
+model GiftCardTxn {
+  id         String   @id @default(cuid())
+  giftCardId String
+  giftCard   GiftCard @relation(fields: [giftCardId], references: [id], onDelete: Cascade)
+  delta      Decimal  @db.Decimal(10, 2)
+  reason     String // issue | redemption | adjustment
+  orderId    String?
+  createdAt  DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Order timeline + returns
+// ----------------------------------------------------------------------------
+
+model OrderTimeline {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    String
+  note      String?
+  createdBy String? // StaffUser id or "system"
+  createdAt DateTime @default(now())
+
+  @@index([orderId, createdAt])
+}
+
+model Return {
+  id           String   @id @default(cuid())
+  orderId      String
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  items        Json // [{ name, qty }]
+  reason       String?
+  status       String   @default("requested") // requested | approved | received | refunded | rejected
+  refundAmount Decimal? @db.Decimal(10, 2)
+  createdBy    String?
+  createdAt    DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Inventory adjustments
+// ----------------------------------------------------------------------------
+
+model StockAdjustment {
+  id        String   @id @default(cuid())
+  productId String?
+  variantId String?
+  delta     Int
+  reason    String // restock | correction | damage | sale | return
+  note      String?
+  createdBy String?
+  createdAt DateTime @default(now())
+
+  @@index([productId, createdAt])
+}
+
+// ----------------------------------------------------------------------------
+// Audit log (every back-office mutation)
+// ----------------------------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  staffId    String?
+  staffEmail String
+  action     String // "product.update"
+  entityType String
+  entityId   String?
+  summary    String?
+  meta       Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+// ----------------------------------------------------------------------------
+// Enquiry message thread
+// ----------------------------------------------------------------------------
+
+model EnquiryMessage {
+  id        String         @id @default(cuid())
+  enquiryId String
+  enquiry   ContactEnquiry @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  direction String         @default("outbound") // inbound (from customer) | outbound (from team)
+  body      String
+  staffEmail String?
+  emailSent Boolean        @default(false)
+  createdAt DateTime       @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Storefront: server cart, wishlist, back-in-stock
+// ----------------------------------------------------------------------------
+
+model Cart {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  customerId String?
+  email      String?
+  items      Json     @default("[]") // [{ productId, variantId?, qty }]
+  recovered  Boolean  @default(false)
+  reminderSentAt DateTime?
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  customerId String
+  productId  String
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, productId])
+}
+
+model StockNotification {
+  id        String   @id @default(cuid())
+  email     String
+  productId String
+  variantId String?
+  notified  Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

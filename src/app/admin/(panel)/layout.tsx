@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import { getStaffUser } from "@/lib/auth";
 import AdminShell from "@/components/admin/admin-shell";
 

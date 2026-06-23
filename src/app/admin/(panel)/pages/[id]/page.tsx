@@ -3,6 +3,11 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { BLOCKS, BLOCK_TYPES, type BlockField } from "@/lib/blocks/registry";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import PageHeader from "@/components/admin/ui/page-header";
+import FormSection from "@/components/admin/ui/form-section";
+import RowActions from "@/components/admin/ui/row-actions";
+import ImageField from "@/components/admin/media/image-field";
+import { TextField, TextareaField, SelectField } from "@/components/admin/ui/field";
 import {
   updatePage,
   addBlock,
@@ -15,6 +20,7 @@ import {
 export const dynamic = "force-dynamic";
 
 const TEXTAREA_TYPES = new Set(["textarea", "lines", "pairs", "richtext"]);
+const STATUSES = ["draft", "published", "archived"];
 
 function FieldInput({ field, value }: { field: BlockField; value: unknown }) {
   const v = value == null ? "" : String(value);
@@ -57,96 +63,110 @@ export default async function PageEditor({
 
   return (
     <>
-      <div className="admin-page-head">
-        <h1>Edit page: {page.title}</h1>
-        <Link href={`/${page.slug}`} target="_blank" className="btn btn-outline-gold btn-sm">
-          View page ↗
-        </Link>
-      </div>
+      <PageHeader
+        title={page.title}
+        subtitle={`/${page.slug}`}
+        breadcrumb={[
+          { label: "Dashboard", href: "/admin" },
+          { label: "Pages", href: "/admin/pages" },
+          { label: page.title },
+        ]}
+        action={
+          <Link href={`/${page.slug}`} target="_blank" className="btn btn-outline-gold btn-sm">
+            View ↗
+          </Link>
+        }
+      />
 
       {/* Page settings */}
-      <form action={updatePage} className="admin-card mb-4">
+      <form action={updatePage}>
         <input type="hidden" name="id" value={page.id} />
-        <div className="row g-3">
-          <div className="col-md-6">
-            <label className="form-label" htmlFor="title">Title</label>
-            <input id="title" name="title" className="form-control" defaultValue={page.title} />
-          </div>
-          <div className="col-md-3">
-            <label className="form-label" htmlFor="slug">Slug</label>
-            <input id="slug" name="slug" className="form-control" defaultValue={page.slug} />
-          </div>
-          <div className="col-md-3">
-            <label className="form-label" htmlFor="status">Status</label>
-            <select id="status" name="status" className="form-select" defaultValue={page.status}>
-              <option value="draft">draft</option>
-              <option value="published">published</option>
-              <option value="archived">archived</option>
-            </select>
-          </div>
-          <div className="col-md-6">
-            <label className="form-label" htmlFor="seoTitle">SEO title</label>
-            <input id="seoTitle" name="seoTitle" className="form-control" defaultValue={page.seoTitle ?? ""} />
-          </div>
-          <div className="col-md-6">
-            <label className="form-label" htmlFor="ogImage">OG image URL</label>
-            <input id="ogImage" name="ogImage" className="form-control" defaultValue={page.ogImage ?? ""} />
-          </div>
-          <div className="col-12">
-            <label className="form-label" htmlFor="seoDescription">SEO description</label>
-            <textarea id="seoDescription" name="seoDescription" rows={2} className="form-control" defaultValue={page.seoDescription ?? ""} />
-          </div>
+        <input type="hidden" name="templateType" value={page.templateType} />
+        <FormSection title="Page settings" description="Title, address and search-engine metadata.">
+          <TextField name="title" label="Title" defaultValue={page.title} col="col-md-6" />
+          <TextField name="slug" label="Slug" defaultValue={page.slug} col="col-md-3" />
+          <SelectField name="status" label="Status" options={STATUSES} defaultValue={page.status} col="col-md-3" />
+          <TextField name="seoTitle" label="SEO title" defaultValue={page.seoTitle ?? ""} col="col-md-6" />
+          <ImageField name="ogImage" label="Social share image (OG)" value={page.ogImage ?? ""} col="col-md-6" hint="Shown when the page is shared on social media." />
+          <TextareaField name="seoDescription" label="SEO description" defaultValue={page.seoDescription ?? ""} rows={2} />
+        </FormSection>
+        <div className="d-flex justify-content-end mb-4">
+          <button type="submit" className="btn btn-gold">Save settings</button>
         </div>
-        <button type="submit" className="btn btn-gold mt-3">Save page settings</button>
       </form>
 
-      {/* Blocks */}
-      <h2 className="h5 mb-3">Content blocks</h2>
+      {/* Content blocks */}
+      <div className="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-3">
+        <div>
+          <h2 className="admin-form-section-title" style={{ fontSize: "1.3rem" }}>Content blocks</h2>
+          <p className="admin-form-section-desc">Add, reorder, hide and edit the sections that make up this page.</p>
+        </div>
+        <form action={addBlock} className="d-flex gap-2 align-items-center">
+          <input type="hidden" name="pageId" value={page.id} />
+          <select name="type" className="form-select form-select-sm" aria-label="Block type to add" style={{ minWidth: 180 }}>
+            {BLOCK_TYPES.map((t) => (
+              <option key={t} value={t}>{BLOCKS[t].label}</option>
+            ))}
+          </select>
+          <button type="submit" className="btn btn-gold btn-sm text-nowrap">
+            <i className="bi bi-plus-lg me-1" aria-hidden="true" />Add block
+          </button>
+        </form>
+      </div>
 
       {page.blocks.length === 0 && (
-        <p style={{ color: "var(--text-dim)" }}>No blocks yet. Add one below.</p>
+        <div className="admin-card admin-empty">
+          <i className="bi bi-layout-text-window" aria-hidden="true" />
+          <div className="admin-empty-title">No blocks yet</div>
+          <div>Choose a block type above and click “Add block” to start composing the page.</div>
+        </div>
       )}
 
       {page.blocks.map((block, i) => {
         const def = BLOCKS[block.type];
         const data = (block.data ?? {}) as Record<string, unknown>;
         return (
-          <div key={block.id} className="admin-card mb-3" style={{ opacity: block.visible ? 1 : 0.55 }}>
-            <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-              <div>
-                <span className="badge-brand">{def?.label ?? block.type}</span>
-                {!block.visible && <span className="ms-2" style={{ color: "var(--text-dim)", fontSize: ".75rem" }}>hidden</span>}
+          <div key={block.id} className="admin-card mb-3" style={{ opacity: block.visible ? 1 : 0.62 }}>
+            <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 pb-3" style={{ borderBottom: "1px solid var(--gold-bdr)" }}>
+              <div className="d-flex align-items-center gap-2">
+                <i className="bi bi-grip-vertical" aria-hidden="true" style={{ color: "var(--text-dim)", fontSize: "1.1rem" }} />
+                <span style={{ fontWeight: 600 }}>{def?.label ?? block.type}</span>
+                {!block.visible && <span className="admin-badge admin-badge--muted">Hidden</span>}
               </div>
-              <div className="d-flex gap-1">
+              <div className="d-flex align-items-center gap-1">
                 <form action={moveBlock}>
                   <input type="hidden" name="id" value={block.id} />
                   <input type="hidden" name="pageId" value={page.id} />
                   <input type="hidden" name="dir" value="up" />
-                  <button className="btn btn-ghost btn-sm" disabled={i === 0} title="Move up">↑</button>
+                  <button className="btn btn-ghost btn-sm" disabled={i === 0} title="Move up" aria-label="Move up">
+                    <i className="bi bi-arrow-up" aria-hidden="true" />
+                  </button>
                 </form>
                 <form action={moveBlock}>
                   <input type="hidden" name="id" value={block.id} />
                   <input type="hidden" name="pageId" value={page.id} />
                   <input type="hidden" name="dir" value="down" />
-                  <button className="btn btn-ghost btn-sm" disabled={i === page.blocks.length - 1} title="Move down">↓</button>
+                  <button className="btn btn-ghost btn-sm" disabled={i === page.blocks.length - 1} title="Move down" aria-label="Move down">
+                    <i className="bi bi-arrow-down" aria-hidden="true" />
+                  </button>
                 </form>
                 <form action={toggleBlock}>
                   <input type="hidden" name="id" value={block.id} />
                   <input type="hidden" name="pageId" value={page.id} />
-                  <button className="btn btn-ghost btn-sm" title="Toggle visibility">{block.visible ? "Hide" : "Show"}</button>
+                  <button className="btn btn-ghost btn-sm" title={block.visible ? "Hide" : "Show"} aria-label={block.visible ? "Hide block" : "Show block"}>
+                    <i className={`bi ${block.visible ? "bi-eye" : "bi-eye-slash"}`} aria-hidden="true" />
+                  </button>
                 </form>
-                <form action={deleteBlock}>
-                  <input type="hidden" name="id" value={block.id} />
-                  <input type="hidden" name="pageId" value={page.id} />
-                  <button className="btn btn-ghost btn-sm" style={{ color: "var(--red)" }} title="Delete">✕</button>
-                </form>
+                <RowActions
+                  deleteAction={deleteBlock}
+                  deleteFields={{ id: block.id, pageId: page.id }}
+                  confirmLabel={`Delete the “${def?.label ?? block.type}” block?`}
+                />
               </div>
             </div>
 
             {def && def.dataDriven && (
-              <p style={{ color: "var(--text-dim)", fontSize: ".8125rem" }}>
-                {def.description}
-              </p>
+              <p className="admin-form-section-desc mb-3">{def.description}</p>
             )}
 
             <form action={updateBlock}>
@@ -154,32 +174,28 @@ export default async function PageEditor({
               <input type="hidden" name="pageId" value={page.id} />
               <input type="hidden" name="type" value={block.type} />
               <div className="row g-2">
-                {def?.fields.map((f) => (
-                  <div className={TEXTAREA_TYPES.has(f.type) ? "col-12" : "col-md-6"} key={f.key}>
-                    <label className="form-label">{f.label}</label>
-                    <FieldInput field={f} value={data[f.key]} />
-                  </div>
-                ))}
+                {def?.fields.map((f) =>
+                  f.type === "image" ? (
+                    <ImageField
+                      key={f.key}
+                      name={f.key}
+                      label={f.label}
+                      value={data[f.key] ? String(data[f.key]) : ""}
+                      col="col-12"
+                    />
+                  ) : (
+                    <div className={TEXTAREA_TYPES.has(f.type) ? "col-12" : "col-md-6"} key={f.key}>
+                      <label className="form-label">{f.label}</label>
+                      <FieldInput field={f} value={data[f.key]} />
+                    </div>
+                  )
+                )}
               </div>
               <button type="submit" className="btn btn-outline-gold btn-sm mt-3">Save block</button>
             </form>
           </div>
         );
       })}
-
-      {/* Add block */}
-      <form action={addBlock} className="admin-card d-flex gap-2 align-items-end" style={{ maxWidth: 480 }}>
-        <input type="hidden" name="pageId" value={page.id} />
-        <div className="flex-grow-1">
-          <label className="form-label" htmlFor="add-type">Add a block</label>
-          <select id="add-type" name="type" className="form-select form-select-sm">
-            {BLOCK_TYPES.map((t) => (
-              <option key={t} value={t}>{BLOCKS[t].label}</option>
-            ))}
-          </select>
-        </div>
-        <button type="submit" className="btn btn-gold btn-sm">+ Add</button>
-      </form>
     </>
   );
 }

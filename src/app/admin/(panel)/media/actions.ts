@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireStaff } from "@/lib/auth";
+import { uploadToMediaLibrary } from "@/lib/media";
 import { revalidatePath } from "next/cache";
 
 export async function uploadMedia(formData: FormData) {
@@ -11,20 +12,7 @@ export async function uploadMedia(formData: FormData) {
   const alt = String(formData.get("alt") ?? "").trim() || null;
   if (!file || file.size === 0) return;
 
-  const admin = createAdminClient();
-  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "-").toLowerCase();
-  const path = `uploads/${Date.now()}-${safe}`;
-
-  const { error } = await admin.storage
-    .from("media")
-    .upload(path, file, { contentType: file.type, upsert: false });
-  if (error) throw new Error(error.message);
-
-  const { data: pub } = admin.storage.from("media").getPublicUrl(path);
-
-  await prisma.media.create({
-    data: { bucketPath: path, url: pub.publicUrl, alt, mimeType: file.type },
-  });
+  await uploadToMediaLibrary(file, alt);
   revalidatePath("/admin/media");
 }
 
