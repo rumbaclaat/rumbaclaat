@@ -61,11 +61,17 @@ model Product {
   saleEndDate DateTime?
   basePoints  Int           @default(0)
   // Rum-specific
-  abv         Decimal?      @db.Decimal(5, 2)
-  volume      String?
-  origin      String?
+  abv          Decimal?     @db.Decimal(5, 2)
+  volume       String?
+  origin       String?
+  tastingNotes String?
+  caskType     String?
+  ageStatement String?
   // Apparel-specific
-  material    String?
+  material         String?
+  gsm              String?
+  fit              String?
+  careInstructions String?
   // Display
   ratingAvg   Decimal?      @db.Decimal(3, 2)
   reviewCount Int           @default(0)

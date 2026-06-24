@@ -4,8 +4,8 @@ import SaveBar from "@/components/admin/ui/save-bar";
 import ImageField from "@/components/admin/media/image-field";
 import GalleryField from "@/components/admin/media/gallery-field";
 import { TextField, TextareaField, SelectField, CheckField, Field } from "@/components/admin/ui/field";
+import ProductAttributes from "@/components/admin/products/product-attributes";
 
-const TYPES = ["rum", "apparel", "cap", "gift_card"];
 const STATUSES = ["draft", "published", "archived"];
 
 function dec(v: unknown): string {
@@ -28,6 +28,7 @@ export default function ProductForm({
   taxClasses = [],
   shippingClasses = [],
   collectionIds = [],
+  initialType,
   submitLabel,
 }: {
   action: (formData: FormData) => void | Promise<void>;
@@ -37,6 +38,7 @@ export default function ProductForm({
   taxClasses?: Opt[];
   shippingClasses?: Opt[];
   collectionIds?: string[];
+  initialType?: string;
   submitLabel: string;
 }) {
   return (
@@ -68,12 +70,21 @@ export default function ProductForm({
             <TextField name="maxQtyPerOrder" label="Max qty / order" type="number" defaultValue={dec(product?.maxQtyPerOrder)} col="col-md-4" />
           </FormSection>
 
-          <FormSection title="Attributes" description="Rum and apparel specifics — leave blank where not relevant.">
-            <TextField name="abv" label="ABV (%)" type="number" step="0.1" defaultValue={dec(product?.abv)} col="col-md-3" />
-            <TextField name="volume" label="Volume" defaultValue={product?.volume ?? ""} placeholder="70cl" col="col-md-3" />
-            <TextField name="origin" label="Origin" defaultValue={product?.origin ?? ""} placeholder="Jamaica" col="col-md-3" />
-            <TextField name="material" label="Material (apparel)" defaultValue={product?.material ?? ""} col="col-md-3" />
-          </FormSection>
+          <ProductAttributes
+            initialType={product?.type ?? initialType ?? "rum"}
+            d={{
+              abv: dec(product?.abv),
+              volume: product?.volume ?? "",
+              origin: product?.origin ?? "",
+              tastingNotes: product?.tastingNotes ?? "",
+              caskType: product?.caskType ?? "",
+              ageStatement: product?.ageStatement ?? "",
+              material: product?.material ?? "",
+              gsm: product?.gsm ?? "",
+              fit: product?.fit ?? "",
+              careInstructions: product?.careInstructions ?? "",
+            }}
+          />
 
           <FormSection title="Search engine (SEO)">
             <TextField name="seoTitle" label="SEO title" defaultValue={product?.seoTitle ?? ""} col="col-md-6" />
@@ -91,7 +102,6 @@ export default function ProductForm({
           </FormSection>
 
           <FormSection title="Organisation">
-            <SelectField name="type" label="Product type" options={TYPES} defaultValue={product?.type ?? "rum"} col="col-12" />
             <SelectField name="categoryId" label="Primary category" options={categories.map((c) => ({ value: c.id, label: c.name }))} defaultValue={product?.categoryId ?? ""} blankLabel="— none —" col="col-12" />
             <Field label="Collections" htmlFor="collections" col="col-12" hint="Ctrl / Cmd-click to select several.">
               <select id="collections" name="collections" className="form-select" multiple size={Math.min(6, Math.max(3, collections.length))} defaultValue={collectionIds}>
