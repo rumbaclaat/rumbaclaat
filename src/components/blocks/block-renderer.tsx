@@ -244,7 +244,12 @@ export default async function BlockRenderer({ block }: { block: ContentBlock }) 
               {products.map((p) => (
                 <div className="col-12 col-md-4" key={p.id}>
                   <Link href={`/product/${p.slug}`} className="card-brand d-block h-100 text-decoration-none">
-                    <div style={{ aspectRatio: "1", borderRadius: "var(--radius)", background: "var(--bg-card3)", marginBottom: 12 }} />
+                    {p.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={p.imageUrl} alt={p.name} style={{ aspectRatio: "1", width: "100%", objectFit: "cover", borderRadius: "var(--radius)", marginBottom: 12 }} />
+                    ) : (
+                      <div style={{ aspectRatio: "1", borderRadius: "var(--radius)", background: "var(--bg-card3)", marginBottom: 12 }} />
+                    )}
                     <h3 className="h6" style={{ color: "var(--text)" }}>{p.name}</h3>
                     {p.subtitle && <p style={{ fontSize: ".8125rem", color: "var(--text-muted)" }}>{p.subtitle}</p>}
                     <div className="serif gold" style={{ fontSize: "1.25rem" }}>£{Number(p.basePrice).toFixed(2)}</div>

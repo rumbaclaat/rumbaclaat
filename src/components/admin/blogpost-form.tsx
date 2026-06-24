@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { BlogPost } from "@/generated/prisma/client";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import ImageField from "@/components/admin/media/image-field";
 
 function dateInput(d: Date | null | undefined): string {
   return d ? new Date(d).toISOString().slice(0, 10) : "";
@@ -53,10 +54,7 @@ export default function BlogPostForm({
             <label className="form-check-label" htmlFor="featured">Featured</label>
           </div>
         </div>
-        <div className="col-12">
-          <label className="form-label" htmlFor="heroImage">Hero image URL</label>
-          <input id="heroImage" name="heroImage" className="form-control" defaultValue={post?.heroImage ?? ""} />
-        </div>
+        <ImageField name="heroImage" label="Hero image" value={post?.heroImage ?? ""} col="col-12" />
         <div className="col-12">
           <label className="form-label" htmlFor="excerpt">Excerpt</label>
           <textarea id="excerpt" name="excerpt" rows={2} className="form-control" defaultValue={post?.excerpt ?? ""} />

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Category } from "@/generated/prisma/client";
+import ImageField from "@/components/admin/media/image-field";
 
 export default function CategoryForm({
   action,
@@ -61,17 +62,7 @@ export default function CategoryForm({
             defaultValue={category?.description ?? ""}
           />
         </div>
-        <div className="col-12">
-          <label className="form-label" htmlFor="heroImage">
-            Hero image URL
-          </label>
-          <input
-            id="heroImage"
-            name="heroImage"
-            className="form-control"
-            defaultValue={category?.heroImage ?? ""}
-          />
-        </div>
+        <ImageField name="heroImage" label="Hero image" value={category?.heroImage ?? ""} col="col-12" />
       </div>
       <div className="d-flex gap-2 mt-4">
         <button type="submit" className="btn btn-gold">

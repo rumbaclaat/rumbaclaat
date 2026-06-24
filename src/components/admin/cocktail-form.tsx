@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Cocktail, Product } from "@/generated/prisma/client";
+import ImageField from "@/components/admin/media/image-field";
 
 function lines(v: unknown): string {
   return Array.isArray(v) ? v.join("\n") : "";
@@ -89,10 +90,7 @@ export default function CocktailForm({
           <textarea id="bartenderTip" name="bartenderTip" rows={4} className="form-control" defaultValue={cocktail?.bartenderTip ?? ""} />
         </div>
 
-        <div className="col-md-8">
-          <label className="form-label" htmlFor="image">Image URL</label>
-          <input id="image" name="image" className="form-control" defaultValue={cocktail?.image ?? ""} />
-        </div>
+        <ImageField name="image" label="Image" value={cocktail?.image ?? ""} col="col-md-8" />
         <div className="col-md-4">
           <label className="form-label" htmlFor="featuredProductId">Featured rum</label>
           <select id="featuredProductId" name="featuredProductId" className="form-select" defaultValue={cocktail?.featuredProductId ?? ""}>

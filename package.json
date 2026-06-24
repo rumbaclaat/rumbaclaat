@@ -18,6 +18,8 @@
     "db:seed-pages": "tsx prisma/seed-pages.ts",
     "db:seed-content": "tsx prisma/seed-content.ts",
     "db:seed-demo": "tsx prisma/seed-demo.ts",
+    "db:seed-home": "tsx prisma/seed-home.ts",
+    "db:seed-placeholders": "tsx prisma/seed-placeholders.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {
