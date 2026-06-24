@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getSectionImageMap, sectionImage } from "@/lib/section-images";
 
 export const dynamic = "force-dynamic";
 
@@ -17,13 +18,14 @@ export default async function CocktailsIndex() {
     where: { status: "published" },
     orderBy: { name: "asc" },
   });
+  const imgs = await getSectionImageMap();
 
   return (
     <>
       {/* Hero (parallax) — static-source/cocktails.html */}
       <section
         className="parallax-section"
-        style={{ minHeight: 440, backgroundImage: "url('https://images.unsplash.com/photo-1767745455688-49391131f751?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80')" }}
+        style={{ minHeight: 440, backgroundImage: `url('${sectionImage(imgs, "cocktails.hero")}')` }}
         aria-labelledby="ck-hero"
       >
         <div className="parallax-overlay" />
@@ -113,7 +115,7 @@ export default async function CocktailsIndex() {
       {/* CTA — static-source/cocktails.html */}
       <section
         className="parallax-section"
-        style={{ minHeight: 360, backgroundImage: "url('https://images.unsplash.com/photo-1744730850457-8795330490df?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80')" }}
+        style={{ minHeight: 360, backgroundImage: `url('${sectionImage(imgs, "cocktails.cta")}')` }}
         aria-labelledby="ck-cta"
       >
         <div className="parallax-overlay" />

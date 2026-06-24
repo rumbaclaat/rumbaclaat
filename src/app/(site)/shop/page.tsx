@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getSectionImageMap, sectionImage } from "@/lib/section-images";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +88,7 @@ export default async function ShopPage({
   }
 
   // ---- Category landing (default) — reproduced from static-source/shop.html ----
+  const imgs = await getSectionImageMap();
   return (
     <>
       <section className="section-sm" style={{ background: "linear-gradient(135deg,#161208,#0E0E0E)", borderBottom: "1px solid var(--gold-bdr)" }}>
@@ -165,7 +167,7 @@ export default async function ShopPage({
         </div>
       </section>
 
-      <section className="parallax-section" style={{ minHeight: 400, backgroundImage: `url('${U("photo-1764065340249-ee8bec50d2f7", 1800)}')` }} aria-labelledby="shop-px">
+      <section className="parallax-section" style={{ minHeight: 400, backgroundImage: `url('${sectionImage(imgs, "shop.parallax")}')` }} aria-labelledby="shop-px">
         <div className="parallax-overlay" />
         <div className="parallax-content reveal">
           <span className="eyebrow eyebrow-center">Premium Lifestyle</span>

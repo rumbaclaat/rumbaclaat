@@ -3,6 +3,7 @@ import Link from "next/link";
 import BrandImage from "@/components/brand-image";
 import { prisma } from "@/lib/prisma";
 import BlockRenderer from "@/components/blocks/block-renderer";
+import { getSectionImageMap, sectionImage } from "@/lib/section-images";
 
 export const dynamic = "force-dynamic";
 
@@ -20,11 +21,13 @@ export default async function HomePage() {
     return <>{homePage.blocks.map((b) => <BlockRenderer key={b.id} block={b} />)}</>;
   }
 
+  const imgs = await getSectionImageMap();
+
   return (
     <>
       {/* Static hero banner */}
       <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: `url('${U("photo-1758871993077-e084cc7eca86", 1800)}')` }} />
+        <div className="hero-bg" style={{ backgroundImage: `url('${sectionImage(imgs, "home.hero")}')` }} />
         <div className="hero-overlay" />
         <div className="hero-content">
           <BrandImage src="/brand/logo.png" alt="Rumbaclaat Rum" className="hero-logo" />
@@ -80,7 +83,7 @@ export default async function HomePage() {
       <section
         className="parallax-section"
         aria-labelledby="oak-title"
-        style={{ minHeight: 440, backgroundImage: `url('${U("photo-1765989427988-248c7d48cb56", 1800)}')` }}
+        style={{ minHeight: 440, backgroundImage: `url('${sectionImage(imgs, "home.oak")}')` }}
       >
         <div className="parallax-overlay" />
         <div className="parallax-content reveal">

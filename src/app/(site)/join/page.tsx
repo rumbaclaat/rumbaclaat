@@ -1,5 +1,8 @@
 import Link from "next/link";
 import MembershipTiers from "@/components/membership/membership-tiers";
+import { getSectionImageMap, sectionImage } from "@/lib/section-images";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Membership",
@@ -28,11 +31,12 @@ const FAQ = [
   { q: "Is there a minimum commitment on paid tiers?", a: "No — monthly billing has no minimum term. Annual plans offer 2 free months. Full refund within 14 days." },
 ];
 
-export default function JoinPage() {
+export default async function JoinPage() {
+  const imgs = await getSectionImageMap();
   return (
     <>
       <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1579042952429-66db7c5cc528?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80')" }} />
+        <div className="hero-bg" style={{ backgroundImage: `url('${sectionImage(imgs, "join.hero")}')` }} />
         <div className="hero-overlay" />
         <div className="hero-content reveal">
           <span className="eyebrow eyebrow-center">Rumbaclaat Loyalty Programme</span>
@@ -75,7 +79,7 @@ export default function JoinPage() {
         </div>
       </section>
 
-      <section className="parallax-section" style={{ minHeight: 320, backgroundImage: "url('https://images.unsplash.com/photo-1635771747900-a19e5c866031?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80')" }}>
+      <section className="parallax-section" style={{ minHeight: 320, backgroundImage: `url('${sectionImage(imgs, "join.parallax")}')` }}>
         <div className="parallax-overlay" />
         <div className="parallax-content reveal"><h2>Some Things Improve<br />with Patience</h2><p style={{ color: "var(--text-muted)" }}>Your membership is one of them.</p></div>
       </section>

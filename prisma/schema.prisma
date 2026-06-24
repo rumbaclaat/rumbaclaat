@@ -201,6 +201,8 @@ model Settings {
   paymentConfig        Json?
   emailConfig          Json?
   branding             Json?
+  // Per-section hero/parallax image overrides for hand-built pages ({ slot: url }).
+  sectionImages        Json?
   updatedAt            DateTime @updatedAt
 }
 
