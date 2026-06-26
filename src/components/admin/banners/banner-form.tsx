@@ -17,18 +17,29 @@ export default function BannerForm({
   submitLabel: string;
 }) {
   return (
-    <form action={action} style={{ maxWidth: 760 }}>
+    <form action={action}>
       {banner && <input type="hidden" name="id" value={banner.id} />}
-      <FormSection title="Banner">
-        <SelectField name="type" label="Type" options={["announcement", "promotional", "info", "warning", "success"]} defaultValue={banner?.type ?? "announcement"} col="col-md-4" />
-        <TextField name="icon" label="Icon" defaultValue={banner?.icon ?? ""} col="col-md-4" hint="e.g. bi-truck or an emoji." />
-        <CheckField name="active" label="Active" defaultChecked={banner?.active ?? true} col="col-md-4" />
-        <TextField name="message" label="Message" defaultValue={banner?.message ?? ""} required col="col-12" />
-        <TextField name="detail" label="Detail" defaultValue={banner?.detail ?? ""} col="col-md-6" />
-        <TextField name="link" label="Link URL" defaultValue={banner?.link ?? ""} col="col-md-6" />
-        <TextField name="startDate" label="Starts" type="date" defaultValue={dateInput(banner?.startDate)} col="col-md-6" />
-        <TextField name="endDate" label="Ends" type="date" defaultValue={dateInput(banner?.endDate)} col="col-md-6" />
-      </FormSection>
+
+      <div className="admin-product-grid">
+        <div className="admin-product-main">
+          <FormSection title="Banner">
+            <TextField name="message" label="Message" defaultValue={banner?.message ?? ""} required col="col-12" />
+            <TextField name="detail" label="Detail" defaultValue={banner?.detail ?? ""} col="col-md-6" />
+            <TextField name="link" label="Link URL" defaultValue={banner?.link ?? ""} col="col-md-6" />
+            <TextField name="icon" label="Icon" defaultValue={banner?.icon ?? ""} col="col-md-6" hint="e.g. bi-truck or an emoji." />
+          </FormSection>
+        </div>
+
+        <div className="admin-product-rail">
+          <FormSection title="Publish">
+            <SelectField name="type" label="Type" options={["announcement", "promotional", "info", "warning", "success"]} defaultValue={banner?.type ?? "announcement"} col="col-12" />
+            <CheckField name="active" label="Active" defaultChecked={banner?.active ?? true} col="col-12" />
+            <TextField name="startDate" label="Starts" type="date" defaultValue={dateInput(banner?.startDate)} col="col-12" />
+            <TextField name="endDate" label="Ends" type="date" defaultValue={dateInput(banner?.endDate)} col="col-12" />
+          </FormSection>
+        </div>
+      </div>
+
       <SaveBar submitLabel={submitLabel} cancelHref="/admin/banners" />
     </form>
   );
