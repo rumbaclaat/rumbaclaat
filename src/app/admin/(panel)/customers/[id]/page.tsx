@@ -47,7 +47,7 @@ export default async function CustomerDetail({ params }: { params: Promise<{ id:
         }
       />
 
-      <div className="admin-stat-grid">
+      <div className="admin-stat-row">
         <div className="admin-stat"><span className="admin-stat-label">Points</span><span className="admin-stat-num">{customer.pointsBalance}</span></div>
         <div className="admin-stat"><span className="admin-stat-label">Lifetime spend</span><span className="admin-stat-num">{formatMoney(Number(customer.lifetimeSpend))}</span></div>
         <div className="admin-stat"><span className="admin-stat-label">Orders</span><span className="admin-stat-num">{orders.length}</span></div>

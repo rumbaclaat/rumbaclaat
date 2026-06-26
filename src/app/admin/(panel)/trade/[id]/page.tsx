@@ -39,7 +39,7 @@ export default async function TradeDetail({ params }: { params: Promise<{ id: st
         action={<a href={`mailto:${acct.contactEmail}`} className="btn btn-ghost btn-sm"><i className="bi bi-envelope me-1" />Email</a>}
       />
 
-      <div className="admin-stat-grid">
+      <div className="admin-stat-row">
         <div className="admin-stat"><span className="admin-stat-label">Status</span><span style={{ marginTop: 6 }}><StatusBadge status={acct.status} /></span></div>
         <div className="admin-stat"><span className="admin-stat-label">Outstanding</span><span className="admin-stat-num">{formatMoney(Number(acct.outstandingBalance))}</span></div>
         <div className="admin-stat"><span className="admin-stat-label">Credit limit</span><span className="admin-stat-num">{formatMoney(Number(acct.creditLimit))}</span></div>
