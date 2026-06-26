@@ -1,7 +1,9 @@
-import Link from "next/link";
 import type { BlogPost } from "@/generated/prisma/client";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import ImageField from "@/components/admin/media/image-field";
+import FormSection from "@/components/admin/ui/form-section";
+import SaveBar from "@/components/admin/ui/save-bar";
+import { TextField, TextareaField, SelectField, CheckField, Field } from "@/components/admin/ui/field";
 
 function dateInput(d: Date | null | undefined): string {
   return d ? new Date(d).toISOString().slice(0, 10) : "";
@@ -17,65 +19,47 @@ export default function BlogPostForm({
   submitLabel: string;
 }) {
   return (
-    <form action={action} className="admin-card">
+    <form action={action}>
       {post && <input type="hidden" name="id" value={post.id} />}
-      <div className="row g-3">
-        <div className="col-md-8">
-          <label className="form-label" htmlFor="title">Title *</label>
-          <input id="title" name="title" className="form-control" defaultValue={post?.title ?? ""} required />
+
+      <div className="admin-product-grid">
+        {/* Main column */}
+        <div className="admin-product-main">
+          <FormSection title="Content">
+            <TextField name="title" label="Title" defaultValue={post?.title ?? ""} required col="col-12" />
+            <TextareaField name="excerpt" label="Excerpt" defaultValue={post?.excerpt ?? ""} rows={3} hint="The short summary shown on the blog index and in search results." />
+            <Field label="Body" col="col-12">
+              <RichTextEditor name="body" defaultValue={post?.body ?? ""} />
+            </Field>
+          </FormSection>
+
+          <FormSection title="Search engine (SEO)" description="How this post appears in search and when shared.">
+            <TextField name="seoTitle" label="SEO title" defaultValue={post?.seoTitle ?? ""} col="col-12" />
+            <TextareaField name="seoDescription" label="Meta description" defaultValue={post?.seoDescription ?? ""} rows={3} />
+          </FormSection>
         </div>
-        <div className="col-md-4">
-          <label className="form-label" htmlFor="status">Status</label>
-          <select id="status" name="status" className="form-select" defaultValue={post?.status ?? "draft"}>
-            <option value="draft">draft</option>
-            <option value="published">published</option>
-            <option value="archived">archived</option>
-          </select>
-        </div>
-        <div className="col-md-4">
-          <label className="form-label" htmlFor="category">Category</label>
-          <input id="category" name="category" className="form-control" defaultValue={post?.category ?? ""} placeholder="Heritage" />
-        </div>
-        <div className="col-md-4">
-          <label className="form-label" htmlFor="readTime">Read time</label>
-          <input id="readTime" name="readTime" className="form-control" defaultValue={post?.readTime ?? ""} placeholder="6 min read" />
-        </div>
-        <div className="col-md-4">
-          <label className="form-label" htmlFor="publishDate">Publish date</label>
-          <input id="publishDate" name="publishDate" type="date" className="form-control" defaultValue={dateInput(post?.publishDate)} />
-        </div>
-        <div className="col-md-8">
-          <label className="form-label" htmlFor="slug">Slug <span style={{ color: "var(--text-dim)" }}>(auto if blank)</span></label>
-          <input id="slug" name="slug" className="form-control" defaultValue={post?.slug ?? ""} />
-        </div>
-        <div className="col-md-4 d-flex align-items-end">
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="featured" name="featured" defaultChecked={post?.featured ?? false} />
-            <label className="form-check-label" htmlFor="featured">Featured</label>
-          </div>
-        </div>
-        <ImageField name="heroImage" label="Hero image" value={post?.heroImage ?? ""} col="col-12" />
-        <div className="col-12">
-          <label className="form-label" htmlFor="excerpt">Excerpt</label>
-          <textarea id="excerpt" name="excerpt" rows={2} className="form-control" defaultValue={post?.excerpt ?? ""} />
-        </div>
-        <div className="col-12">
-          <label className="form-label">Body</label>
-          <RichTextEditor name="body" defaultValue={post?.body ?? ""} />
-        </div>
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="seoTitle">SEO title</label>
-          <input id="seoTitle" name="seoTitle" className="form-control" defaultValue={post?.seoTitle ?? ""} />
-        </div>
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="seoDescription">SEO description</label>
-          <input id="seoDescription" name="seoDescription" className="form-control" defaultValue={post?.seoDescription ?? ""} />
+
+        {/* Persistent rail */}
+        <div className="admin-product-rail">
+          <FormSection title="Publish">
+            <SelectField name="status" label="Status" options={["draft", "published", "archived"]} defaultValue={post?.status ?? "draft"} col="col-12" />
+            <TextField name="publishDate" label="Publish date" type="date" defaultValue={dateInput(post?.publishDate)} col="col-md-6" />
+            <CheckField name="featured" label="Featured" defaultChecked={post?.featured ?? false} col="col-md-6" />
+            <TextField name="slug" label="Slug" defaultValue={post?.slug ?? ""} col="col-12" hint="Leave blank to auto-generate." />
+          </FormSection>
+
+          <FormSection title="Organisation">
+            <TextField name="category" label="Category" defaultValue={post?.category ?? ""} col="col-md-6" placeholder="Heritage" />
+            <TextField name="readTime" label="Read time" defaultValue={post?.readTime ?? ""} col="col-md-6" placeholder="6 min read" />
+          </FormSection>
+
+          <FormSection title="Hero image">
+            <ImageField name="heroImage" label="Hero image" value={post?.heroImage ?? ""} col="col-12" />
+          </FormSection>
         </div>
       </div>
-      <div className="d-flex gap-2 mt-4">
-        <button type="submit" className="btn btn-gold">{submitLabel}</button>
-        <Link href="/admin/blog" className="btn btn-ghost">Cancel</Link>
-      </div>
+
+      <SaveBar submitLabel={submitLabel} cancelHref="/admin/blog" />
     </form>
   );
 }

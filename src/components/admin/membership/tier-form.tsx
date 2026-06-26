@@ -23,7 +23,7 @@ export default function TierForm({
         <TextField name="pointsMultiplier" label="Points multiplier" type="number" step="0.1" defaultValue={tier ? Number(tier.pointsMultiplier) : 1} col="col-md-3" />
         <TextField name="memberDiscountPct" label="Member discount (%)" type="number" defaultValue={tier?.memberDiscountPct ?? 0} col="col-md-3" />
         <CheckField name="isFree" label="Free tier (no subscription)" defaultChecked={tier?.isFree ?? false} />
-        <TextareaField name="benefits" label="Benefits" defaultValue={(tier?.benefits ?? []).join("\n")} rows={4} hint="One per line." />
+        <TextareaField name="benefits" label="Benefits" defaultValue={(tier?.benefits ?? []).join("\n")} rows={6} hint="One per line." />
       </FormSection>
       <SaveBar submitLabel={submitLabel} cancelHref="/admin/membership" />
     </form>

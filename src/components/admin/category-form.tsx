@@ -1,6 +1,8 @@
-import Link from "next/link";
 import type { Category } from "@/generated/prisma/client";
 import ImageField from "@/components/admin/media/image-field";
+import FormSection from "@/components/admin/ui/form-section";
+import SaveBar from "@/components/admin/ui/save-bar";
+import { TextField, TextareaField } from "@/components/admin/ui/field";
 
 export default function CategoryForm({
   action,
@@ -12,66 +14,21 @@ export default function CategoryForm({
   submitLabel: string;
 }) {
   return (
-    <form action={action} className="admin-card" style={{ maxWidth: 640 }}>
+    <form action={action} style={{ maxWidth: 820 }}>
       {category && <input type="hidden" name="id" value={category.id} />}
-      <div className="row g-3">
-        <div className="col-sm-8">
-          <label className="form-label" htmlFor="name">
-            Name *
-          </label>
-          <input
-            id="name"
-            name="name"
-            className="form-control"
-            defaultValue={category?.name ?? ""}
-            required
-          />
-        </div>
-        <div className="col-sm-4">
-          <label className="form-label" htmlFor="sortOrder">
-            Sort order
-          </label>
-          <input
-            id="sortOrder"
-            name="sortOrder"
-            type="number"
-            className="form-control"
-            defaultValue={category?.sortOrder ?? 0}
-          />
-        </div>
-        <div className="col-12">
-          <label className="form-label" htmlFor="slug">
-            Slug <span style={{ color: "var(--text-dim)" }}>(leave blank to auto-generate)</span>
-          </label>
-          <input
-            id="slug"
-            name="slug"
-            className="form-control"
-            defaultValue={category?.slug ?? ""}
-          />
-        </div>
-        <div className="col-12">
-          <label className="form-label" htmlFor="description">
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows={3}
-            className="form-control"
-            defaultValue={category?.description ?? ""}
-          />
-        </div>
+
+      <FormSection title="Category">
+        <TextField name="name" label="Name" defaultValue={category?.name ?? ""} required col="col-md-8" />
+        <TextField name="sortOrder" label="Sort order" type="number" defaultValue={category?.sortOrder ?? 0} col="col-md-4" />
+        <TextField name="slug" label="Slug" defaultValue={category?.slug ?? ""} col="col-12" hint="Leave blank to auto-generate." />
+        <TextareaField name="description" label="Description" defaultValue={category?.description ?? ""} rows={5} hint="Shown on the category landing page and in search results." />
+      </FormSection>
+
+      <FormSection title="Image">
         <ImageField name="heroImage" label="Hero image" value={category?.heroImage ?? ""} col="col-12" />
-      </div>
-      <div className="d-flex gap-2 mt-4">
-        <button type="submit" className="btn btn-gold">
-          {submitLabel}
-        </button>
-        <Link href="/admin/categories" className="btn btn-ghost">
-          Cancel
-        </Link>
-      </div>
+      </FormSection>
+
+      <SaveBar submitLabel={submitLabel} cancelHref="/admin/categories" />
     </form>
   );
 }

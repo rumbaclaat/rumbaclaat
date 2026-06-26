@@ -31,7 +31,7 @@ function FieldInput({ field, value }: { field: BlockField; value: unknown }) {
     return (
       <textarea
         name={field.key}
-        rows={3}
+        rows={5}
         className="form-control form-control-sm"
         defaultValue={v}
         placeholder={field.placeholder}
@@ -88,7 +88,7 @@ export default async function PageEditor({
           <SelectField name="status" label="Status" options={STATUSES} defaultValue={page.status} col="col-md-3" />
           <TextField name="seoTitle" label="SEO title" defaultValue={page.seoTitle ?? ""} col="col-md-6" />
           <ImageField name="ogImage" label="Social share image (OG)" value={page.ogImage ?? ""} col="col-md-6" hint="Shown when the page is shared on social media." />
-          <TextareaField name="seoDescription" label="SEO description" defaultValue={page.seoDescription ?? ""} rows={2} />
+          <TextareaField name="seoDescription" label="SEO description" defaultValue={page.seoDescription ?? ""} rows={4} />
         </FormSection>
         <div className="d-flex justify-content-end mb-4">
           <button type="submit" className="btn btn-gold">Save settings</button>

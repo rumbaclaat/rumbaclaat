@@ -1,6 +1,8 @@
-import Link from "next/link";
 import type { Cocktail, Product } from "@/generated/prisma/client";
+import FormSection from "@/components/admin/ui/form-section";
+import SaveBar from "@/components/admin/ui/save-bar";
 import ImageField from "@/components/admin/media/image-field";
+import { TextField, TextareaField, SelectField } from "@/components/admin/ui/field";
 
 function lines(v: unknown): string {
   return Array.isArray(v) ? v.join("\n") : "";
@@ -14,8 +16,6 @@ function pairs(v: unknown): string {
   return "";
 }
 
-const DIFFICULTY = ["", "Easy", "Medium", "Hard"];
-
 export default function CocktailForm({
   action,
   cocktail,
@@ -28,95 +28,60 @@ export default function CocktailForm({
   submitLabel: string;
 }) {
   return (
-    <form action={action} className="admin-card">
+    <form action={action}>
       {cocktail && <input type="hidden" name="id" value={cocktail.id} />}
-      <div className="row g-3">
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="name">Name *</label>
-          <input id="name" name="name" className="form-control" defaultValue={cocktail?.name ?? ""} required />
-        </div>
-        <div className="col-md-3">
-          <label className="form-label" htmlFor="difficulty">Difficulty</label>
-          <select id="difficulty" name="difficulty" className="form-select" defaultValue={cocktail?.difficulty ?? ""}>
-            {DIFFICULTY.map((d) => <option key={d} value={d}>{d || "—"}</option>)}
-          </select>
-        </div>
-        <div className="col-md-3">
-          <label className="form-label" htmlFor="status">Status</label>
-          <select id="status" name="status" className="form-select" defaultValue={cocktail?.status ?? "draft"}>
-            <option value="draft">draft</option>
-            <option value="published">published</option>
-            <option value="archived">archived</option>
-          </select>
+
+      <div className="admin-product-grid">
+        {/* Main column */}
+        <div className="admin-product-main">
+          <FormSection title="Overview" description="The headline and intro shown at the top of the recipe.">
+            <TextField name="name" label="Name" defaultValue={cocktail?.name ?? ""} required col="col-md-8" />
+            <TextField name="eyebrow" label="Eyebrow" defaultValue={cocktail?.eyebrow ?? ""} col="col-md-4" placeholder="Long & refreshing" />
+            <TextField name="occasion" label="Occasion" defaultValue={cocktail?.occasion ?? ""} col="col-md-6" placeholder="Party / Summer" />
+            <TextareaField name="lede" label="Lede" defaultValue={cocktail?.lede ?? ""} rows={3} placeholder="A one-line description of the serve." />
+            <TextareaField name="tags" label="Tags" defaultValue={(cocktail?.tags ?? []).join("\n")} rows={3} col="col-md-6" hint="One tag per line." placeholder={"Citrus\nClassic"} />
+          </FormSection>
+
+          <FormSection title="Recipe" description="One item per line. Order matters — it renders top to bottom.">
+            <TextareaField name="ingredients" label="Ingredients" defaultValue={lines(cocktail?.ingredients)} rows={10} col="col-md-6" placeholder={"50ml Spiced Gold\n150ml ginger beer\n15ml fresh lime juice"} />
+            <TextareaField name="method" label="Method steps" defaultValue={lines(cocktail?.method)} rows={10} col="col-md-6" placeholder={"Fill a copper mug with ice\nAdd Spiced Gold and lime\nTop with ginger beer"} />
+          </FormSection>
+
+          <FormSection title="Service notes & tips">
+            <TextareaField name="serviceNotes" label="Service notes (key | value per line)" defaultValue={pairs(cocktail?.serviceNotes)} rows={6} col="col-md-6" placeholder={"Glassware | Copper mug\nGarnish | Lime & mint\nTotal time | 3 mins"} />
+            <TextareaField name="bartenderTip" label="Bartender tip" defaultValue={cocktail?.bartenderTip ?? ""} rows={6} col="col-md-6" placeholder="Use a fiery ginger beer for the best contrast with the spice." />
+          </FormSection>
+
+          <FormSection title="Image">
+            <ImageField name="image" label="Hero image" value={cocktail?.image ?? ""} col="col-12" hint="Upload a file or choose from the media library." />
+          </FormSection>
         </div>
 
-        <div className="col-md-4">
-          <label className="form-label" htmlFor="eyebrow">Eyebrow</label>
-          <input id="eyebrow" name="eyebrow" className="form-control" defaultValue={cocktail?.eyebrow ?? ""} />
-        </div>
-        <div className="col-md-4">
-          <label className="form-label" htmlFor="occasion">Occasion</label>
-          <input id="occasion" name="occasion" className="form-control" defaultValue={cocktail?.occasion ?? ""} />
-        </div>
-        <div className="col-md-2">
-          <label className="form-label" htmlFor="timeMins">Time (mins)</label>
-          <input id="timeMins" name="timeMins" type="number" className="form-control" defaultValue={cocktail?.timeMins ?? ""} />
-        </div>
-        <div className="col-md-2">
-          <label className="form-label" htmlFor="slug">Slug</label>
-          <input id="slug" name="slug" className="form-control" defaultValue={cocktail?.slug ?? ""} />
-        </div>
+        {/* Persistent rail */}
+        <div className="admin-product-rail">
+          <FormSection title="Publish">
+            <SelectField name="status" label="Status" options={["draft", "published", "archived"]} defaultValue={cocktail?.status ?? "draft"} col="col-12" />
+            <SelectField name="difficulty" label="Difficulty" options={["Easy", "Medium", "Hard"]} defaultValue={cocktail?.difficulty ?? ""} blankLabel="— none —" col="col-md-6" />
+            <TextField name="timeMins" label="Time (mins)" type="number" defaultValue={cocktail?.timeMins ?? ""} col="col-md-6" />
+            <TextField name="slug" label="Slug" defaultValue={cocktail?.slug ?? ""} col="col-12" hint="Leave blank to auto-generate." />
+          </FormSection>
 
-        <div className="col-12">
-          <label className="form-label" htmlFor="lede">Lede</label>
-          <textarea id="lede" name="lede" rows={2} className="form-control" defaultValue={cocktail?.lede ?? ""} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="ingredients">Ingredients (one per line)</label>
-          <textarea id="ingredients" name="ingredients" rows={6} className="form-control" defaultValue={lines(cocktail?.ingredients)} />
-        </div>
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="method">Method steps (one per line)</label>
-          <textarea id="method" name="method" rows={6} className="form-control" defaultValue={lines(cocktail?.method)} />
-        </div>
-
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="serviceNotes">Service notes (key | value per line)</label>
-          <textarea id="serviceNotes" name="serviceNotes" rows={4} className="form-control" defaultValue={pairs(cocktail?.serviceNotes)} placeholder={"Glassware | Coupe\nGarnish | Lime twist"} />
-        </div>
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="bartenderTip">Bartender tip</label>
-          <textarea id="bartenderTip" name="bartenderTip" rows={4} className="form-control" defaultValue={cocktail?.bartenderTip ?? ""} />
-        </div>
-
-        <ImageField name="image" label="Image" value={cocktail?.image ?? ""} col="col-md-8" />
-        <div className="col-md-4">
-          <label className="form-label" htmlFor="featuredProductId">Featured rum</label>
-          <select id="featuredProductId" name="featuredProductId" className="form-select" defaultValue={cocktail?.featuredProductId ?? ""}>
-            <option value="">— none —</option>
-            {products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-        </div>
-
-        <div className="col-md-3">
-          <label className="form-label" htmlFor="ratingAvg">Rating (0–5)</label>
-          <input id="ratingAvg" name="ratingAvg" type="number" step="0.1" min="0" max="5" className="form-control" defaultValue={cocktail?.ratingAvg != null ? String(cocktail.ratingAvg) : ""} />
-        </div>
-        <div className="col-md-3">
-          <label className="form-label" htmlFor="ratingCount">Rating count</label>
-          <input id="ratingCount" name="ratingCount" type="number" className="form-control" defaultValue={cocktail?.ratingCount ?? 0} />
-        </div>
-        <div className="col-md-6">
-          <label className="form-label" htmlFor="tags">Tags (one per line)</label>
-          <textarea id="tags" name="tags" rows={2} className="form-control" defaultValue={(cocktail?.tags ?? []).join("\n")} placeholder={"Citrus\nClassic"} />
+          <FormSection title="Featured & ratings">
+            <SelectField
+              name="featuredProductId"
+              label="Featured rum"
+              options={products.map((p) => ({ value: p.id, label: p.name }))}
+              defaultValue={cocktail?.featuredProductId ?? ""}
+              blankLabel="— none —"
+              col="col-12"
+            />
+            <TextField name="ratingAvg" label="Rating (0–5)" type="number" step="0.1" defaultValue={cocktail?.ratingAvg != null ? String(cocktail.ratingAvg) : ""} col="col-md-6" />
+            <TextField name="ratingCount" label="Rating count" type="number" defaultValue={cocktail?.ratingCount ?? 0} col="col-md-6" />
+          </FormSection>
         </div>
       </div>
 
-      <div className="d-flex gap-2 mt-4">
-        <button type="submit" className="btn btn-gold">{submitLabel}</button>
-        <Link href="/admin/cocktails" className="btn btn-ghost">Cancel</Link>
-      </div>
+      <SaveBar submitLabel={submitLabel} cancelHref="/admin/cocktails" />
     </form>
   );
 }
