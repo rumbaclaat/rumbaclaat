@@ -66,8 +66,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Trust bar */}
-      <section style={{ background: "var(--bg-card)" }}>
+      {/* Trust strip */}
+      <section className="section--sunken">
         <div className="container">
           <ul className="trust-bar list-unstyled m-0">
             <li className="trust-item"><span className="trust-icon" aria-hidden="true">✦</span> 12+ Year Aged Expressions</li>
@@ -93,13 +93,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured products */}
+      {/* Editorial story split — product collection */}
       <section className="section" aria-labelledby="featured-title">
         <div className="container">
           <div className="text-center reveal mb-5">
-            <span className="eyebrow">Signature Collection</span>
-            <h2 id="featured-title">From the cask to the wardrobe</h2>
-            <p style={{ maxWidth: 540, margin: "12px auto 0", color: "var(--text-muted)" }}>
+            <span className="eyebrow eyebrow-center">Signature Collection</span>
+            <h2 className="serif" id="featured-title">From the cask to the wardrobe</h2>
+            <p style={{ maxWidth: 720, margin: "12px auto 0", color: "var(--text-muted)" }}>
               Two Caribbean expressions and the apparel we wear behind the bar. Pick a flagship from each side of the brand.
             </p>
           </div>
@@ -136,24 +136,25 @@ export default async function HomePage() {
             />
           </div>
           <div className="text-center mt-5 d-flex gap-2 justify-content-center flex-wrap">
-            <Link href="/shop" className="btn btn-outline-gold">View Full Rum Collection →</Link>
-            <Link href="/shop?category=mens-apparel" className="btn btn-outline-gold">View All Apparel →</Link>
+            <Link href="/shop" className="btn btn-gold btn-lg">View Full Rum Collection →</Link>
+            <Link href="/shop?category=mens-apparel" className="btn btn-outline-gold btn-lg">View All Apparel →</Link>
           </div>
         </div>
       </section>
 
-      {/* Membership strip */}
+      {/* Membership tiers */}
       <section
+        className="section"
         style={{ background: "linear-gradient(135deg,#1C1A14,#161310)", borderTop: "1px solid var(--gold-bdr)", borderBottom: "1px solid var(--gold-bdr)" }}
         aria-labelledby="tiers-title"
       >
-        <div className="container section-sm">
+        <div className="container">
           <div className="text-center reveal mb-5">
-            <span className="eyebrow">Loyalty Programme</span>
-            <h2 id="tiers-title">The Inner Circle of Rum</h2>
-            <p style={{ maxWidth: 480, margin: "12px auto 0", color: "var(--text-muted)" }}>Four tiers. Exclusive perks. Member-only pricing. Join free — upgrade when ready.</p>
+            <span className="eyebrow eyebrow-center">Loyalty Programme</span>
+            <h2 className="serif" id="tiers-title">The Inner Circle of Rum</h2>
+            <p style={{ maxWidth: 720, margin: "12px auto 0", color: "var(--text-muted)" }}>Four tiers. Exclusive perks. Member-only pricing. Join free — upgrade when ready.</p>
           </div>
-          <div className="row g-3">
+          <div className="row g-4">
             <TierCard color="var(--bronze)" cls="tier-bronze" name="Bronze" price="Free" perk="5% discount · 1× points" />
             <TierCard color="var(--silver)" cls="tier-silver" name="Silver" price="£9.99/mo" perk="10% off · 1.5× points" />
             <TierCard color="var(--gold)" cls="tier-gold" name="Gold" price="£24.99/mo" perk="15% off · 2× points" highlight />
@@ -165,45 +166,50 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Cocktails preview */}
-      <section className="section" aria-labelledby="cocktails-title">
+      {/* Cocktails — 3-up */}
+      <section className="section section--surface" aria-labelledby="cocktails-title">
         <div className="container">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
-            <div>
-              <span className="eyebrow">Cocktail Recipes</span>
-              <h2 id="cocktails-title">Mix it up</h2>
-            </div>
-            <Link href="/cocktails" className="btn btn-outline-gold">View All Recipes →</Link>
+          <div className="text-center reveal mb-5">
+            <span className="eyebrow eyebrow-center">Cocktail Recipes</span>
+            <h2 className="serif" id="cocktails-title">Mix it up</h2>
+            <p style={{ maxWidth: 720, margin: "12px auto 0", color: "var(--text-muted)" }}>Three signature serves to pour at home — from a five-minute sour to a slow evening sipper.</p>
           </div>
           <div className="row g-4">
             <CocktailCard href="/cocktails/rumbaclaat-sour" img={U("photo-1748674755168-266c309d4712", 600)} badge="Easy · 5 mins" title="Rumbaclaat Sour" desc="Fresh lime, egg white, bitters. Elegant aperitif." />
             <CocktailCard href="/cocktails" img={U("photo-1767745455688-49391131f751", 600)} badge="Medium · 8 mins" title="Dark & Smoky" desc="Mezcal, dark honey, mole bitters. An evening classic." />
             <CocktailCard href="/cocktails/spiced-mule" img={U("photo-1609189123897-42db027571c9", 600)} badge="Easy · 3 mins" title="Spiced Mule" desc="Spiced Gold, ginger beer, lime. Refreshing and easy." />
           </div>
+          <div className="text-center mt-5 reveal">
+            <Link href="/cocktails" className="btn btn-gold btn-lg">View All Recipes →</Link>
+          </div>
         </div>
       </section>
 
-      {/* Blog preview */}
-      <section className="section" style={{ background: "var(--bg-card)", borderTop: "1px solid var(--gold-bdr)" }} aria-labelledby="blog-title">
+      {/* Journal — 3-up */}
+      <section className="section" aria-labelledby="blog-title">
         <div className="container">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5 reveal">
-            <div><span className="eyebrow">From the Blog</span><h2 id="blog-title">Stories &amp; Craft</h2></div>
-            <Link href="/blog" className="btn btn-outline-gold">All Posts →</Link>
+          <div className="text-center reveal mb-5">
+            <span className="eyebrow eyebrow-center">From the Journal</span>
+            <h2 className="serif" id="blog-title">Stories &amp; Craft</h2>
+            <p style={{ maxWidth: 720, margin: "12px auto 0", color: "var(--text-muted)" }}>Heritage, craft and cocktail culture — dispatches from behind the bar and inside the distillery.</p>
           </div>
           <div className="row g-4">
             <BlogCard href="/blog/the-story-behind-rumbaclaat" img={U("photo-1642963036562-affa2703f5ad")} badge="Heritage" title="The Story Behind Rumbaclaat" desc="From the Caribbean canefields to your glass — the origins of our brand." meta="Jan 20, 2025 · 6 min read" />
             <BlogCard href="/blog/the-art-of-rum-ageing" img={U("photo-1764699186296-9dac0ddb5edb")} badge="Craft" title="The Art of Rum Ageing" desc="Understanding the journey from distillate to reserve expression." meta="Jan 10, 2025 · 8 min read" />
             <BlogCard href="/blog/cocktail-culture-in-2025" img={U("photo-1767745455688-49391131f751")} badge="Cocktails" title="Cocktail Culture in 2025" desc="The trends shaping premium cocktail experiences worldwide." meta="Jan 5, 2025 · 5 min read" />
           </div>
+          <div className="text-center mt-5 reveal">
+            <Link href="/blog" className="btn btn-gold btn-lg">Read All Posts →</Link>
+          </div>
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="section home-newsletter reveal" aria-labelledby="newsletter-title">
+      {/* Newsletter band */}
+      <section className="section section--sunken home-newsletter reveal" aria-labelledby="newsletter-title">
         <div className="container">
           <div className="home-newsletter-card">
-            <span className="eyebrow">Letters from the Distillery</span>
-            <h2 id="newsletter-title">Join the Rumbaclaat list</h2>
+            <span className="eyebrow eyebrow-center">Letters from the Distillery</span>
+            <h2 className="serif" id="newsletter-title">Join the Rumbaclaat list</h2>
             <p style={{ color: "var(--text-muted)" }}>A few emails a month. New releases, journal pieces, cocktail recipes, member events. No noise — unsubscribe whenever you like.</p>
             <form className="home-newsletter-row" action="/newsletter">
               <label htmlFor="hn-email" className="visually-hidden">Email address</label>
@@ -221,7 +227,7 @@ export default async function HomePage() {
           <div className="home-socials-inner">
             <div className="home-socials-copy">
               <span className="eyebrow">From Our Feed</span>
-              <h2 id="follow-title">Follow Rumbaclaat</h2>
+              <h2 className="serif" id="follow-title">Follow Rumbaclaat</h2>
               <p style={{ color: "var(--text-muted)" }}>Behind-the-bar moments, new cocktails, distillery dispatches, drops and member events. We post when there&apos;s something worth saying — never more.</p>
               <p className="home-socials-handle">@rumbaclaat</p>
             </div>
@@ -261,9 +267,9 @@ function FeaturedCard(props: {
               <div className="price-member">{props.member}</div>
             </div>
             {props.cta === "view" ? (
-              <Link href={props.href} className="btn btn-gold btn-sm">View →</Link>
+              <Link href={props.href} className="btn btn-outline-gold btn-sm">View →</Link>
             ) : (
-              <Link href={props.href} className="btn btn-gold btn-sm">Add to Cart</Link>
+              <Link href={props.href} className="btn btn-outline-gold btn-sm">Add to Cart</Link>
             )}
           </div>
         </div>

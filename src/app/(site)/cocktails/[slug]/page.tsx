@@ -41,9 +41,10 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
   const dc = cocktail.difficulty ? diffClass[cocktail.difficulty] ?? "diff-easy" : "diff-easy";
 
   return (
+    <>
     <section className="section">
       <div className="container">
-        <nav aria-label="Breadcrumb" className="mb-3">
+        <nav aria-label="Breadcrumb" className="mb-4">
           <ol className="breadcrumb" style={{ fontSize: ".75rem" }}>
             <li className="breadcrumb-item"><Link href="/">Home</Link></li>
             <li className="breadcrumb-item"><Link href="/cocktails">Cocktails</Link></li>
@@ -51,17 +52,19 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
           </ol>
         </nav>
 
-        {cocktail.eyebrow && <span className="eyebrow">{cocktail.eyebrow}</span>}
-        <h1 style={{ fontSize: "clamp(2rem,4vw,2.75rem)" }}>{cocktail.name}</h1>
-        {cocktail.lede && <p className="hero-lede" style={{ margin: "10px 0 18px", textAlign: "left" }}>{cocktail.lede}</p>}
+        <header className="mb-5" style={{ maxWidth: 720 }}>
+          <span className="eyebrow">{cocktail.eyebrow || "Craft Cocktail"}</span>
+          <h1 className="serif" style={{ fontSize: "clamp(2rem,4.4vw,3.4rem)", margin: ".4rem 0 0" }}>{cocktail.name}</h1>
+          {cocktail.lede && <p className="hero-lede" style={{ margin: "16px 0 20px", textAlign: "left" }}>{cocktail.lede}</p>}
 
-        <div className="ck-meta-row mb-4">
-          {cocktail.difficulty && (
-            <span className="meta-pill"><span className={`diff-dot ${dc}`} />{cocktail.difficulty}</span>
-          )}
-          {cocktail.timeMins && <span className="meta-pill meta-pill-plain">⏱ {cocktail.timeMins} mins</span>}
-          {cocktail.occasion && <span className="meta-pill">{cocktail.occasion}</span>}
-        </div>
+          <div className="ck-meta-row">
+            {cocktail.difficulty && (
+              <span className="meta-pill"><span className={`diff-dot ${dc}`} />{cocktail.difficulty}</span>
+            )}
+            {cocktail.timeMins && <span className="meta-pill meta-pill-plain">⏱ {cocktail.timeMins} mins</span>}
+            {cocktail.occasion && <span className="meta-pill">{cocktail.occasion}</span>}
+          </div>
+        </header>
 
         <div className="ck-layout">
           {/* Image */}
@@ -120,38 +123,48 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
             )}
 
             {featured && (
-              <div className="mt-4">
+              <div className="card-brand card-brand--feature mt-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div>
+                  <span className="eyebrow">The Bottle Behind the Bar</span>
+                  <h3 className="serif mb-0" style={{ fontSize: "1.35rem", marginTop: ".3rem" }}>Made with {featured.name}</h3>
+                </div>
                 <Link href={`/product/${featured.slug}`} className="btn btn-gold">Shop {featured.name} →</Link>
               </div>
             )}
           </div>
         </div>
-
-        {related.length > 0 && (
-          <div className="mt-5 pt-4" style={{ borderTop: "1px solid var(--gold-bdr)" }}>
-            <h2 className="h4 mb-4">Try next</h2>
-            <div className="row g-4">
-              {related.map((r) => (
-                <div className="col-12 col-md-4" key={r.id}>
-                  <Link href={`/cocktails/${r.slug}`} className="ck-rel-card">
-                    <div className="ck-rel-img">
-                      {r.image ? (
-                        <img src={r.image} alt={r.name} />
-                      ) : (
-                        <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#1a1a1a,#0f0f0f)" }} />
-                      )}
-                    </div>
-                    <div className="ck-rel-meta">
-                      {r.difficulty}{r.difficulty && r.timeMins ? " · " : ""}{r.timeMins ? `${r.timeMins} mins` : ""}
-                    </div>
-                    <h3>{r.name}</h3>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </section>
+
+    {related.length > 0 && (
+      <section className="section section--surface">
+        <div className="container">
+          <div className="mb-5">
+            <span className="eyebrow">More to Pour</span>
+            <h2 className="serif" style={{ fontSize: "clamp(1.9rem,4vw,3rem)", margin: ".25rem 0 0" }}>Try next</h2>
+          </div>
+          <div className="row g-4">
+            {related.map((r) => (
+              <div className="col-12 col-md-4" key={r.id}>
+                <Link href={`/cocktails/${r.slug}`} className="ck-rel-card">
+                  <div className="ck-rel-img">
+                    {r.image ? (
+                      <img src={r.image} alt={r.name} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#1a1a1a,#0f0f0f)" }} />
+                    )}
+                  </div>
+                  <div className="ck-rel-meta">
+                    {r.difficulty}{r.difficulty && r.timeMins ? " · " : ""}{r.timeMins ? `${r.timeMins} mins` : ""}
+                  </div>
+                  <h3>{r.name}</h3>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+    </>
   );
 }

@@ -39,10 +39,20 @@ export default async function CmsPage({
   if (!page) notFound();
 
   return (
-    <>
-      {page.blocks.map((block) => (
-        <BlockRenderer key={block.id} block={block} />
-      ))}
-    </>
+    <section className="section">
+      <div className="container">
+        <header style={{ maxWidth: 820, marginInline: "auto", textAlign: "center", marginBottom: "clamp(36px, 5vw, 56px)" }}>
+          <span className="eyebrow eyebrow-center">Rumbaclaat</span>
+          <h1 className="serif" style={{ fontSize: "clamp(2rem, 4.4vw, 3.4rem)", margin: 0 }}>
+            {page.title}
+          </h1>
+        </header>
+        <div style={{ maxWidth: 820, marginInline: "auto" }}>
+          {page.blocks.map((block) => (
+            <BlockRenderer key={block.id} block={block} />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

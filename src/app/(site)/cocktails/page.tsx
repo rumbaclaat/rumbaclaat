@@ -37,14 +37,14 @@ export default async function CocktailsIndex() {
       </section>
 
       {/* Filter / search bar */}
-      <div style={{ background: "var(--bg-card3)", borderBottom: "1px solid var(--gold-bdr)", padding: "16px 0" }}>
+      <div className="section--sunken" style={{ padding: "20px 0" }}>
         <div className="container d-flex align-items-center gap-3 flex-wrap">
           <div className="ck-search">
             <label className="visually-hidden" htmlFor="ck-search">Search cocktails or ingredients</label>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
             <input type="search" className="form-control" id="ck-search" placeholder="Search cocktails or ingredients…" />
           </div>
-          <div className="d-flex gap-2 flex-wrap" role="group" aria-label="Filter by difficulty">
+          <div className="d-flex gap-2 flex-wrap ms-auto" role="group" aria-label="Filter by difficulty">
             <button type="button" className="btn btn-ghost btn-sm active" aria-pressed="true">All</button>
             <button type="button" className="btn btn-outline-gold btn-sm"><span className="diff-dot diff-easy" />Easy</button>
             <button type="button" className="btn btn-outline-gold btn-sm"><span className="diff-dot diff-medium" />Medium</button>
@@ -55,7 +55,13 @@ export default async function CocktailsIndex() {
 
       <section className="section">
         <div className="container">
-          <p className="mb-4" style={{ fontSize: ".8125rem", color: "var(--text-dim)" }}>{cocktails.length} cocktails</p>
+          <div className="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-5">
+            <div>
+              <span className="eyebrow">The Collection</span>
+              <h2 className="serif" style={{ fontSize: "clamp(1.9rem,4vw,3rem)", margin: ".25rem 0 0" }}>Cocktail Recipes</h2>
+            </div>
+            <p className="mb-0" style={{ fontSize: ".8125rem", color: "var(--text-dim)", fontVariantNumeric: "tabular-nums" }}>{cocktails.length} cocktails</p>
+          </div>
 
           {cocktails.length === 0 ? (
             <p style={{ color: "var(--text-dim)" }}>No recipes yet.</p>

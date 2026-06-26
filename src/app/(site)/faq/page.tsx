@@ -5,8 +5,9 @@ export const metadata = {
   description: "Answers to common questions about Rumbaclaat orders, delivery, membership, products and your account.",
 };
 
-const GROUPS: { heading: string; items: { q: string; a: string }[] }[] = [
+const GROUPS: { eyebrow: string; heading: string; items: { q: string; a: string }[] }[] = [
   {
+    eyebrow: "Getting your order",
     heading: "Orders, delivery & returns",
     items: [
       { q: "How do I return an item?", a: "Email hello@rumbaclaat.com with your order number and we'll send return instructions. You pay return postage unless the item is faulty." },
@@ -15,6 +16,7 @@ const GROUPS: { heading: string; items: { q: string; a: string }[] }[] = [
     ],
   },
   {
+    eyebrow: "Rewards & tiers",
     heading: "Membership & points",
     items: [
       { q: "Is Bronze membership really free?", a: "Yes. Bronze gives you 5% off every order, 1× loyalty points, birthday bonus and early newsletter access at no cost." },
@@ -24,6 +26,7 @@ const GROUPS: { heading: string; items: { q: string; a: string }[] }[] = [
     ],
   },
   {
+    eyebrow: "The rum itself",
     heading: "Products",
     items: [
       { q: "Where is Rumbaclaat made?", a: "Our Original Reserve is distilled in Jamaica and aged in American oak. Each expression comes from selected Caribbean distilleries — see each product page for origin details." },
@@ -37,25 +40,47 @@ const GROUPS: { heading: string; items: { q: string; a: string }[] }[] = [
 export default function FaqPage() {
   return (
     <>
-      <section className="section-sm" style={{ background: "linear-gradient(135deg,#161208,#0E0E0E)", borderBottom: "1px solid var(--gold-bdr)" }}>
-        <div className="container reveal">
+      <section className="section-sm section--sunken">
+        <div className="container reveal" style={{ maxWidth: 820 }}>
           <span className="eyebrow">Help Centre</span>
-          <h1>Frequently asked questions</h1>
-          <p style={{ maxWidth: 480, marginTop: 10, color: "var(--text-muted)" }}>Everything about orders, delivery, membership and our rum. Can&apos;t find it? <Link href="/contact">Contact us</Link>.</p>
+          <h1 className="serif" style={{ fontSize: "clamp(2rem, 4.4vw, 3.4rem)" }}>Frequently asked questions</h1>
+          <p style={{ maxWidth: 560, marginTop: 14, color: "var(--text-muted)", fontSize: "1.0625rem", lineHeight: 1.7 }}>
+            Everything about orders, delivery, membership and our rum. Can&apos;t find it? <Link href="/contact">Contact us</Link>.
+          </p>
         </div>
       </section>
 
       <section className="section">
-        <div className="container" style={{ maxWidth: 860 }}>
+        <div className="container" style={{ maxWidth: 820 }}>
           {GROUPS.map((g) => (
-            <div key={g.heading} className="mb-5">
-              <h2 className="h4 mb-3">{g.heading}</h2>
-              {g.items.map((it) => (
-                <details key={it.q} className="accordion-item card-brand mb-2" style={{ borderRadius: "var(--radius)" }}>
-                  <summary style={{ cursor: "pointer", fontFamily: "var(--sans)", fontWeight: 600, color: "var(--text)" }}>{it.q}</summary>
-                  <p style={{ color: "var(--text-muted)", marginTop: 10, marginBottom: 0, fontSize: ".9rem", lineHeight: 1.65 }}>{it.a}</p>
-                </details>
-              ))}
+            <div key={g.heading} style={{ marginBottom: 56 }}>
+              <span className="eyebrow">{g.eyebrow}</span>
+              <h2 className="serif" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: 18 }}>{g.heading}</h2>
+
+              <div className="d-flex flex-column gap-3">
+                {g.items.map((it) => (
+                  <details key={it.q} className="card-brand" style={{ padding: "18px 22px" }}>
+                    <summary
+                      className="serif"
+                      style={{
+                        cursor: "pointer",
+                        fontSize: "1.2rem",
+                        fontWeight: 600,
+                        color: "var(--text)",
+                        listStyle: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 16,
+                      }}
+                    >
+                      <span>{it.q}</span>
+                      <span aria-hidden="true" className="gold" style={{ fontSize: "1.4rem", lineHeight: 1, flexShrink: 0 }}>+</span>
+                    </summary>
+                    <p style={{ color: "var(--text-muted)", marginTop: 14, marginBottom: 0, fontSize: ".95rem", lineHeight: 1.7 }}>{it.a}</p>
+                  </details>
+                ))}
+              </div>
             </div>
           ))}
         </div>

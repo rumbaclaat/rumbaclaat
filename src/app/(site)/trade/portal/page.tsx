@@ -14,14 +14,36 @@ const EXPORT: Record<string, { code: string; origin: string; net: string; gross:
 
 const money = (n: number) => `£${n.toFixed(2)}`;
 
+// Champagne table header: uppercase .66rem --text-dim on --surface-sunken
+const thBase = {
+  fontSize: ".66rem",
+  fontWeight: 600,
+  letterSpacing: ".08em",
+  textTransform: "uppercase" as const,
+  color: "var(--text-dim)",
+  background: "var(--surface-sunken)",
+};
+const thNum = { ...thBase, textAlign: "right" as const };
+const tdNum = { textAlign: "right" as const, fontVariantNumeric: "tabular-nums" as const };
+const sectionHead = (eyebrow: string, title: string, lede?: string) => (
+  <div className="mb-4">
+    <span className="eyebrow">{eyebrow}</span>
+    <h2 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(1.5rem, 3vw, 2rem)", margin: 0 }}>{title}</h2>
+    {lede ? <p style={{ color: "var(--text-muted)", lineHeight: 1.7, margin: "8px 0 0" }}>{lede}</p> : null}
+  </div>
+);
+
 export default async function TradePortalPage() {
   const account = await prisma.tradeAccount.findFirst({ orderBy: { createdAt: "asc" } });
   if (!account) {
     return (
-      <div className="container section text-center">
-        <h1>Trade Portal</h1>
-        <p style={{ color: "var(--text-muted)" }}>No trade account found. <Link href="/trade-apply">Apply for trade access →</Link></p>
-      </div>
+      <section className="section">
+        <div className="container text-center">
+          <span className="eyebrow eyebrow-center">Trade Portal</span>
+          <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(2rem, 4.4vw, 3rem)", margin: 0 }}>Trade Portal</h1>
+          <p style={{ color: "var(--text-muted)", marginTop: 14 }}>No trade account found. <Link href="/trade-apply">Apply for trade access →</Link></p>
+        </div>
+      </section>
     );
   }
 
@@ -53,24 +75,25 @@ export default async function TradePortalPage() {
       label: "Pricing",
       content: (
         <div>
-          <div className="card-brand mb-3" style={{ borderColor: "var(--gold-md)" }}>
-            <p style={{ fontFamily: "var(--serif)", fontSize: "1rem", fontWeight: 600, color: "var(--gold-hi)", marginBottom: 4 }}>Your pricing tier: {account.pricingTier}</p>
-            <p style={{ margin: 0 }}>All prices include UK VAT at 20%. Payment terms: {account.paymentTerms}. Minimum order: 6 bottles (1 case).</p>
+          {sectionHead("Your rate card", "Wholesale pricing", `All prices include UK VAT at 20%. Payment terms: ${account.paymentTerms}. Minimum order: 6 bottles (1 case).`)}
+          <div className="card-brand card-brand--feature mb-4" style={{ padding: 22 }}>
+            <p style={{ fontFamily: "var(--serif)", fontSize: "1.2rem", fontWeight: 600, color: "var(--gold-hi)", margin: "0 0 4px" }}>Your pricing tier: {account.pricingTier}</p>
+            <p style={{ color: "var(--text-muted)", margin: 0 }}>Tiered rates below are locked to your account and refresh automatically with each volume band.</p>
           </div>
           <div className="row g-4">
             {Object.entries(pricingByProduct).map(([pid, rows]) => (
               <div className="col-12 col-lg-6" key={pid}>
-                <div className="card-brand h-100">
-                  <h2 className="h4 mb-3">{productName(pid)} — Wholesale</h2>
+                <div className="card-brand h-100 p-0" style={{ overflow: "hidden" }}>
+                  <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: 0, padding: "20px 22px 16px", borderBottom: "1px solid var(--line)" }}>{productName(pid)} — Wholesale</h3>
                   <div className="table-responsive">
                     <table className="trade-table">
-                      <thead><tr><th>Volume</th><th>Price/Bottle</th><th>Price/Case</th></tr></thead>
+                      <thead><tr><th style={thBase}>Volume</th><th style={thNum}>Price/Bottle</th><th style={thNum}>Price/Case</th></tr></thead>
                       <tbody>
                         {rows.map((r) => (
                           <tr key={r.id}>
                             <td>{r.volumeBand === "10+" ? "10+ cases" : `${r.volumeBand} cases`}</td>
-                            <td style={{ color: "var(--gold-hi)", fontFamily: "var(--serif)" }}>{money(Number(r.pricePerBottle))}</td>
-                            <td>{money(Number(r.pricePerCase))}</td>
+                            <td style={{ ...tdNum, color: "var(--gold-hi)", fontFamily: "var(--serif)" }}>{money(Number(r.pricePerBottle))}</td>
+                            <td style={tdNum}>{money(Number(r.pricePerCase))}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -86,28 +109,36 @@ export default async function TradePortalPage() {
     {
       id: "order",
       label: "Place order",
-      content: <TradeOrderCalculator products={calcProducts} pricing={calcPricing} />,
+      content: (
+        <div>
+          {sectionHead("New order", "Place an order", "Build your order against your locked rate card — totals update live as you change quantities.")}
+          <TradeOrderCalculator products={calcProducts} pricing={calcPricing} />
+        </div>
+      ),
     },
     {
       id: "orders",
       label: "Orders",
       content: (
-        <div className="card-brand p-0" style={{ overflow: "hidden" }}>
-          <div className="table-responsive">
-            <table className="trade-table">
-              <thead><tr><th>Order</th><th>Date</th><th>Total (inc VAT)</th><th>Status</th></tr></thead>
-              <tbody>
-                {orders.length === 0 && <tr><td colSpan={4} style={{ color: "var(--text-dim)" }}>No orders yet.</td></tr>}
-                {orders.map((o) => (
-                  <tr key={o.id}>
-                    <td style={{ color: "var(--gold-hi)" }}>{o.ref}</td>
-                    <td>{new Date(o.placedAt).toLocaleDateString("en-GB")}</td>
-                    <td style={{ fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(o.grandTotal))}</td>
-                    <td style={{ textTransform: "capitalize" }}>{o.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div>
+          {sectionHead("History", "Your orders")}
+          <div className="card-brand p-0" style={{ overflow: "hidden" }}>
+            <div className="table-responsive">
+              <table className="trade-table">
+                <thead><tr><th style={thBase}>Order</th><th style={thBase}>Date</th><th style={thNum}>Total (inc VAT)</th><th style={thBase}>Status</th></tr></thead>
+                <tbody>
+                  {orders.length === 0 && <tr><td colSpan={4} style={{ color: "var(--text-dim)" }}>No orders yet.</td></tr>}
+                  {orders.map((o) => (
+                    <tr key={o.id}>
+                      <td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{o.ref}</td>
+                      <td>{new Date(o.placedAt).toLocaleDateString("en-GB")}</td>
+                      <td style={{ ...tdNum, fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(o.grandTotal))}</td>
+                      <td style={{ textTransform: "capitalize" }}>{o.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       ),
@@ -116,23 +147,30 @@ export default async function TradePortalPage() {
       id: "invoices",
       label: "Invoices",
       content: (
-        <div className="card-brand p-0" style={{ overflow: "hidden" }}>
-          <div className="table-responsive">
-            <table className="trade-table">
-              <thead><tr><th>Invoice</th><th>Issued</th><th>Amount</th><th>Terms</th><th>Status</th></tr></thead>
-              <tbody>
-                {invoices.length === 0 && <tr><td colSpan={5} style={{ color: "var(--text-dim)" }}>No invoices yet.</td></tr>}
-                {invoices.map((iv) => (
-                  <tr key={iv.id}>
-                    <td style={{ color: "var(--gold-hi)" }}>{iv.ref}</td>
-                    <td>{new Date(iv.issuedAt).toLocaleDateString("en-GB")}</td>
-                    <td style={{ fontFamily: "var(--serif)" }}>{money(Number(iv.amount))}</td>
-                    <td>{iv.terms}</td>
-                    <td style={{ textTransform: "capitalize", color: iv.status === "paid" ? "var(--green)" : "var(--yellow)" }}>{iv.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div>
+          {sectionHead("Billing", "Your invoices")}
+          <div className="card-brand p-0" style={{ overflow: "hidden" }}>
+            <div className="table-responsive">
+              <table className="trade-table">
+                <thead><tr><th style={thBase}>Invoice</th><th style={thBase}>Issued</th><th style={thNum}>Amount</th><th style={thBase}>Terms</th><th style={thBase}>Status</th></tr></thead>
+                <tbody>
+                  {invoices.length === 0 && <tr><td colSpan={5} style={{ color: "var(--text-dim)" }}>No invoices yet.</td></tr>}
+                  {invoices.map((iv) => (
+                    <tr key={iv.id}>
+                      <td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{iv.ref}</td>
+                      <td>{new Date(iv.issuedAt).toLocaleDateString("en-GB")}</td>
+                      <td style={{ ...tdNum, fontFamily: "var(--serif)" }}>{money(Number(iv.amount))}</td>
+                      <td>{iv.terms}</td>
+                      <td>
+                        <span className="badge-brand" style={iv.status === "paid"
+                          ? { color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)", textTransform: "capitalize" }
+                          : { color: "var(--yellow)", background: "rgba(232,182,90,.12)", borderColor: "rgba(232,182,90,.3)", textTransform: "capitalize" }}>{iv.status}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       ),
@@ -142,23 +180,33 @@ export default async function TradePortalPage() {
       label: "Messages",
       badge: unread || undefined,
       content: (
-        <div className="row g-4">
-          <div className="col-12 col-lg-6">
-            {messages.map((m) => (
-              <div className={`msg-item${m.read ? "" : " unread"}`} key={m.id}>
-                <div className="d-flex justify-content-between mb-1"><span style={{ fontSize: ".8125rem", fontWeight: 600 }}>{m.subject ?? "Message"}</span></div>
-                <span className="d-block" style={{ fontSize: ".8125rem", color: "var(--text-muted)" }}>{m.body}</span>
-                <span className="d-block" style={{ fontSize: ".6875rem", color: "var(--text-dim)", marginTop: 4 }}>{m.direction === "inbound" ? "You" : "Rumbaclaat Trade Team"} · {new Date(m.createdAt).toLocaleDateString("en-GB")}</span>
-              </div>
-            ))}
-          </div>
-          <div className="col-12 col-lg-6">
-            <form action={sendTradeMessage} className="card-brand">
-              <h2 className="h4 mb-3">Send a message</h2>
-              <div className="mb-3"><label className="form-label" htmlFor="m-subject">Subject</label><input id="m-subject" name="subject" className="form-control" /></div>
-              <div className="mb-3"><label className="form-label" htmlFor="m-body">Message *</label><textarea id="m-body" name="body" rows={4} className="form-control" required /></div>
-              <button type="submit" className="btn btn-gold w-100">Send message</button>
-            </form>
+        <div>
+          {sectionHead("Account manager", "Messages")}
+          <div className="row g-4">
+            <div className="col-12 col-lg-6">
+              {messages.length === 0 && <p style={{ color: "var(--text-dim)" }}>No messages yet.</p>}
+              {messages.map((m) => (
+                <div className={`msg-item${m.read ? "" : " unread"}`} key={m.id}>
+                  <div className="d-flex justify-content-between mb-1"><span style={{ fontSize: ".875rem", fontWeight: 600, color: "var(--text)" }}>{m.subject ?? "Message"}</span></div>
+                  <span className="d-block" style={{ fontSize: ".875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>{m.body}</span>
+                  <span className="d-block" style={{ fontSize: ".6875rem", color: "var(--text-dim)", marginTop: 6 }}>{m.direction === "inbound" ? "You" : "Rumbaclaat Trade Team"} · {new Date(m.createdAt).toLocaleDateString("en-GB")}</span>
+                </div>
+              ))}
+            </div>
+            <div className="col-12 col-lg-6">
+              <form action={sendTradeMessage} className="card-brand" style={{ padding: 24 }}>
+                <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Send a message</h3>
+                <div className="mb-3">
+                  <label className="form-label" htmlFor="m-subject" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Subject</label>
+                  <input id="m-subject" name="subject" className="form-control" />
+                </div>
+                <div className="mb-4">
+                  <label className="form-label" htmlFor="m-body" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Message *</label>
+                  <textarea id="m-body" name="body" rows={4} className="form-control" required />
+                </div>
+                <button type="submit" className="btn btn-gold w-100">Send message</button>
+              </form>
+            </div>
           </div>
         </div>
       ),
@@ -167,31 +215,34 @@ export default async function TradePortalPage() {
       id: "export",
       label: "Export compliance",
       content: (
-        <div className="row g-4">
-          {Object.entries(pricingByProduct).map(([pid]) => {
-            const e = EXPORT[productName(pid)];
-            if (!e) return null;
-            return (
-              <div className="col-12 col-lg-6" key={pid}>
-                <div className="card-brand h-100">
-                  <h2 className="h4 mb-3">Export compliance — {productName(pid)}</h2>
-                  <div className="table-responsive">
-                    <table className="trade-table">
-                      <tbody>
-                        <tr><td style={{ color: "var(--text-muted)" }}>Commodity Code</td><td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{e.code}</td></tr>
-                        <tr><td style={{ color: "var(--text-muted)" }}>Country of Origin</td><td>{e.origin}</td></tr>
-                        <tr><td style={{ color: "var(--text-muted)" }}>Net Weight</td><td>{e.net}/bottle</td></tr>
-                        <tr><td style={{ color: "var(--text-muted)" }}>Gross Weight</td><td>{e.gross}/bottle</td></tr>
-                        <tr><td style={{ color: "var(--text-muted)" }}>ABV</td><td>{e.abv}</td></tr>
-                        <tr><td style={{ color: "var(--text-muted)" }}>Volume</td><td>{e.vol}</td></tr>
-                        <tr><td style={{ color: "var(--text-muted)" }}>Incoterms</td><td>EXW, FOB, CIF</td></tr>
-                      </tbody>
-                    </table>
+        <div>
+          {sectionHead("Documentation", "Export compliance", "Commodity codes, weights and Incoterms for your international shipments.")}
+          <div className="row g-4">
+            {Object.entries(pricingByProduct).map(([pid]) => {
+              const e = EXPORT[productName(pid)];
+              if (!e) return null;
+              return (
+                <div className="col-12 col-lg-6" key={pid}>
+                  <div className="card-brand h-100 p-0" style={{ overflow: "hidden" }}>
+                    <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: 0, padding: "20px 22px 16px", borderBottom: "1px solid var(--line)" }}>Export compliance — {productName(pid)}</h3>
+                    <div className="table-responsive">
+                      <table className="trade-table">
+                        <tbody>
+                          <tr><td style={{ color: "var(--text-muted)" }}>Commodity Code</td><td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{e.code}</td></tr>
+                          <tr><td style={{ color: "var(--text-muted)" }}>Country of Origin</td><td>{e.origin}</td></tr>
+                          <tr><td style={{ color: "var(--text-muted)" }}>Net Weight</td><td>{e.net}/bottle</td></tr>
+                          <tr><td style={{ color: "var(--text-muted)" }}>Gross Weight</td><td>{e.gross}/bottle</td></tr>
+                          <tr><td style={{ color: "var(--text-muted)" }}>ABV</td><td>{e.abv}</td></tr>
+                          <tr><td style={{ color: "var(--text-muted)" }}>Volume</td><td>{e.vol}</td></tr>
+                          <tr><td style={{ color: "var(--text-muted)" }}>Incoterms</td><td>EXW, FOB, CIF</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       ),
     },
@@ -199,34 +250,52 @@ export default async function TradePortalPage() {
       id: "account",
       label: "Account",
       content: (
-        <div className="card-brand" style={{ maxWidth: 480 }}>
-          <h2 className="h4 mb-3">Account summary</h2>
-          <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}><span style={{ color: "var(--text-muted)" }}>Company</span><span>{account.companyName}</span></div>
-          <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}><span style={{ color: "var(--text-muted)" }}>Status</span><span className="badge-brand" style={{ color: "var(--green)" }}>{account.status}</span></div>
-          <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}><span style={{ color: "var(--text-muted)" }}>Pricing tier</span><span className="badge-brand badge-gold">{account.pricingTier}</span></div>
-          <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}><span style={{ color: "var(--text-muted)" }}>Payment terms</span><span>{account.paymentTerms}</span></div>
-          <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}><span style={{ color: "var(--text-muted)" }}>Credit limit</span><span style={{ fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(account.creditLimit))}</span></div>
-          <div className="d-flex justify-content-between py-2"><span style={{ color: "var(--text-muted)" }}>Outstanding balance</span><span style={{ fontFamily: "var(--serif)" }}>{money(Number(account.outstandingBalance))}</span></div>
+        <div>
+          {sectionHead("Your account", "Account summary")}
+          <div className="card-brand" style={{ maxWidth: 480, padding: 24 }}>
+            <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Company</span><span style={{ color: "var(--text)" }}>{account.companyName}</span></div>
+            <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Status</span><span className="badge-brand" style={{ color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)" }}>{account.status}</span></div>
+            <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Pricing tier</span><span className="badge-brand badge-gold">{account.pricingTier}</span></div>
+            <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Payment terms</span><span style={{ color: "var(--text)" }}>{account.paymentTerms}</span></div>
+            <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Credit limit</span><span style={{ fontFamily: "var(--serif)", color: "var(--gold-hi)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.creditLimit))}</span></div>
+            <div className="d-flex justify-content-between py-2"><span style={{ color: "var(--text-muted)" }}>Outstanding balance</span><span style={{ fontFamily: "var(--serif)", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.outstandingBalance))}</span></div>
+          </div>
         </div>
       ),
     },
   ];
 
+  const stats = [
+    { label: "YTD Orders", value: String(orders.length) },
+    { label: "YTD Spend", value: money(ytdSpend) },
+    { label: "Open Orders", value: String(openOrders) },
+    { label: "Outstanding", value: money(Number(account.outstandingBalance)) },
+  ];
+
   return (
-    <div className="container section">
-      <div className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-2">
-        <div><span className="eyebrow">Trade Portal</span><h1 style={{ fontSize: "2rem" }}>Wholesale &amp; Export</h1></div>
-        <span className="badge-brand badge-gold">Signed in · {account.companyName}</span>
-      </div>
+    <section className="section">
+      <div className="container">
+        <div className="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-4">
+          <div>
+            <span className="eyebrow">Trade Portal</span>
+            <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(2rem, 4.4vw, 3.4rem)", lineHeight: 1.05, margin: 0 }}>Wholesale &amp; Export</h1>
+          </div>
+          <span className="badge-brand badge-gold">Signed in · {account.companyName}</span>
+        </div>
 
-      <div className="row g-3">
-        <div className="col-6 col-lg-3"><div className="card-brand h-100"><div style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>YTD Orders</div><div className="serif" style={{ fontSize: "1.75rem" }}>{orders.length}</div></div></div>
-        <div className="col-6 col-lg-3"><div className="card-brand h-100"><div style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>YTD Spend</div><div className="serif" style={{ fontSize: "1.75rem" }}>{money(ytdSpend)}</div></div></div>
-        <div className="col-6 col-lg-3"><div className="card-brand h-100"><div style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>Open Orders</div><div className="serif" style={{ fontSize: "1.75rem" }}>{openOrders}</div></div></div>
-        <div className="col-6 col-lg-3"><div className="card-brand h-100"><div style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>Outstanding</div><div className="serif" style={{ fontSize: "1.75rem" }}>{money(Number(account.outstandingBalance))}</div></div></div>
-      </div>
+        <div className="row g-3">
+          {stats.map((s) => (
+            <div className="col-6 col-lg-3" key={s.label}>
+              <div className="card-brand h-100" style={{ padding: 20 }}>
+                <div style={{ fontSize: ".66rem", fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-dim)" }}>{s.label}</div>
+                <div className="serif" style={{ fontSize: "1.9rem", color: "var(--gold-hi)", fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{s.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-      <TradeTabs tabs={tabs} />
-    </div>
+        <TradeTabs tabs={tabs} />
+      </div>
+    </section>
   );
 }

@@ -49,13 +49,13 @@ export default async function JoinPage() {
         </div>
       </section>
 
-      <section style={{ background: "rgba(198,167,94,.04)", borderTop: "1px solid var(--gold-bdr)", borderBottom: "1px solid var(--gold-bdr)" }} aria-label="Membership at a glance">
+      <section className="section--sunken" style={{ padding: "44px 0" }} aria-label="Membership at a glance">
         <div className="container">
-          <div className="row g-4 text-center reveal" style={{ padding: "44px 0" }}>
+          <div className="row g-4 text-center reveal">
             {STATS.map((s) => (
               <div className="col-6 col-lg-3" key={s.l}>
                 <div className="serif" style={{ fontSize: "clamp(2rem,4vw,2.75rem)", fontWeight: 700, color: "var(--gold-hi)" }}>{s.n}</div>
-                <p style={{ fontSize: ".8125rem", marginTop: 6 }}>{s.l}</p>
+                <p style={{ fontSize: ".8125rem", marginTop: 6, color: "var(--text-muted)" }}>{s.l}</p>
               </div>
             ))}
           </div>
@@ -64,14 +64,18 @@ export default async function JoinPage() {
 
       <section className="section">
         <div className="container">
-          <div className="text-center reveal mb-5"><span className="eyebrow">The Programme</span><h2>Rewards that grow with you</h2></div>
+          <div className="text-center reveal mb-5" style={{ maxWidth: 680, marginInline: "auto" }}>
+            <span className="eyebrow eyebrow-center">The Programme</span>
+            <h2>Rewards that grow with you</h2>
+            <p className="subtitle" style={{ marginTop: 14 }}>Three simple steps from a free Bronze account to member pricing, multiplied points, and the perks of the inner circle.</p>
+          </div>
           <div className="row g-4">
             {STEPS.map((s) => (
-              <div className="col-12 col-md-4" key={s.n}>
-                <div className="card-brand reveal text-center h-100">
-                  <div className="serif" style={{ fontSize: "3rem", fontWeight: 700, color: "rgba(212,184,120,.65)", lineHeight: 1, marginBottom: 12 }}>{s.n}</div>
-                  <h3 style={{ fontSize: "1.375rem", marginBottom: 10 }}>{s.h}</h3>
-                  <p style={{ color: "var(--text-muted)" }}>{s.p}</p>
+              <div className="col-12 col-md-4 d-flex" key={s.n}>
+                <div className="card-brand reveal text-center h-100 w-100">
+                  <div className="serif" style={{ fontSize: "3rem", fontWeight: 700, color: "var(--gold)", opacity: .65, lineHeight: 1, marginBottom: 12 }}>{s.n}</div>
+                  <h3 style={{ fontSize: "1.375rem", marginBottom: 10, fontFamily: "var(--serif)", fontWeight: 600 }}>{s.h}</h3>
+                  <p style={{ color: "var(--text-muted)", marginBottom: 0 }}>{s.p}</p>
                 </div>
               </div>
             ))}
@@ -84,26 +88,30 @@ export default async function JoinPage() {
         <div className="parallax-content reveal"><h2>Some Things Improve<br />with Patience</h2><p style={{ color: "var(--text-muted)" }}>Your membership is one of them.</p></div>
       </section>
 
-      <section className="section">
+      <section className="section section--surface">
         <MembershipTiers />
       </section>
 
-      <section className="section" style={{ background: "var(--bg-card)", borderTop: "1px solid var(--gold-bdr)" }}>
+      <section className="section section--sunken">
         <div className="container" style={{ maxWidth: 860 }}>
-          <div className="text-center reveal mb-5"><span className="eyebrow">FAQs</span><h2>Questions answered</h2></div>
+          <div className="text-center reveal mb-5">
+            <span className="eyebrow eyebrow-center">FAQs</span>
+            <h2>Questions answered</h2>
+            <p className="subtitle" style={{ marginTop: 14 }}>Everything you need to know about points, tiers, billing, and cancelling — answered before you join.</p>
+          </div>
           {FAQ.map((f) => (
-            <details key={f.q} className="card-brand mb-2">
-              <summary style={{ cursor: "pointer", fontFamily: "var(--serif)", fontWeight: 600 }}>{f.q}</summary>
+            <details key={f.q} className="card-brand mb-3">
+              <summary style={{ cursor: "pointer", fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.0625rem", color: "var(--text)" }}>{f.q}</summary>
               <p style={{ color: "var(--text-muted)", marginTop: 10, marginBottom: 0 }}>{f.a}</p>
             </details>
           ))}
         </div>
       </section>
 
-      <section style={{ padding: "90px 0", textAlign: "center", background: "linear-gradient(135deg,#161208,#1C1A14,#0E0E0E)" }}>
+      <section className="section section--surface" style={{ textAlign: "center" }}>
         <div className="container reveal" style={{ maxWidth: 860 }}>
           <div style={{ fontSize: "2rem", marginBottom: 16, color: "var(--gold)" }} aria-hidden="true">✦</div>
-          <span className="eyebrow">Start Today</span>
+          <span className="eyebrow eyebrow-center">Start Today</span>
           <h2 className="mb-3">Join for free.<br /><em className="gold">Upgrade when ready.</em></h2>
           <p style={{ maxWidth: 440, margin: "0 auto 36px", color: "var(--text-muted)" }}>Bronze membership is permanently free. No credit card. No commitment. Upgrade anytime — cancel anytime.</p>
           <div className="d-flex gap-3 justify-content-center flex-wrap">

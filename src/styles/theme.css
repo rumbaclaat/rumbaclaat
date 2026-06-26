@@ -39,6 +39,16 @@
   --text-dim: #8C8678;
   --on-gold: #171310;                  /* text/icon on a solid gold button */
 
+  /* Champagne semantic aliases + storefront surfaces (design-system names) */
+  --surface: var(--bg-card);           /* raised bands on storefront */
+  --surface-raised: var(--bg-card2);   /* section / product cards */
+  --surface-sunken: var(--bg-card3);   /* inputs, ticker, recessed wells */
+  --card: #1C1C24;                     /* elevated cards (featured / membership) */
+  --gold-deep: #B8995F;                /* pressed / lower gradient stop */
+  --line-2: rgba(205, 181, 130, 0.10); /* faint dividers */
+  --muted: var(--text-muted);
+  --dim: var(--text-dim);
+
   /* Status (desaturated to sit calmly on dark) */
   --red: #EC8B8B;
   --green: #6FCF97;
@@ -103,18 +113,22 @@ p { line-height: 1.7; }
 /* ---------- Utilities ---------- */
 .eyebrow {
   display: inline-block;
-  font-size: .75rem;
-  letter-spacing: .22em;
+  font-size: .74rem;
+  font-weight: 600;
+  letter-spacing: .2em;
   text-transform: uppercase;
-  color: var(--gold-hi);
-  margin-bottom: 12px;
+  color: var(--gold);
+  margin-bottom: 14px;
 }
 .eyebrow-center { display: block; text-align: center; }
 .gold { color: var(--gold-hi); }
 em { font-style: italic; }
 
-.section { padding: 88px 0; }
-.section-sm { padding: 52px 0; }
+.section { padding: clamp(72px, 9vw, 120px) 0; }
+.section-sm { padding: clamp(48px, 6vw, 80px) 0; }
+/* Champagne: alternating surface band to give sections "defined areas" */
+.section--surface { background: var(--surface); border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); }
+.section--sunken { background: var(--surface-sunken); border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); }
 
 /* reveal: source used JS scroll-reveal (main.js, absent) — keep content visible */
 .reveal { opacity: 1; }
@@ -136,8 +150,13 @@ em { font-style: italic; }
 .badge-gold { background: var(--gold-lt); border-color: var(--gold-md); }
 
 .card-brand {
-  background: var(--bg-card2); border: 1px solid var(--gold-bdr);
+  background: var(--surface-raised); border: 1px solid var(--line);
   border-radius: var(--radius-xl); padding: 24px;
+}
+/* Featured / popular cards: champagne wash + gold border */
+.card-brand--feature {
+  background: linear-gradient(165deg, rgba(205,181,130,.14), var(--card));
+  border-color: var(--gold);
 }
 
 .stars { color: var(--gold); letter-spacing: 2px; font-size: .9rem; }
