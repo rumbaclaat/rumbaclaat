@@ -15,39 +15,41 @@
  * ========================================================================== */
 
 :root {
-  /* Surfaces */
-  --bg: #0E0E0E;
-  --bg-card: #14110B;
-  --bg-card2: #1C1A14;
-  --bg-card3: #161310;
+  /* Surfaces — Champagne (cooler charcoal ramp: bg < card3 < card < card2) */
+  --bg: #0E0E12;
+  --bg-card: #16161B;
+  --bg-card2: #1A1A20;
+  --bg-card3: #141419;
 
-  /* Gold / brand (rgb 198,167,94) */
-  --gold: #C6A75E;
-  --gold-hi: #E4C77B;
-  --gold-md: rgba(198, 167, 94, 0.45);
-  --gold-lt: rgba(198, 167, 94, 0.12);
-  --gold-bdr: rgba(198, 167, 94, 0.18);
+  /* Champagne accent */
+  --gold: #CDB582;
+  --gold-hi: #E6D2A0;
+  --gold-md: rgba(205, 167, 130, 0.45);
+  --gold-lt: rgba(205, 181, 130, 0.12);
+  --gold-bdr: rgba(205, 181, 130, 0.16);
+  --line: rgba(205, 181, 130, 0.14);   /* hairline dividers / card borders */
 
-  /* Tier accents */
+  /* Tier accents (storefront) */
   --bronze: #CD7F32;
   --silver: #C0C0C0;
 
-  /* Text (rgb 245,240,232) */
-  --text: #F5F0E8;
-  --text-muted: #CFC7B6;
-  --text-dim: #9A927F;
+  /* Text */
+  --text: #F3EFE6;
+  --text-muted: #C7C1B2;
+  --text-dim: #8C8678;
+  --on-gold: #171310;                  /* text/icon on a solid gold button */
 
-  /* Status */
-  --red: #F26D6D;     /* rgb 242,109,109 */
-  --green: #4ADE80;   /* rgb 74,222,128 */
-  --yellow: #FBBF24;  /* rgb 251,191,36 */
+  /* Status (desaturated to sit calmly on dark) */
+  --red: #EC8B8B;
+  --green: #6FCF97;
+  --yellow: #E8B65A;
 
   /* Type + shape */
   --serif: var(--font-serif), Georgia, "Times New Roman", serif;
   --sans: var(--font-sans), system-ui, -apple-system, sans-serif;
-  --radius: 10px;
+  --radius: 9px;
   --radius-lg: 14px;
-  --radius-xl: 18px;
+  --radius-xl: 16px;
 }
 
 [data-bs-theme="dark"] {
@@ -147,9 +149,9 @@ em { font-style: italic; }
 .btn { border-radius: 10px; font-weight: 600; letter-spacing: .01em; }
 .btn-lg { padding: 12px 26px; }
 .btn-gold {
-  background: var(--gold); border: 1px solid var(--gold); color: #0E0E0E;
+  background: var(--gold); border: 1px solid var(--gold); color: var(--on-gold);
 }
-.btn-gold:hover, .btn-gold:focus { background: var(--gold-hi); border-color: var(--gold-hi); color: #0E0E0E; }
+.btn-gold:hover, .btn-gold:focus { background: var(--gold-hi); border-color: var(--gold-hi); color: var(--on-gold); }
 .btn-outline-gold {
   background: transparent; border: 1px solid var(--gold-md); color: var(--gold-hi);
 }
@@ -583,7 +585,6 @@ p a, li:not(.breadcrumb-item):not(.nav-item) a, .rte-content a { text-decoration
   display: flex;
   flex-direction: column;
   background: var(--bg-card3);
-  border-right: 1px solid var(--gold-bdr);
 }
 .admin-brand {
   display: flex;
@@ -634,7 +635,6 @@ p a, li:not(.breadcrumb-item):not(.nav-item) a, .rte-content a { text-decoration
   background: var(--gold-lt);
   color: var(--gold-hi);
   font-weight: 600;
-  border: 1px solid var(--gold-bdr);
 }
 .admin-nav-link i, .admin-nav-link .admin-nav-ico {
   font-size: 1.05rem;
@@ -833,8 +833,8 @@ p a, li:not(.breadcrumb-item):not(.nav-item) a, .rte-content a { text-decoration
 
 /* ---- Order timeline ---- */
 .order-timeline { list-style: none; margin: 0; padding: 0; }
-.order-timeline li { position: relative; padding: 0 0 16px 24px; border-left: 1px solid var(--gold-bdr); }
-.order-timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.order-timeline li { position: relative; padding: 0 0 16px 24px; }
+.order-timeline li:last-child { padding-bottom: 0; }
 .order-timeline li::before {
   content: ""; position: absolute; left: -5px; top: 2px; width: 9px; height: 9px;
   border-radius: 50%; background: var(--gold); border: 2px solid var(--bg-card2);
@@ -1039,3 +1039,105 @@ a.admin-choice:hover { border-color: var(--gold-md); transform: translateY(-2px)
 @media (min-width: 992px) {
   .admin-hamburger { display: none; }
 }
+
+/* ============================================================================
+ * CHAMPAGNE — structural additions for the restyled hero pages (NEW classes).
+ * Recolours come from the :root token swap above; these add components the
+ * Dashboard / Analytics / Product editor use. Chart + donut refinements land
+ * with the chart-component update (Phase 2). Per the design brief, all thin
+ * left-edge borders in the admin were removed (sidebar divider, active-nav
+ * bar, timeline spine).
+ * ========================================================================== */
+
+/* Brand monogram (sidebar) */
+.admin-brand-mark {
+  width: 34px; height: 34px; border-radius: 9px; flex: 0 0 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: linear-gradient(145deg, var(--gold-hi), var(--gold));
+  color: var(--on-gold); font-family: var(--serif); font-weight: 700; font-size: 1.3rem;
+}
+
+/* Uppercase tier label that groups dense KPI sets ("Headline" / "Detail") */
+.admin-section-label { font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 11px; }
+
+/* KPI tiers — a hero metric or a primary trio, then a smaller secondary strip */
+.admin-stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.admin-stat--hero { flex: 2.4 1 300px; min-width: 280px; border-radius: var(--radius-xl); padding: 22px 24px;
+  background: linear-gradient(150deg, rgba(205,181,130,.12), var(--bg-card2) 58%); }
+.admin-stat--hero .admin-stat-num { font-size: 3rem; color: var(--gold-hi); }
+.admin-stat--primary { flex: 1 1 240px; min-width: 215px; border-radius: var(--radius-xl); padding: 22px 24px; }
+.admin-stat--primary .admin-stat-num { font-size: 2.5rem; }
+
+/* Product editor: tabbed main column + a persistent Publish/Organisation rail */
+.admin-product-grid { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
+.admin-product-main { flex: 1.8 1 460px; min-width: 340px; }
+.admin-product-rail { flex: 1 1 280px; min-width: 260px; display: flex; flex-direction: column; gap: 16px; }
+
+/* Pill tabs — render ONLY the active section's content */
+.admin-tabbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.admin-tab { color: var(--text-muted); border: 1px solid var(--line); background: var(--bg-card2); font-size: .875rem; padding: 8px 16px; border-radius: 999px; cursor: pointer; font-weight: 500; }
+.admin-tab:hover { color: var(--gold-hi); }
+.admin-tab.active { background: var(--gold-lt); color: var(--gold-hi); border-color: var(--gold); font-weight: 600; }
+
+/* Badge without the leading dot */
+.admin-badge--no-dot::before { display: none; }
+
+/* Plain-table cell helpers (dashboard "recent orders", etc.) */
+.admin-cellname { display: flex; align-items: center; gap: 12px; }
+.admin-cellname .nm { font-weight: 600; color: var(--text); }
+.admin-cellname .sb { font-size: .74rem; color: var(--text-dim); }
+.admin-rowacts { display: flex; gap: 4px; justify-content: flex-end; }
+.admin-iconbtn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.admin-iconbtn:hover { color: var(--gold-hi); background: var(--gold-lt); }
+.admin-iconbtn.danger:hover { color: var(--red); background: rgba(236,134,134,.1); }
+
+/* Mini list (dashboard low-stock / activity) */
+.admin-mini-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.admin-mini-row:last-child { border-bottom: 0; }
+.admin-mini-row .grow { flex: 1 1 auto; min-width: 0; }
+.admin-mini-row .t { color: var(--text); font-size: .86rem; }
+.admin-mini-row .s { color: var(--text-dim); font-size: .74rem; }
+
+/* Dark scrollbars (small polish) */
+.admin-wrap ::-webkit-scrollbar { width: 10px; height: 10px; }
+.admin-wrap ::-webkit-scrollbar-thumb { background: rgba(205,181,130,.18); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+.admin-wrap ::-webkit-scrollbar-thumb:hover { background: rgba(205,181,130,.32); background-clip: padding-box; }
+
+/* ---- Champagne charts (override the earlier admin chart block) ----
+   Bars live in a fixed-height PLOT; axis labels are a separate aligned row, so
+   tall bars aren't squashed by sibling text. Donuts enlarged + centred; chart
+   cards made equal-height + flush to kill the "floating" feel. */
+.admin-chart { display: flex; flex-direction: column; gap: 10px; height: 100%; }
+.admin-bars { display: flex; align-items: flex-end; gap: 10px; height: 210px; padding-top: 4px; }
+.admin-bar-col { flex: 1 1 0; height: 100%; display: flex; align-items: flex-end; justify-content: center; min-width: 0; }
+.admin-bar { width: 100%; max-width: 40px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, var(--gold-hi), var(--gold)); min-height: 4px; }
+.admin-bar-axis { display: flex; gap: 10px; }
+.admin-bar-axis span { flex: 1 1 0; text-align: center; font-size: .68rem; color: var(--text-dim); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Ranked horizontal bars — for long-labelled series (top products) */
+.admin-rank { display: flex; flex-direction: column; gap: 4px; }
+.admin-rank-row { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 14px; padding: 7px 0; }
+.admin-rank-row .lbl { color: var(--text); font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.admin-rank-track { height: 9px; border-radius: 999px; background: var(--bg-card3); overflow: hidden; }
+.admin-rank-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), var(--gold-hi)); }
+.admin-rank-row .val { color: var(--text-muted); font-size: .82rem; font-variant-numeric: tabular-nums; text-align: right; min-width: 56px; }
+
+/* Donut — bigger, centred, with its legend */
+.admin-donut-wrap { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; justify-content: center; height: 100%; }
+.admin-donut { width: 190px; height: 190px; border-radius: 50%; flex: 0 0 190px; position: relative; }
+.admin-donut::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle, var(--bg-card2) 60%, transparent 61%); border-radius: 50%; }
+.admin-donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 2; }
+.admin-donut-center .n { font-family: var(--serif); font-size: 1.85rem; color: var(--gold-hi); line-height: 1; }
+.admin-donut-center .l { font-size: .62rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-dim); margin-top: 3px; }
+.admin-legend { display: flex; flex-direction: column; gap: 11px; min-width: 150px; }
+.admin-legend-item { display: flex; align-items: center; gap: 9px; font-size: .84rem; color: var(--text-muted); }
+.admin-legend-dot { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 11px; }
+.admin-legend-val { margin-left: auto; color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* Equal-height, flush chart/donut cards */
+.admin-chart-row { align-items: stretch; }
+.admin-chart-row > [class*="col-"] { display: flex; }
+.admin-chart-row > [class*="col-"] > .admin-card { flex: 1 1 auto; display: flex; flex-direction: column; }
+.admin-chart-row .admin-card > .admin-card-head { flex: 0 0 auto; }
+.admin-card--chart { display: flex; flex-direction: column; }
+.admin-card--chart .admin-chart, .admin-card--chart .admin-donut-wrap { flex: 1 1 auto; }

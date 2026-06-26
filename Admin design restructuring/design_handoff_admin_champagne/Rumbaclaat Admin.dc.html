@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#0E0E12;}
+  ::placeholder{color:#8C8678;opacity:1;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:rgba(205,181,130,.18);border-radius:8px;border:2px solid transparent;background-clip:padding-box;}
+  ::-webkit-scrollbar-thumb:hover{background:rgba(205,181,130,.32);background-clip:padding-box;}
+  @keyframes scFade{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+</style>
+</helmet>
+
+<div style="display:grid;grid-template-columns:248px 1fr;min-height:100vh;width:100%;background:var(--bg,#0E0E12);color:#F3EFE6;font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;">
+
+  <aside data-screen-label="Sidebar" style="position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;display:flex;flex-direction:column;background:var(--surface2,#141419);border-right:1px solid var(--line,rgba(205,181,130,.14));">
+    <div style="display:flex;align-items:center;gap:11px;padding:18px 20px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));position:sticky;top:0;background:var(--surface2,#141419);z-index:2;">
+      <span style="width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--goldHi,#E6D2A0),var(--gold,#CDB582));color:#171310;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.3rem;flex:0 0 34px;">R</span>
+      <div style="display:flex;flex-direction:column;line-height:1.1;">
+        <span style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.2rem;color:#F3EFE6;letter-spacing:.01em;">Rumbaclaat</span>
+        <span style="font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold,#CDB582);margin-top:1px;">Admin Console</span>
+      </div>
+    </div>
+    <nav style="padding:10px 12px 16px;display:flex;flex-direction:column;gap:2px;flex:1 1 auto;">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="6">
+        <sc-if value="{{ group.hasLabel }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:#8C8678;padding:15px 12px 5px;">{{ group.label }}</div>
+        </sc-if>
+        <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="3">
+          <a onClick="{{ item.onClick }}" style="{{ item.style }}" style-hover="background:rgba(205,181,130,.07);color:var(--goldHi,#E6D2A0);">
+            <i class="bi bi-{{ item.icon }}" style="font-size:1.02rem;width:20px;text-align:center;flex:0 0 20px;opacity:.82;"></i>
+            <span style="flex:1 1 auto;">{{ item.label }}</span>
+          </a>
+        </sc-for>
+      </sc-for>
+    </nav>
+    <div style="padding:12px 14px;border-top:1px solid var(--line,rgba(205,181,130,.14));">
+      <a onClick="{{ goDash }}" style="display:flex;align-items:center;gap:11px;min-height:42px;padding:9px 12px;border-radius:9px;color:#C7C1B2;font-size:.9rem;cursor:pointer;text-decoration:none;" style-hover="background:rgba(205,181,130,.07);color:var(--goldHi,#E6D2A0);"><i class="bi bi-box-arrow-right" style="font-size:1.02rem;width:20px;text-align:center;opacity:.82;"></i><span>Sign out</span></a>
+    </div>
+  </aside>
+
+  <div style="display:flex;flex-direction:column;min-width:0;">
+
+    <header style="position:sticky;top:0;z-index:90;display:flex;align-items:center;gap:14px;height:64px;padding:0 clamp(16px,2.5vw,30px);background:color-mix(in srgb, var(--surface2,#141419) 84%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line,rgba(205,181,130,.14));">
+      <div style="position:relative;max-width:340px;width:100%;">
+        <i class="bi bi-search" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#8C8678;font-size:.85rem;"></i>
+        <input placeholder="Search orders, products, customers…" style="width:100%;background:var(--surface2,#141419);border:1px solid var(--line,rgba(205,181,130,.14));color:#F3EFE6;border-radius:10px;padding:9px 12px 9px 35px;font-size:.85rem;outline:none;" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);">
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px;">
+        <div style="display:flex;align-items:center;gap:8px;padding-right:14px;border-right:1px solid var(--line,rgba(205,181,130,.14));">
+          <i class="bi bi-palette" style="color:#8C8678;font-size:.9rem;" title="Theme"></i>
+          <sc-for list="{{ themeSwatches }}" as="sw" hint-placeholder-count="4">
+            <button onClick="{{ sw.onClick }}" title="{{ sw.label }}" style="{{ sw.style }}"></button>
+          </sc-for>
+        </div>
+        <button title="Notifications" style="position:relative;width:38px;height:38px;border-radius:10px;border:1px solid var(--line,rgba(205,181,130,.14));background:transparent;color:#C7C1B2;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-bell"></i><span style="position:absolute;top:8px;right:9px;width:6px;height:6px;border-radius:50%;background:var(--gold,#CDB582);"></span></button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;flex-direction:column;line-height:1.2;text-align:right;">
+            <span style="font-weight:600;font-size:.86rem;color:#F3EFE6;">Joe Nebula</span>
+            <span style="font-size:.7rem;color:#8C8678;">Super admin</span>
+          </div>
+          <span style="width:38px;height:38px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.13);border:1px solid var(--gold,#CDB582);color:var(--goldHi,#E6D2A0);font-weight:700;font-size:.82rem;flex:0 0 38px;">JN</span>
+        </div>
+      </div>
+    </header>
+
+    <main style="flex:1 1 auto;min-width:0;padding:26px clamp(16px,3vw,38px) 64px;">
+
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="Dashboard">
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+          <div>
+            <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3.4vw,2.1rem);margin:0;color:#F3EFE6;font-weight:600;">Dashboard</h1>
+            <div style="color:#8C8678;font-size:.9rem;margin-top:5px;">Welcome back, Joe — here's how Rumbaclaat is performing today.</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <select style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));color:#F3EFE6;border-radius:9px;padding:9px 12px;font-size:.85rem;cursor:pointer;outline:none;"><option>Last 7 days</option><option>Last 30 days</option><option>This quarter</option><option>This year</option></select>
+            <button style="display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--gold,#CDB582);color:var(--goldHi,#E6D2A0);border-radius:9px;padding:9px 15px;font-size:.85rem;font-weight:600;cursor:pointer;" style-hover="background:rgba(205,181,130,.1);"><i class="bi bi-download"></i>Export</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;">
+          <div style="flex:2.4 1 320px;min-width:300px;background:linear-gradient(150deg, rgba(205,181,130,.12), var(--surface,#1A1A20) 58%);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;justify-content:space-between;gap:20px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+              <div>
+                <div style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#8C8678;">Revenue · last 7 days</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:3rem;line-height:1;color:var(--goldHi,#E6D2A0);margin-top:9px;">£18,420</div>
+              </div>
+              <span style="display:inline-flex;align-items:center;gap:5px;font-size:.78rem;font-weight:600;color:#6FCF97;background:rgba(95,190,134,.12);border:1px solid rgba(95,190,134,.3);border-radius:999px;padding:4px 11px;white-space:nowrap;"><i class="bi bi-arrow-up-right"></i>12.4%</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;align-items:flex-end;gap:7px;height:48px;">
+                <sc-for list="{{ revenueWeek }}" as="b" hint-placeholder-count="7">
+                  <div style="flex:1 1 0;height:100%;display:flex;align-items:flex-end;justify-content:center;min-width:0;"><div style="width:100%;max-width:26px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--goldHi,#E6D2A0),var(--gold,#CDB582));height:{{ b.h }};min-height:4px;opacity:.92;"></div></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:7px;">
+                <sc-for list="{{ revenueWeek }}" as="b" hint-placeholder-count="7">
+                  <span style="flex:1 1 0;text-align:center;font-size:.6rem;color:#8C8678;min-width:0;">{{ b.label }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1 1 150px;min-width:140px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:#8C8678;">Orders</span><span style="width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.1);border:1px solid var(--line,rgba(205,181,130,.14));color:var(--goldHi,#E6D2A0);font-size:.92rem;"><i class="bi bi-receipt"></i></span></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.95rem;line-height:1;color:#F3EFE6;">342</div>
+            <div style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>6.1%</div>
+          </div>
+
+          <div style="flex:1 1 150px;min-width:140px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:#8C8678;">New members</span><span style="width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.1);border:1px solid var(--line,rgba(205,181,130,.14));color:var(--goldHi,#E6D2A0);font-size:.92rem;"><i class="bi bi-people"></i></span></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.95rem;line-height:1;color:#F3EFE6;">1,204</div>
+            <div style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>18.0%</div>
+          </div>
+
+          <div style="flex:1 1 150px;min-width:140px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:#8C8678;">Avg order value</span><span style="width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.1);border:1px solid var(--line,rgba(205,181,130,.14));color:var(--goldHi,#E6D2A0);font-size:.92rem;"><i class="bi bi-bag-check"></i></span></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.95rem;line-height:1;color:#F3EFE6;">£53.86</div>
+            <div style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#EC8B8B;"><i class="bi bi-arrow-down-right"></i>2.3%</div>
+          </div>
+
+          <div style="flex:1 1 150px;min-width:140px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:#8C8678;">Conversion</span><span style="width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.1);border:1px solid var(--line,rgba(205,181,130,.14));color:var(--goldHi,#E6D2A0);font-size:.92rem;"><i class="bi bi-graph-up-arrow"></i></span></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.95rem;line-height:1;color:#F3EFE6;">3.8%</div>
+            <div style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>0.4pt</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;align-items:stretch;">
+          <div style="flex:1.7 1 380px;min-width:340px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:20px 22px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
+              <h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Revenue — last 7 days</h3>
+              <span style="font-size:.72rem;font-weight:600;color:var(--goldHi,#E6D2A0);background:rgba(205,181,130,.12);border:1px solid var(--line,rgba(205,181,130,.18));border-radius:999px;padding:3px 10px;">£18,420 total</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:flex-end;gap:10px;height:200px;">
+                <sc-for list="{{ revenueWeek }}" as="b" hint-placeholder-count="7">
+                  <div style="flex:1 1 0;height:100%;display:flex;align-items:flex-end;justify-content:center;min-width:0;"><div style="width:100%;max-width:42px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--goldHi,#E6D2A0),var(--gold,#CDB582));height:{{ b.h }};min-height:4px;"></div></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <sc-for list="{{ revenueWeek }}" as="b" hint-placeholder-count="7">
+                  <span style="flex:1 1 0;text-align:center;font-size:.68rem;color:#8C8678;min-width:0;">{{ b.label }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1 1 280px;min-width:270px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:20px 22px;">
+            <div style="margin-bottom:18px;"><h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Sales by category</h3></div>
+            <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:center;">
+              <div style="width:158px;height:158px;border-radius:50%;flex:0 0 158px;position:relative;background:conic-gradient(var(--gold,#CDB582) 0 52%,var(--goldHi,#E6D2A0) 52% 76%,#8a7440 76% 92%,#6FCF97 92% 100%);">
+                <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle, var(--surface,#1A1A20) 61%, transparent 62%);"></div>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                  <span style="font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:var(--goldHi,#E6D2A0);line-height:1;">£18.4k</span>
+                  <span style="font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:#8C8678;margin-top:2px;">Revenue</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:11px;flex:1 1 130px;min-width:130px;">
+                <div style="display:flex;align-items:center;gap:9px;font-size:.84rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:var(--gold,#CDB582);"></span><span style="flex:1 1 auto;">Rum</span><span style="color:#F3EFE6;font-variant-numeric:tabular-nums;">52%</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.84rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:var(--goldHi,#E6D2A0);"></span><span style="flex:1 1 auto;">Men's apparel</span><span style="color:#F3EFE6;font-variant-numeric:tabular-nums;">24%</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.84rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:#8a7440;"></span><span style="flex:1 1 auto;">Women's apparel</span><span style="color:#F3EFE6;font-variant-numeric:tabular-nums;">16%</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.84rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:#6FCF97;"></span><span style="flex:1 1 auto;">Gift cards</span><span style="color:#F3EFE6;font-variant-numeric:tabular-nums;">8%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+          <div style="flex:1.7 1 420px;min-width:340px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));">
+              <h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Recent orders</h3>
+              <a onClick="{{ goTable }}" style="display:inline-flex;align-items:center;gap:5px;color:#C7C1B2;font-size:.82rem;cursor:pointer;text-decoration:none;" style-hover="color:var(--goldHi,#E6D2A0);">View all <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+              <thead><tr>
+                <th style="text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 22px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));">Order</th>
+                <th style="text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));">Customer</th>
+                <th style="text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));">Status</th>
+                <th style="text-align:right;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 22px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));">Total</th>
+              </tr></thead>
+              <tbody>
+                <sc-for list="{{ orders }}" as="o" hint-placeholder-count="5">
+                  <tr style="border-bottom:1px solid var(--line,rgba(205,181,130,.1));" style-hover="background:rgba(205,181,130,.05);">
+                    <td style="padding:13px 22px;"><a onClick="{{ goProduct }}" style="color:var(--goldHi,#E6D2A0);cursor:pointer;font-weight:500;">{{ o.id }}</a></td>
+                    <td style="padding:13px 16px;color:#C7C1B2;">{{ o.cust }}</td>
+                    <td style="padding:13px 16px;"><span style="{{ o.badge }}"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>{{ o.status }}</span></td>
+                    <td style="padding:13px 22px;text-align:right;font-variant-numeric:tabular-nums;color:#F3EFE6;">{{ o.total }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="flex:1 1 280px;min-width:260px;display:flex;flex-direction:column;gap:16px;">
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:18px 20px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:13px;margin-bottom:6px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));">
+                <h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.15rem;color:#F3EFE6;font-weight:600;"><i class="bi bi-exclamation-triangle" style="color:#E8B65A;font-size:.95rem;margin-right:7px;"></i>Low stock</h3>
+                <span style="font-size:.72rem;font-weight:600;color:#E8B65A;background:rgba(232,182,90,.12);border:1px solid rgba(232,182,90,.3);border-radius:999px;padding:3px 10px;">4 items</span>
+              </div>
+              <sc-for list="{{ lowStock }}" as="s" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line,rgba(205,181,130,.1));">
+                  <div style="flex:1 1 auto;min-width:0;"><div style="color:#F3EFE6;font-size:.86rem;">{{ s.name }}</div><div style="color:#8C8678;font-size:.74rem;margin-top:1px;">{{ s.sku }}</div></div>
+                  <span style="{{ s.badge }}">{{ s.left }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:18px 20px;">
+              <div style="margin-bottom:16px;"><h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.15rem;color:#F3EFE6;font-weight:600;">Recent activity</h3></div>
+              <ul style="list-style:none;margin:0;padding:0;">
+                <sc-for list="{{ activity }}" as="a" hint-placeholder-count="4">
+                  <li style="position:relative;padding:0 0 16px 22px;border-left:1px solid var(--line,rgba(205,181,130,.16));">
+                    <span style="position:absolute;left:-5px;top:3px;width:9px;height:9px;border-radius:50%;background:var(--gold,#CDB582);border:2px solid var(--surface,#1A1A20);"></span>
+                    <div style="font-weight:600;font-size:.85rem;color:#F3EFE6;">{{ a.title }}</div>
+                    <div style="color:#8C8678;font-size:.74rem;margin-top:2px;">{{ a.meta }}</div>
+                  </li>
+                </sc-for>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isAnalytics }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Analytics">
+
+        <div style="font-size:.78rem;color:#8C8678;margin-bottom:8px;"><a onClick="{{ goDash }}" style="color:#8C8678;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);">Dashboard</a> <span style="opacity:.6;">/</span> Analytics</div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;">
+          <div>
+            <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3.4vw,2.1rem);margin:0;color:#F3EFE6;font-weight:600;">Analytics</h1>
+            <div style="color:#8C8678;font-size:.9rem;margin-top:5px;max-width:560px;">Commerce performance over the last 12 months. Web traffic lives in your Vercel Analytics dashboard.</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <select style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));color:#F3EFE6;border-radius:9px;padding:9px 12px;font-size:.85rem;cursor:pointer;outline:none;"><option>Last 12 months</option><option>This year</option><option>Last quarter</option></select>
+            <button style="display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--gold,#CDB582);color:var(--goldHi,#E6D2A0);border-radius:9px;padding:9px 15px;font-size:.85rem;font-weight:600;cursor:pointer;" style-hover="background:rgba(205,181,130,.1);"><i class="bi bi-download"></i>Export</button>
+          </div>
+        </div>
+
+        <div style="font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#8C8678;margin-bottom:11px;">Headline</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px;">
+          <div style="flex:1 1 240px;min-width:215px;background:linear-gradient(150deg, rgba(205,181,130,.10), var(--surface,#1A1A20) 60%);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#8C8678;">Total revenue</span><span style="width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.1);border:1px solid var(--line,rgba(205,181,130,.14));color:var(--goldHi,#E6D2A0);"><i class="bi bi-cash-stack"></i></span></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;line-height:1;color:var(--goldHi,#E6D2A0);">£171,300</div>
+            <div style="font-size:.8rem;display:inline-flex;align-items:center;gap:5px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>14.2% YoY</div>
+          </div>
+          <div style="flex:1 1 240px;min-width:215px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#8C8678;">Orders</span><span style="width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.1);border:1px solid var(--line,rgba(205,181,130,.14));color:var(--goldHi,#E6D2A0);"><i class="bi bi-bag"></i></span></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;line-height:1;color:#F3EFE6;">2,940</div>
+            <div style="font-size:.8rem;display:inline-flex;align-items:center;gap:5px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>9.4%</div>
+          </div>
+          <div style="flex:1 1 240px;min-width:215px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#8C8678;">Customers</span><span style="width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(205,181,130,.1);border:1px solid var(--line,rgba(205,181,130,.14));color:var(--goldHi,#E6D2A0);"><i class="bi bi-people"></i></span></div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;line-height:1;color:#F3EFE6;">5,840</div>
+            <div style="font-size:.8rem;display:inline-flex;align-items:center;gap:5px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>21.0%</div>
+          </div>
+        </div>
+
+        <div style="font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#8C8678;margin-bottom:11px;">Detail</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:24px;">
+          <div style="flex:1 1 170px;min-width:158px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#8C8678;">Avg order value</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;line-height:1;color:#F3EFE6;">£53.86</span>
+            <span style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>3.1%</span>
+          </div>
+          <div style="flex:1 1 170px;min-width:158px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#8C8678;">Members</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;line-height:1;color:#F3EFE6;">4,210</span>
+            <span style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>18.6%</span>
+          </div>
+          <div style="flex:1 1 170px;min-width:158px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#8C8678;">Trade revenue</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;line-height:1;color:#F3EFE6;">£48,600</span>
+            <span style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#6FCF97;"><i class="bi bi-arrow-up-right"></i>6.8%</span>
+          </div>
+          <div style="flex:1 1 170px;min-width:158px;background:var(--surface,#1A1A20);border:1px solid rgba(232,182,90,.28);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#8C8678;">Trade outstanding</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;line-height:1;color:#F3EFE6;">£7,420</span>
+            <span style="font-size:.75rem;display:inline-flex;align-items:center;gap:4px;color:#E8B65A;"><i class="bi bi-exclamation-circle"></i>2 overdue</span>
+          </div>
+        </div>
+
+        <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:20px 22px;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
+            <h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Revenue by month</h3>
+            <span style="font-size:.72rem;font-weight:600;color:var(--goldHi,#E6D2A0);background:rgba(205,181,130,.12);border:1px solid var(--line,rgba(205,181,130,.18));border-radius:999px;padding:3px 10px;">£171,300</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:flex-end;gap:10px;height:220px;">
+              <sc-for list="{{ revenueMonth }}" as="b" hint-placeholder-count="12">
+                <div style="flex:1 1 0;height:100%;display:flex;align-items:flex-end;justify-content:center;min-width:0;"><div style="width:100%;max-width:34px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--goldHi,#E6D2A0),var(--gold,#CDB582));height:{{ b.h }};min-height:4px;"></div></div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <sc-for list="{{ revenueMonth }}" as="b" hint-placeholder-count="12">
+                <span style="flex:1 1 0;text-align:center;font-size:.66rem;color:#8C8678;min-width:0;">{{ b.label }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;align-items:stretch;">
+          <div style="flex:1.7 1 380px;min-width:340px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:20px 22px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;">
+              <h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Orders by month</h3>
+              <span style="font-size:.72rem;font-weight:600;color:var(--goldHi,#E6D2A0);background:rgba(205,181,130,.12);border:1px solid var(--line,rgba(205,181,130,.18));border-radius:999px;padding:3px 10px;">2,940</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:flex-end;gap:8px;height:190px;">
+                <sc-for list="{{ ordersMonth }}" as="b" hint-placeholder-count="12">
+                  <div style="flex:1 1 0;height:100%;display:flex;align-items:flex-end;justify-content:center;min-width:0;"><div style="width:100%;max-width:30px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--goldHi,#E6D2A0),var(--gold,#CDB582));height:{{ b.h }};min-height:4px;"></div></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <sc-for list="{{ ordersMonth }}" as="b" hint-placeholder-count="12">
+                  <span style="flex:1 1 0;text-align:center;font-size:.64rem;color:#8C8678;min-width:0;">{{ b.label }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1 1 280px;min-width:270px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:20px 22px;">
+            <div style="margin-bottom:18px;"><h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Membership tiers</h3></div>
+            <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;">
+              <div style="width:150px;height:150px;border-radius:50%;flex:0 0 150px;position:relative;background:conic-gradient(var(--gold,#CDB582) 0 58%,var(--goldHi,#E6D2A0) 58% 76%,#8a7440 76% 88%,#5b4a25 88% 92%,rgba(154,146,127,.5) 92% 100%);">
+                <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle, var(--surface,#1A1A20) 61%, transparent 62%);"></div>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--goldHi,#E6D2A0);line-height:1;">5,840</span><span style="font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:#8C8678;margin-top:2px;">Customers</span></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px;flex:1 1 130px;min-width:130px;">
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:var(--gold,#CDB582);"></span><span style="flex:1 1 auto;">Bronze</span><span style="color:#F3EFE6;">58%</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:var(--goldHi,#E6D2A0);"></span><span style="flex:1 1 auto;">Silver</span><span style="color:#F3EFE6;">18%</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:#8a7440;"></span><span style="flex:1 1 auto;">Gold</span><span style="color:#F3EFE6;">12%</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:#5b4a25;"></span><span style="flex:1 1 auto;">Black Reserve</span><span style="color:#F3EFE6;">4%</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:rgba(154,146,127,.5);"></span><span style="flex:1 1 auto;">No tier</span><span style="color:#F3EFE6;">8%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;">
+          <div style="flex:1 1 280px;min-width:270px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:20px 22px;">
+            <div style="margin-bottom:18px;"><h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Points — issued vs redeemed</h3></div>
+            <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;">
+              <div style="width:150px;height:150px;border-radius:50%;flex:0 0 150px;position:relative;background:conic-gradient(#6FCF97 0 76.5%,#EC8B8B 76.5% 100%);">
+                <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle, var(--surface,#1A1A20) 61%, transparent 62%);"></div>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--goldHi,#E6D2A0);line-height:1;">860k</span><span style="font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:#8C8678;margin-top:2px;">Liability</span></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px;flex:1 1 130px;min-width:130px;">
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:#6FCF97;"></span><span style="flex:1 1 auto;">Issued</span><span style="color:#F3EFE6;">1.24M</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:#EC8B8B;"></span><span style="flex:1 1 auto;">Redeemed</span><span style="color:#F3EFE6;">380k</span></div>
+                <div style="display:flex;align-items:center;gap:9px;font-size:.82rem;color:#C7C1B2;"><span style="width:11px;height:11px;border-radius:3px;flex:0 0 11px;background:var(--gold,#CDB582);"></span><span style="flex:1 1 auto;">Outstanding</span><span style="color:#F3EFE6;">860k</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="flex:1.5 1 380px;min-width:340px;background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:20px 22px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;">
+              <h3 style="font-family:'Cormorant Garamond',serif;margin:0;font-size:1.2rem;color:#F3EFE6;font-weight:600;">Top products by revenue</h3>
+              <span style="font-size:.72rem;font-weight:600;color:#8C8678;background:rgba(255,255,255,.04);border:1px solid var(--line,rgba(205,181,130,.16));border-radius:999px;padding:3px 10px;">12 months</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <sc-for list="{{ topProducts }}" as="b" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:14px;padding:7px 0;">
+                  <span style="color:#F3EFE6;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ b.label }}</span>
+                  <div style="height:9px;border-radius:999px;background:var(--surface2,#141419);overflow:hidden;"><div style="height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold,#CDB582),var(--goldHi,#E6D2A0));width:{{ b.w }};"></div></div>
+                  <span style="color:#C7C1B2;font-size:.82rem;font-variant-numeric:tabular-nums;min-width:48px;text-align:right;">{{ b.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      </sc-if>
+      <sc-if value="{{ isProduct }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Product editor">
+
+        <div style="font-size:.78rem;color:#8C8678;margin-bottom:8px;"><a onClick="{{ goDash }}" style="color:#8C8678;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);">Dashboard</a> <span style="opacity:.6;">/</span> <a onClick="{{ goTable }}" style="color:#8C8678;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);">Products</a> <span style="opacity:.6;">/</span> Original Reserve</div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
+          <div>
+            <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,3.2vw,2rem);margin:0;color:#F3EFE6;font-weight:600;">Rumbaclaat Original Reserve</h1>
+            <div style="display:flex;align-items:center;gap:9px;color:#8C8678;font-size:.88rem;margin-top:6px;flex-wrap:wrap;">12 Year Aged Rum<span style="opacity:.5;">·</span>SKU RUM-ORIG-700<span style="display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;border-radius:999px;padding:3px 10px;color:#6FCF97;background:rgba(95,190,134,.13);border:1px solid rgba(95,190,134,.32);"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>Published</span></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button style="display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--line,rgba(205,181,130,.18));color:#C7C1B2;border-radius:9px;padding:9px 14px;font-size:.85rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-files"></i>Duplicate</button>
+            <button style="display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--gold,#CDB582);color:var(--goldHi,#E6D2A0);border-radius:9px;padding:9px 14px;font-size:.85rem;font-weight:600;cursor:pointer;" style-hover="background:rgba(205,181,130,.1);"><i class="bi bi-box-arrow-up-right"></i>View on store</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+            <a onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</a>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;">
+          <div style="flex:1.8 1 460px;min-width:340px;">
+
+            <sc-if value="{{ isGeneral }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:22px 24px;">
+              <div style="margin-bottom:18px;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:#F3EFE6;">General</div><p style="color:#8C8678;font-size:.82rem;margin:3px 0 0;">Name, description and where this product lives.</p></div>
+              <div style="display:flex;flex-direction:column;gap:16px;">
+                <div><label style="{{ lbl }}">Product name</label><input style="{{ inp }}" value="Rumbaclaat Original Reserve" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+                  <div><label style="{{ lbl }}">Subtitle</label><input style="{{ inp }}" value="12 Year Aged Rum — Jamaica" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                  <div><label style="{{ lbl }}">Slug</label><input style="{{ inp }}" value="original-reserve" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                </div>
+                <div><label style="{{ lbl }}">Short description</label><textarea rows="4" style="{{ area }}" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);">Vanilla, toasted caramel and tropical fruit over a long, warming finish. Aged a minimum of twelve years in American oak — the rum that defines the Rumbaclaat character.</textarea></div>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isPricing }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:22px 24px;">
+              <div style="margin-bottom:18px;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:#F3EFE6;">Pricing &amp; inventory</div><p style="color:#8C8678;font-size:.82rem;margin:3px 0 0;">Prices are in GBP. Member pricing is applied automatically at checkout.</p></div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">
+                <div><label style="{{ lbl }}">Base price (£)</label><input type="number" style="{{ inp }}" value="49.99" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Sale price (£)</label><input type="number" style="{{ inp }}" value="42.49" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Cost (£)</label><input type="number" style="{{ inp }}" value="21.00" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div style="display:flex;align-items:flex-end;"><label style="display:flex;align-items:center;gap:9px;color:#C7C1B2;font-size:.88rem;cursor:pointer;padding-bottom:9px;"><input type="checkbox" checked style="width:17px;height:17px;accent-color:var(--gold,#CDB582);cursor:pointer;">On sale</label></div>
+                <div><label style="{{ lbl }}">SKU</label><input style="{{ inp }}" value="RUM-ORIG-700" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Barcode</label><input style="{{ inp }}" value="5012345678900" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Stock on hand</label><input type="number" style="{{ inp }}" value="128" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Tax class</label><select style="{{ inp }}" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"><option>Alcohol (20%)</option><option>Standard (20%)</option><option>Zero</option></select></div>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isAttr }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:22px 24px;">
+              <div style="margin-bottom:18px;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:#F3EFE6;">Rum attributes</div><p style="color:#8C8678;font-size:.82rem;margin:3px 0 0;">Type-specific fields — these surface on the product page spec table.</p></div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">
+                <div><label style="{{ lbl }}">ABV (%)</label><input type="number" style="{{ inp }}" value="43" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Volume (ml)</label><input type="number" style="{{ inp }}" value="700" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Age (years)</label><input type="number" style="{{ inp }}" value="12" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Region</label><input style="{{ inp }}" value="Jamaica" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Cask</label><input style="{{ inp }}" value="American oak" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div style="grid-column:1/-1;"><label style="{{ lbl }}">Tasting notes</label><input style="{{ inp }}" value="Vanilla · Toasted caramel · Tropical fruit" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isMedia }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:22px 24px;">
+              <div style="margin-bottom:18px;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:#F3EFE6;">Media</div><p style="color:#8C8678;font-size:.82rem;margin:3px 0 0;">Featured image and gallery shots shown on the product page.</p></div>
+              <label style="{{ lbl }}">Featured image</label>
+              <div style="border:1px solid var(--line,rgba(205,181,130,.14));border-radius:10px;overflow:hidden;background:var(--surface2,#141419);max-width:320px;margin-bottom:18px;">
+                <img src="https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=700" alt="Original Reserve" style="width:100%;display:block;aspect-ratio:1;object-fit:cover;">
+                <div style="display:flex;gap:8px;padding:10px;border-top:1px solid var(--line,rgba(205,181,130,.14));">
+                  <button style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line,rgba(205,181,130,.18));color:#C7C1B2;border-radius:8px;padding:6px 11px;font-size:.8rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-arrow-repeat"></i>Replace</button>
+                  <button style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line,rgba(205,181,130,.18));color:#C7C1B2;border-radius:8px;padding:6px 11px;font-size:.8rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-images"></i>Library</button>
+                  <button style="margin-left:auto;background:transparent;border:1px solid transparent;color:#EC8B8B;border-radius:8px;padding:6px 9px;font-size:.8rem;cursor:pointer;"><i class="bi bi-x-lg"></i></button>
+                </div>
+              </div>
+              <label style="{{ lbl }}">Gallery</label>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;max-width:430px;">
+                <img src="https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200" alt="" style="width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;border:1px solid var(--line,rgba(205,181,130,.14));">
+                <img src="https://images.unsplash.com/photo-1764699186296-9dac0ddb5edb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200" alt="" style="width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;border:1px solid var(--line,rgba(205,181,130,.14));">
+                <img src="https://images.unsplash.com/photo-1748674755168-266c309d4712?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200" alt="" style="width:100%;aspect-ratio:1;border-radius:8px;object-fit:cover;border:1px solid var(--line,rgba(205,181,130,.14));">
+                <div style="width:100%;aspect-ratio:1;border-radius:8px;border:1px dashed var(--line,rgba(205,181,130,.3));background:var(--surface2,#141419);display:flex;align-items:center;justify-content:center;color:#8C8678;font-size:1.3rem;cursor:pointer;"><i class="bi bi-plus-lg"></i></div>
+              </div>
+            </div>
+            </sc-if>
+
+            <sc-if value="{{ isSeo }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:22px 24px;">
+              <div style="margin-bottom:18px;"><div style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:#F3EFE6;">SEO</div><p style="color:#8C8678;font-size:.82rem;margin:3px 0 0;">How this product appears in search and when shared.</p></div>
+              <div style="display:flex;flex-direction:column;gap:16px;">
+                <div><label style="{{ lbl }}">SEO title</label><input style="{{ inp }}" value="Rumbaclaat Original Reserve — 12 Year Aged Caribbean Rum" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div><label style="{{ lbl }}">Meta description</label><textarea rows="3" style="{{ area }}" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);">A 12-year-aged Jamaican rum with vanilla, toasted caramel and tropical fruit. Free UK shipping over £50.</textarea></div>
+              </div>
+            </div>
+            </sc-if>
+
+          </div>
+
+          <div style="flex:1 1 280px;min-width:260px;display:flex;flex-direction:column;gap:16px;">
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:18px 20px;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#F3EFE6;margin-bottom:16px;">Publish</div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div><label style="{{ lbl }}">Status</label><select style="{{ inp }}" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"><option>Published</option><option>Draft</option><option>Archived</option></select></div>
+                <div><label style="{{ lbl }}">Launch date</label><input type="date" style="{{ inp }}" value="2025-01-12" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div style="display:flex;align-items:center;gap:8px;color:#8C8678;font-size:.78rem;padding-top:2px;"><i class="bi bi-clock-history"></i>Last saved 2 hours ago</div>
+                <button style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--gold,#CDB582);border:1px solid var(--gold,#CDB582);color:#171310;border-radius:9px;padding:11px;font-size:.9rem;font-weight:600;cursor:pointer;" style-hover="background:var(--goldHi,#E6D2A0);border-color:var(--goldHi,#E6D2A0);"><i class="bi bi-check-lg"></i>Save product</button>
+              </div>
+            </div>
+
+            <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;padding:18px 20px;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#F3EFE6;margin-bottom:16px;">Organisation</div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                  <div><label style="{{ lbl }}">Type</label><select style="{{ inp }}" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"><option>Rum</option><option>Apparel</option><option>Cap</option><option>Gift card</option></select></div>
+                  <div><label style="{{ lbl }}">Category</label><select style="{{ inp }}" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"><option>Rum</option><option>Men's apparel</option><option>Women's apparel</option></select></div>
+                </div>
+                <div><label style="{{ lbl }}">Collections</label><select style="{{ inp }}" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"><option>Signature collection</option><option>Sale</option><option>New arrivals</option></select></div>
+                <div><label style="{{ lbl }}">Tags</label><input style="{{ inp }}" value="aged, jamaica, flagship" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);"></div>
+                <div style="display:flex;gap:18px;flex-wrap:wrap;padding-top:2px;">
+                  <label style="display:flex;align-items:center;gap:8px;color:#C7C1B2;font-size:.85rem;cursor:pointer;"><input type="checkbox" checked style="width:17px;height:17px;accent-color:var(--gold,#CDB582);cursor:pointer;">Featured</label>
+                  <label style="display:flex;align-items:center;gap:8px;color:#C7C1B2;font-size:.85rem;cursor:pointer;"><input type="checkbox" checked style="width:17px;height:17px;accent-color:var(--gold,#CDB582);cursor:pointer;">Member pricing</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="position:sticky;bottom:0;z-index:60;margin-top:22px;padding:13px 16px;display:flex;align-items:center;gap:10px;justify-content:flex-end;background:color-mix(in srgb, var(--surface2,#141419) 92%, transparent);backdrop-filter:blur(10px);border:1px solid var(--line,rgba(205,181,130,.16));border-radius:13px;">
+          <span style="margin-right:auto;color:#8C8678;font-size:.82rem;display:inline-flex;align-items:center;gap:6px;"><i class="bi bi-clock-history"></i>Last saved 2 hours ago</span>
+          <a onClick="{{ goTable }}" style="background:transparent;border:1px solid var(--line,rgba(205,181,130,.18));color:#C7C1B2;border-radius:9px;padding:9px 16px;font-size:.85rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);">Cancel</a>
+          <button style="display:inline-flex;align-items:center;gap:7px;background:var(--gold,#CDB582);border:1px solid var(--gold,#CDB582);color:#171310;border-radius:9px;padding:9px 18px;font-size:.85rem;font-weight:600;cursor:pointer;" style-hover="background:var(--goldHi,#E6D2A0);border-color:var(--goldHi,#E6D2A0);"><i class="bi bi-check-lg"></i>Save product</button>
+        </div>
+
+      </div>
+      </sc-if>
+      <sc-if value="{{ isTable }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Products table">
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;">
+          <div>
+            <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3.4vw,2.1rem);margin:0;color:#F3EFE6;font-weight:600;">Products</h1>
+            <div style="color:#8C8678;font-size:.9rem;margin-top:5px;">Manage your rum &amp; apparel catalogue — 24 products.</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button style="display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--line,rgba(205,181,130,.18));color:#C7C1B2;border-radius:9px;padding:9px 14px;font-size:.85rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-download"></i>Export CSV</button>
+            <button onClick="{{ goProduct }}" style="display:inline-flex;align-items:center;gap:7px;background:var(--gold,#CDB582);border:1px solid var(--gold,#CDB582);color:#171310;border-radius:9px;padding:9px 16px;font-size:.85rem;font-weight:600;cursor:pointer;" style-hover="background:var(--goldHi,#E6D2A0);border-color:var(--goldHi,#E6D2A0);"><i class="bi bi-plus-lg"></i>New product</button>
+          </div>
+        </div>
+
+        <div style="background:var(--surface,#1A1A20);border:1px solid var(--line,rgba(205,181,130,.14));border-radius:14px;overflow:hidden;">
+
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));">
+            <div style="position:relative;flex:1 1 240px;max-width:380px;">
+              <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8C8678;font-size:.82rem;"></i>
+              <input value="{{ query }}" onInput="{{ setQuery }}" placeholder="Search products…" style="width:100%;background:var(--surface2,#141419);border:1px solid var(--line,rgba(205,181,130,.14));color:#F3EFE6;border-radius:9px;padding:8px 12px 8px 34px;font-size:.85rem;outline:none;" style-focus="border-color:var(--gold,#CDB582);box-shadow:0 0 0 3px rgba(205,181,130,.13);">
+            </div>
+            <select style="background:var(--surface2,#141419);border:1px solid var(--line,rgba(205,181,130,.14));color:#F3EFE6;border-radius:9px;padding:8px 11px;font-size:.83rem;cursor:pointer;outline:none;"><option>All categories</option><option>Rum</option><option>Men's apparel</option><option>Women's apparel</option><option>Gift cards</option></select>
+            <select style="background:var(--surface2,#141419);border:1px solid var(--line,rgba(205,181,130,.14));color:#F3EFE6;border-radius:9px;padding:8px 11px;font-size:.83rem;cursor:pointer;outline:none;"><option>All statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select>
+            <span style="margin-left:auto;color:#8C8678;font-size:.82rem;">{{ showingLabel }}</span>
+          </div>
+
+          <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;background:rgba(205,181,130,.1);border-bottom:1px solid var(--line,rgba(205,181,130,.18));">
+            <span style="font-size:.82rem;color:var(--goldHi,#E6D2A0);font-weight:600;margin-right:4px;">{{ selCountLabel }}</span>
+            <button style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line,rgba(205,181,130,.2));color:#C7C1B2;border-radius:8px;padding:6px 11px;font-size:.8rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-check2-circle"></i>Publish</button>
+            <button style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line,rgba(205,181,130,.2));color:#C7C1B2;border-radius:8px;padding:6px 11px;font-size:.8rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-archive"></i>Archive</button>
+            <button style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line,rgba(205,181,130,.2));color:#C7C1B2;border-radius:8px;padding:6px 11px;font-size:.8rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-tag"></i>Edit category</button>
+            <button style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(236,134,134,.3);color:#EC8B8B;border-radius:8px;padding:6px 11px;font-size:.8rem;cursor:pointer;" style-hover="background:rgba(236,134,134,.1);"><i class="bi bi-trash"></i>Delete</button>
+            <button onClick="{{ clearSel }}" style="margin-left:auto;background:transparent;border:none;color:#8C8678;font-size:.8rem;cursor:pointer;display:inline-flex;align-items:center;gap:5px;" style-hover="color:var(--goldHi,#E6D2A0);"><i class="bi bi-x-lg"></i>Clear</button>
+          </div>
+          </sc-if>
+
+          <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:.9rem;min-width:760px;">
+            <thead><tr>
+              <th style="width:42px;padding:11px 16px;background:var(--surface2,#141419);border-bottom:1px solid var(--line,rgba(205,181,130,.14));text-align:left;"><input type="checkbox" checked="{{ selAll }}" onChange="{{ toggleAll }}" style="width:16px;height:16px;accent-color:var(--gold,#CDB582);cursor:pointer;vertical-align:middle;"></th>
+              <th style="text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));white-space:nowrap;">Product <i class="bi bi-caret-down-fill" style="font-size:.58rem;opacity:.6;"></i></th>
+              <th style="text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));white-space:nowrap;">Type</th>
+              <th style="text-align:right;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));white-space:nowrap;">Price</th>
+              <th style="text-align:right;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));white-space:nowrap;">Stock</th>
+              <th style="text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));white-space:nowrap;">Status</th>
+              <th style="text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#C7C1B2;background:var(--surface2,#141419);padding:11px 16px;border-bottom:1px solid var(--line,rgba(205,181,130,.14));white-space:nowrap;">Updated</th>
+              <th style="width:108px;background:var(--surface2,#141419);border-bottom:1px solid var(--line,rgba(205,181,130,.14));"></th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+                <tr style="{{ r.rowStyle }}" style-hover="background:rgba(205,181,130,.05);">
+                  <td style="padding:12px 16px;"><input type="checkbox" checked="{{ r.checked }}" onChange="{{ r.onToggle }}" style="width:16px;height:16px;accent-color:var(--gold,#CDB582);cursor:pointer;vertical-align:middle;"></td>
+                  <td style="padding:12px 16px;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                      <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ true }}"><img src="{{ r.img }}" alt="" style="width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid var(--line,rgba(205,181,130,.14));background:var(--surface2,#141419);flex:0 0 40px;"></sc-if>
+                      <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;border:1px solid var(--line,rgba(205,181,130,.14));background:var(--surface2,#141419);color:#8C8678;flex:0 0 40px;"><i class="bi bi-{{ r.ph }}"></i></span></sc-if>
+                      <div style="min-width:0;"><div style="font-weight:600;color:#F3EFE6;">{{ r.name }}</div><div style="font-size:.74rem;color:#8C8678;">{{ r.sku }}</div></div>
+                    </div>
+                  </td>
+                  <td style="padding:12px 16px;"><span style="{{ r.typeStyle }}">{{ r.type }}</span></td>
+                  <td style="padding:12px 16px;text-align:right;font-variant-numeric:tabular-nums;color:#F3EFE6;">{{ r.price }}</td>
+                  <td style="padding:12px 16px;text-align:right;font-variant-numeric:tabular-nums;color:#C7C1B2;">{{ r.stock }}</td>
+                  <td style="padding:12px 16px;"><span style="{{ r.statusStyle }}"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>{{ r.status }}</span></td>
+                  <td style="padding:12px 16px;color:#8C8678;white-space:nowrap;">{{ r.updated }}</td>
+                  <td style="padding:12px 16px;">
+                    <div style="display:flex;gap:4px;justify-content:flex-end;">
+                      <a onClick="{{ goProduct }}" title="Edit" style="width:30px;height:30px;border-radius:8px;border:1px solid transparent;color:#C7C1B2;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);background:rgba(205,181,130,.1);"><i class="bi bi-pencil"></i></a>
+                      <a title="View" style="width:30px;height:30px;border-radius:8px;border:1px solid transparent;color:#C7C1B2;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);background:rgba(205,181,130,.1);"><i class="bi bi-eye"></i></a>
+                      <button title="Delete" style="width:30px;height:30px;border-radius:8px;border:1px solid transparent;background:transparent;color:#C7C1B2;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="color:#EC8B8B;background:rgba(236,134,134,.1);"><i class="bi bi-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--line,rgba(205,181,130,.14));">
+            <span style="color:#8C8678;font-size:.82rem;">Showing 1–8 of 24 products</span>
+            <select style="background:var(--surface2,#141419);border:1px solid var(--line,rgba(205,181,130,.14));color:#F3EFE6;border-radius:8px;padding:6px 10px;font-size:.8rem;cursor:pointer;outline:none;"><option>8 / page</option><option>24 / page</option><option>50 / page</option></select>
+            <div style="margin-left:auto;display:flex;gap:5px;">
+              <a style="min-width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line,rgba(205,181,130,.14));background:var(--surface2,#141419);color:#8C8678;font-size:.82rem;opacity:.5;"><i class="bi bi-chevron-left"></i></a>
+              <a style="min-width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--gold,#CDB582);background:var(--gold,#CDB582);color:#171310;font-size:.82rem;font-weight:600;cursor:pointer;">1</a>
+              <a style="min-width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line,rgba(205,181,130,.14));background:var(--surface2,#141419);color:#C7C1B2;font-size:.82rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);">2</a>
+              <a style="min-width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line,rgba(205,181,130,.14));background:var(--surface2,#141419);color:#C7C1B2;font-size:.82rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);">3</a>
+              <a style="min-width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line,rgba(205,181,130,.14));background:var(--surface2,#141419);color:#C7C1B2;font-size:.82rem;cursor:pointer;" style-hover="color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);"><i class="bi bi-chevron-right"></i></a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      </sc-if>
+
+    </main>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;champagne&quot;,&quot;classic&quot;,&quot;cognac&quot;,&quot;emerald&quot;],&quot;default&quot;:&quot;champagne&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { screen:'dashboard', tab:'general', theme:'champagne', sel:{}, selAll:false, query:'' };
+
+  themes = {
+    champagne:{ bg:'#0E0E12', surface:'#1A1A20', surface2:'#141419', line:'rgba(205,181,130,0.14)', gold:'#CDB582', goldHi:'#E6D2A0' },
+    classic:{ bg:'#0E0E0E', surface:'#1C1A14', surface2:'#161310', line:'rgba(198,167,94,0.18)', gold:'#C6A75E', goldHi:'#E4C77B' },
+    cognac:{ bg:'#120D08', surface:'#241A10', surface2:'#1A130B', line:'rgba(214,164,90,0.18)', gold:'#D6A45A', goldHi:'#EBC179' },
+    emerald:{ bg:'#0B0F0C', surface:'#161D17', surface2:'#10160F', line:'rgba(198,167,94,0.16)', gold:'#C6A75E', goldHi:'#E6D2A0' },
+  };
+
+  componentDidMount(){ this.applyTheme(this.props.theme || this.state.theme); }
+  componentDidUpdate(prev){ if(prev.theme !== this.props.theme && this.props.theme){ this.applyTheme(this.props.theme); this.setState({theme:this.props.theme}); } }
+  applyTheme(name){ const t=this.themes[name]||this.themes.champagne; const r=document.documentElement; Object.keys(t).forEach(k=>r.style.setProperty('--'+k, t[k])); }
+
+  setTheme = (name) => { this.applyTheme(name); this.setState({ theme:name }); };
+  go = (s) => () => { if(s) this.setState({ screen:s }); };
+  setTab = (t) => () => this.setState({ tab:t });
+  toggleRow = (id) => () => this.setState(s => { const sel={...s.sel}; sel[id]=!sel[id]; return { sel, selAll:false }; });
+  toggleAll = () => this.setState(s => { const all=!s.selAll; const sel={}; if(all) this.products.forEach(p=>sel[p.id]=true); return { selAll:all, sel }; });
+  clearSel = () => this.setState({ sel:{}, selAll:false });
+  setQuery = (e) => this.setState({ query:e.target.value });
+
+  badge(tone){
+    const m={
+      success:['#6FCF97','rgba(95,190,134,.13)','rgba(95,190,134,.32)'],
+      warn:['#E8B65A','rgba(232,182,90,.13)','rgba(232,182,90,.32)'],
+      danger:['#EC8B8B','rgba(236,134,134,.13)','rgba(236,134,134,.32)'],
+      info:['var(--goldHi,#E6D2A0)','rgba(205,181,130,.13)','var(--line,rgba(205,181,130,.2))'],
+      muted:['#9A9384','rgba(255,255,255,.05)','var(--line,rgba(205,181,130,.16))'],
+    };
+    const a=m[tone]||m.muted;
+    return 'display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;letter-spacing:.02em;border-radius:999px;padding:3px 10px;line-height:1.4;white-space:nowrap;color:'+a[0]+';background:'+a[1]+';border:1px solid '+a[2]+';';
+  }
+
+  navData = [
+    { items:[['speedometer2','Dashboard','dashboard'],['bar-chart-line','Analytics','analytics']] },
+    { label:'Catalogue', items:[['box-seam','Products','table'],['collection','Collections'],['tags','Categories'],['boxes','Inventory'],['star-half','Reviews']] },
+    { label:'Sales', items:[['receipt','Orders'],['people','Customers'],['briefcase','Trade'],['chat-left-text','Enquiries']] },
+    { label:'Marketing', items:[['megaphone','Promotions'],['card-image','Banners'],['gift','Gift cards'],['envelope-paper','Newsletter']] },
+    { label:'Content', items:[['file-earmark-text','Pages'],['journal-text','Blog'],['cup-straw','Cocktails']] },
+    { label:'Settings', items:[['person-badge','Staff'],['palette','Appearance'],['gear','Settings']] },
+  ];
+
+  products = [
+    {id:'p1',name:'Rumbaclaat Original Reserve',sku:'RUM-ORIG-700',type:'Rum',tone:'info',price:'£49.99',stock:'128',status:'Published',st:'success',updated:'12 Jun 2026',img:'https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=120'},
+    {id:'p2',name:'Rumbaclaat Spiced Gold',sku:'RUM-SPCD-700',type:'Rum',tone:'info',price:'£38.99',stock:'86',status:'Published',st:'success',updated:'11 Jun 2026',img:'https://images.unsplash.com/photo-1764699186296-9dac0ddb5edb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=120'},
+    {id:'p3',name:'Gold Label Hoodie',sku:'APP-HOOD-GL',type:'Apparel',tone:'muted',price:'£95.00',stock:'40',status:'Published',st:'success',updated:'9 Jun 2026',img:'https://images.unsplash.com/photo-1499971442178-8c10fdf5f6ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=120'},
+    {id:'p4',name:'Heritage Tee',sku:'APP-HER-BL',type:'Apparel',tone:'muted',price:'£45.00',stock:'0',status:'Out of stock',st:'danger',updated:'7 Jun 2026',img:'',ph:'image'},
+    {id:'p5',name:'Members Cap — Stone',sku:'APP-CAP-ST',type:'Cap',tone:'muted',price:'£30.00',stock:'12',status:'Published',st:'success',updated:'5 Jun 2026',img:'',ph:'image'},
+    {id:'p6',name:'£100 Gift Card',sku:'GIFT-100',type:'Gift card',tone:'warn',price:'£100.00',stock:'∞',status:'Published',st:'success',updated:'3 Jun 2026',img:'',ph:'gift'},
+    {id:'p7',name:'Spiced Tasting Set',sku:'RUM-TAST-01',type:'Rum',tone:'info',price:'£75.00',stock:'18',status:'Draft',st:'warn',updated:'2 Jun 2026',img:'https://images.unsplash.com/photo-1748674755168-266c309d4712?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=120'},
+    {id:'p8',name:'Women\u2019s Silk Scarf',sku:'APP-SCF-01',type:'Apparel',tone:'muted',price:'£65.00',stock:'7',status:'Archived',st:'muted',updated:'28 May 2026',img:'',ph:'image'},
+  ];
+
+  renderVals(){
+    const cur = this.state.screen;
+    const line = 'var(--line,rgba(205,181,130,0.14))';
+    const navBase = 'display:flex;align-items:center;gap:11px;min-height:42px;padding:9px 12px 9px 13px;border-radius:9px;font-size:.9rem;font-weight:500;text-decoration:none;cursor:pointer;border:1px solid transparent;color:#C7C1B2;';
+    const navActive = 'background:rgba(205,181,130,.12);color:var(--goldHi,#E6D2A0);border-color:'+line+';font-weight:600;box-shadow:inset 2px 0 0 var(--gold,#CDB582);';
+    const navGroups = this.navData.map(g => ({
+      hasLabel: !!g.label, label: g.label||'',
+      items: g.items.map(it => { const active = it[2] && it[2]===cur; return { icon:it[0], label:it[1], active, onClick: it[2]?this.go(it[2]):(e=>{}), style: navBase+(active?navActive:'') }; })
+    }));
+
+    const themeSwatches = [['champagne','Champagne','#CDB582'],['classic','Classic gold','#C6A75E'],['cognac','Cognac','#D6A45A'],['emerald','Emerald','#3E7E5E']].map(s => {
+      const active = this.state.theme===s[0];
+      return { key:s[0], label:s[1], onClick:()=>this.setTheme(s[0]),
+        style:'width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.2);cursor:pointer;padding:0;background:'+s[2]+';'+(active?'box-shadow:0 0 0 2px var(--bg,#0E0E12),0 0 0 4px var(--goldHi,#E6D2A0);':'') };
+    });
+
+    const vbar = (arr) => arr.map(x => ({ label:x[0], val:x[1], h:x[2]+'%' }));
+    const revenueWeek = vbar([['Mon','£1.9k',52],['Tue','£2.3k',63],['Wed','£2.1k',58],['Thu','£2.8k',77],['Fri','£3.6k',100],['Sat','£3.1k',86],['Sun','£2.6k',72]]);
+    const revenueMonth = vbar([['Jul','£9.2k',41],['Aug','£10.1k',45],['Sep','£11.4k',51],['Oct','£12.8k',57],['Nov','£15.6k',70],['Dec','£22.4k',100],['Jan','£13.1k',58],['Feb','£12.2k',54],['Mar','£14.0k',63],['Apr','£15.3k',68],['May','£16.8k',75],['Jun','£18.4k',82]]);
+    const ordersMonth = vbar([['Jul','168',41],['Aug','182',44],['Sep','205',50],['Oct','232',57],['Nov','286',70],['Dec','410',100],['Jan','245',60],['Feb','228',56],['Mar','262',64],['Apr','288',70],['May','312',76],['Jun','342',83]]);
+    const topProducts = [['Original Reserve','£42.1k',100],['Spiced Gold','£31.5k',75],['Gold Label','£18.9k',45],['Heritage Tee','£9.4k',22],['Members Cap','£6.2k',15],['£100 Gift Card','£5.8k',14],['Tasting Set','£4.9k',12],['Silk Scarf','£3.7k',9]].map(x => ({ label:x[0], val:x[1], w:x[2]+'%' }));
+
+    const orders = [['#RC-1042','Amara Bennett','Paid','success','£128.50'],['#RC-1041','Marcus Lee','Pending','warn','£49.99'],['#RC-1040','Priya Shah','Fulfilled','info','£213.00'],['#RC-1039','Tom Okafor','Paid','success','£95.00'],['#RC-1038','Sofia Romano','Refunded','danger','£38.99']].map(o => ({ id:o[0], cust:o[1], status:o[2], badge:this.badge(o[3]), total:o[4] }));
+    const lowStock = [['Heritage Tee — Black / L','APP-HER-BL-L','0 left','danger'],['Women\u2019s Silk Scarf','APP-SCF-01','7 left','warn'],['Members Cap — Stone','APP-CAP-ST','12 left','warn'],['Spiced Tasting Set','RUM-TAST-01','18 left','warn']].map(x => ({ name:x[0], sku:x[1], left:x[2], badge:this.badge(x[3]) }));
+    const activity = [['New order #RC-1042','Amara Bennett · 4 min ago'],['Gold membership upgrade','Marcus Lee · 22 min ago'],['Product review (5\u2605) — Original Reserve','Priya Shah · 1 hr ago'],['Stock adjustment — Heritage Tee','System · 2 hr ago']].map(x => ({ title:x[0], meta:x[1] }));
+
+    const q = this.state.query.trim().toLowerCase();
+    const rows = this.products.filter(p => !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)).map(p => ({
+      ...p, hasImg: !!p.img, noImg: !p.img, checked: !!this.state.sel[p.id], onToggle: this.toggleRow(p.id),
+      typeStyle: this.badge(p.tone), statusStyle: this.badge(p.st),
+      rowStyle: 'border-bottom:1px solid var(--line,rgba(205,181,130,.1));background:'+(this.state.sel[p.id]?'rgba(205,181,130,.06)':'transparent')+';'
+    }));
+    const selCount = Object.keys(this.state.sel).filter(k=>this.state.sel[k]).length;
+
+    const tabDefs = [['general','General'],['pricing','Pricing & inventory'],['attr','Attributes'],['media','Media'],['seo','SEO']];
+    const tabBase = 'padding:8px 16px;border-radius:999px;font-size:.875rem;cursor:pointer;border:1px solid '+line+';background:var(--surface,#1A1A20);color:#C7C1B2;text-decoration:none;font-weight:500;';
+    const tabActive = 'background:rgba(205,181,130,.13);color:var(--goldHi,#E6D2A0);border-color:var(--gold,#CDB582);font-weight:600;';
+    const tabs = tabDefs.map(t => ({ label:t[1], active:this.state.tab===t[0], onClick:this.setTab(t[0]), style: tabBase+(this.state.tab===t[0]?tabActive:'') }));
+
+    return {
+      navGroups, themeSwatches,
+      isDashboard: cur==='dashboard', isAnalytics: cur==='analytics', isProduct: cur==='product', isTable: cur==='table',
+      goDash: this.go('dashboard'), goTable: this.go('table'), goProduct: this.go('product'),
+      revenueWeek, revenueMonth, ordersMonth, topProducts, orders, lowStock, activity,
+      tabs, isGeneral: this.state.tab==='general', isPricing: this.state.tab==='pricing', isAttr: this.state.tab==='attr', isMedia: this.state.tab==='media', isSeo: this.state.tab==='seo',
+      rows, showingLabel: 'Showing '+rows.length+' of 24', selCount, selCountLabel: selCount+' selected', hasSel: selCount>0, selAll: this.state.selAll, toggleAll: this.toggleAll, clearSel: this.clearSel,
+      query: this.state.query, setQuery: this.setQuery,
+      inp:'width:100%;background:var(--surface2,#141419);border:1px solid '+line+';color:#F3EFE6;border-radius:9px;padding:9px 11px;font-size:.9rem;outline:none;font-family:inherit;',
+      area:'width:100%;background:var(--surface2,#141419);border:1px solid '+line+';color:#F3EFE6;border-radius:9px;padding:9px 11px;font-size:.9rem;outline:none;font-family:inherit;resize:vertical;line-height:1.5;',
+      lbl:'display:block;color:#C7C1B2;font-size:.8rem;font-weight:500;margin-bottom:6px;',
+    };
+  }
+}
+</script>
+</body>
+</html>

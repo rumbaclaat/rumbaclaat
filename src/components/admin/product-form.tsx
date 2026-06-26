@@ -5,6 +5,7 @@ import ImageField from "@/components/admin/media/image-field";
 import GalleryField from "@/components/admin/media/gallery-field";
 import { TextField, TextareaField, SelectField, CheckField, Field } from "@/components/admin/ui/field";
 import ProductAttributes from "@/components/admin/products/product-attributes";
+import ProductTabs from "@/components/admin/products/product-tabs";
 
 const STATUSES = ["draft", "published", "archived"];
 
@@ -41,21 +42,27 @@ export default function ProductForm({
   initialType?: string;
   submitLabel: string;
 }) {
-  return (
-    <form action={action}>
-      {product && <input type="hidden" name="id" value={product.id} />}
-
-      <div className="row g-4">
-        {/* Main column */}
-        <div className="col-12 col-lg-8">
-          <FormSection title="General">
-            <TextField name="name" label="Name" defaultValue={product?.name ?? ""} required col="col-md-7" />
-            <TextField name="sku" label="SKU" defaultValue={product?.sku ?? ""} required col="col-md-5" />
-            <TextField name="slug" label="Slug" defaultValue={product?.slug ?? ""} col="col-md-6" hint="Leave blank to auto-generate." />
-            <TextField name="subtitle" label="Subtitle / spec line" defaultValue={product?.subtitle ?? ""} col="col-md-6" />
-            <TextareaField name="description" label="Description" defaultValue={product?.description ?? ""} rows={4} />
-          </FormSection>
-
+  // Tabbed main column — only the active section is visible; all fields stay in
+  // the DOM so the server action receives them unchanged.
+  const tabs = [
+    {
+      id: "general",
+      label: "General",
+      content: (
+        <FormSection title="General">
+          <TextField name="name" label="Name" defaultValue={product?.name ?? ""} required col="col-md-7" />
+          <TextField name="sku" label="SKU" defaultValue={product?.sku ?? ""} required col="col-md-5" />
+          <TextField name="slug" label="Slug" defaultValue={product?.slug ?? ""} col="col-md-6" hint="Leave blank to auto-generate." />
+          <TextField name="subtitle" label="Subtitle / spec line" defaultValue={product?.subtitle ?? ""} col="col-md-6" />
+          <TextareaField name="description" label="Description" defaultValue={product?.description ?? ""} rows={4} />
+        </FormSection>
+      ),
+    },
+    {
+      id: "pricing",
+      label: "Pricing & inventory",
+      content: (
+        <>
           <FormSection title="Pricing">
             <TextField name="basePrice" label="Base price (£)" type="number" step="0.01" defaultValue={dec(product?.basePrice)} col="col-md-4" />
             <TextField name="basePoints" label="Base points" type="number" defaultValue={product?.basePoints ?? 0} col="col-md-4" />
@@ -69,33 +76,66 @@ export default function ProductForm({
             <TextField name="lowStockThreshold" label="Low-stock alert at" type="number" defaultValue={product?.lowStockThreshold ?? 5} col="col-md-4" hint="Flags on the dashboard." />
             <TextField name="maxQtyPerOrder" label="Max qty / order" type="number" defaultValue={dec(product?.maxQtyPerOrder)} col="col-md-4" />
           </FormSection>
+        </>
+      ),
+    },
+    {
+      id: "attributes",
+      label: "Attributes",
+      content: (
+        <ProductAttributes
+          initialType={product?.type ?? initialType ?? "rum"}
+          d={{
+            abv: dec(product?.abv),
+            volume: product?.volume ?? "",
+            origin: product?.origin ?? "",
+            tastingNotes: product?.tastingNotes ?? "",
+            caskType: product?.caskType ?? "",
+            ageStatement: product?.ageStatement ?? "",
+            material: product?.material ?? "",
+            gsm: product?.gsm ?? "",
+            fit: product?.fit ?? "",
+            careInstructions: product?.careInstructions ?? "",
+          }}
+        />
+      ),
+    },
+    {
+      id: "media",
+      label: "Media",
+      content: (
+        <FormSection title="Media">
+          <ImageField name="imageUrl" label="Primary image" value={product?.imageUrl ?? ""} col="col-12" hint="Upload a file or choose from the media library." />
+          <GalleryField name="galleryImages" label="Gallery images" value={product?.galleryImages ?? []} hint="Add more images and drag to reorder." />
+        </FormSection>
+      ),
+    },
+    {
+      id: "seo",
+      label: "SEO",
+      content: (
+        <FormSection title="Search engine (SEO)">
+          <TextField name="seoTitle" label="SEO title" defaultValue={product?.seoTitle ?? ""} col="col-md-6" />
+          <TextField name="canonical" label="Canonical URL" defaultValue={product?.canonical ?? ""} col="col-md-6" />
+          <TextareaField name="seoDescription" label="Meta description" defaultValue={product?.seoDescription ?? ""} rows={2} />
+        </FormSection>
+      ),
+    },
+  ];
 
-          <ProductAttributes
-            initialType={product?.type ?? initialType ?? "rum"}
-            d={{
-              abv: dec(product?.abv),
-              volume: product?.volume ?? "",
-              origin: product?.origin ?? "",
-              tastingNotes: product?.tastingNotes ?? "",
-              caskType: product?.caskType ?? "",
-              ageStatement: product?.ageStatement ?? "",
-              material: product?.material ?? "",
-              gsm: product?.gsm ?? "",
-              fit: product?.fit ?? "",
-              careInstructions: product?.careInstructions ?? "",
-            }}
-          />
+  return (
+    <form action={action}>
+      {product && <input type="hidden" name="id" value={product.id} />}
 
-          <FormSection title="Search engine (SEO)">
-            <TextField name="seoTitle" label="SEO title" defaultValue={product?.seoTitle ?? ""} col="col-md-6" />
-            <TextField name="canonical" label="Canonical URL" defaultValue={product?.canonical ?? ""} col="col-md-6" />
-            <TextareaField name="seoDescription" label="Meta description" defaultValue={product?.seoDescription ?? ""} rows={2} />
-          </FormSection>
+      <div className="admin-product-grid">
+        {/* Tabbed main column */}
+        <div className="admin-product-main">
+          <ProductTabs tabs={tabs} />
         </div>
 
-        {/* Right rail */}
-        <div className="col-12 col-lg-4">
-          <FormSection title="Status & scheduling">
+        {/* Persistent rail — visible across every tab */}
+        <div className="admin-product-rail">
+          <FormSection title="Publish">
             <SelectField name="status" label="Status" options={STATUSES} defaultValue={product?.status ?? "draft"} col="col-12" />
             <TextField name="publishAt" label="Publish at" type="datetime-local" defaultValue={dtLocal(product?.publishAt)} col="col-12" hint="Auto-publish at this time (optional)." />
             <TextField name="unpublishAt" label="Unpublish at" type="datetime-local" defaultValue={dtLocal(product?.unpublishAt)} col="col-12" />
@@ -110,11 +150,6 @@ export default function ProductForm({
             </Field>
             <SelectField name="taxClassId" label="Tax class" options={taxClasses.map((c) => ({ value: c.id, label: c.name }))} defaultValue={product?.taxClassId ?? ""} blankLabel="— store default —" col="col-12" />
             <SelectField name="shippingClassId" label="Shipping class" options={shippingClasses.map((c) => ({ value: c.id, label: c.name }))} defaultValue={product?.shippingClassId ?? ""} blankLabel="— store default —" col="col-12" />
-          </FormSection>
-
-          <FormSection title="Media">
-            <ImageField name="imageUrl" label="Primary image" value={product?.imageUrl ?? ""} col="col-12" hint="Upload a file or choose from the media library." />
-            <GalleryField name="galleryImages" label="Gallery images" value={product?.galleryImages ?? []} hint="Add more images and drag to reorder." />
           </FormSection>
         </div>
       </div>

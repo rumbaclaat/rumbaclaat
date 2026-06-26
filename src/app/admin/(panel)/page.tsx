@@ -4,8 +4,9 @@ import { formatMoney } from "@/lib/money";
 import PageHeader from "@/components/admin/ui/page-header";
 import AdminCard from "@/components/admin/ui/admin-card";
 import StatCard from "@/components/admin/ui/stat-card";
+import SectionLabel from "@/components/admin/ui/section-label";
 import StatusBadge from "@/components/admin/ui/status-badge";
-import { BarChart, Donut } from "@/components/admin/analytics/charts";
+import { BarChart, Donut, Sparkline } from "@/components/admin/analytics/charts";
 
 export const dynamic = "force-dynamic";
 
@@ -48,26 +49,42 @@ export default async function AdminDashboard() {
     <>
       <PageHeader title="Dashboard" subtitle={now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} />
 
-      <div className="admin-stat-grid">
-        <StatCard label="Revenue (30d)" value={formatMoney(Number(rev30._sum.total ?? 0))} icon="bi-graph-up-arrow" href="/admin/analytics" />
-        <StatCard label="Revenue (all)" value={formatMoney(Number(revAll._sum.total ?? 0))} icon="bi-cash-stack" />
+      {/* Headline: hero revenue + a secondary strip */}
+      <div className="admin-stat-row">
+        <StatCard
+          variant="hero"
+          label="Revenue · last 30 days"
+          value={formatMoney(Number(rev30._sum.total ?? 0))}
+          icon="bi-graph-up-arrow"
+          href="/admin/analytics"
+          foot={<div className="mt-3"><Sparkline data={months.map((m) => m.value)} /></div>}
+        />
         <StatCard label="Orders" value={orderCount} icon="bi-bag" href="/admin/orders" />
-        <StatCard label="Pending orders" value={pending} icon="bi-hourglass-split" href="/admin/orders" />
+        <StatCard label="Pending" value={pending} icon="bi-hourglass-split" href="/admin/orders" />
         <StatCard label="Customers" value={customers} icon="bi-people" href="/admin/customers" />
-        <StatCard label="New (30d)" value={new30} icon="bi-person-plus" />
-        <StatCard label="Points liability" value={(points._sum.pointsBalance ?? 0).toLocaleString()} icon="bi-coin" />
         <StatCard label="Low stock" value={lowStock} icon="bi-exclamation-triangle" href="/admin/inventory" />
+      </div>
+
+      <SectionLabel>Detail</SectionLabel>
+      <div className="admin-stat-row">
+        <StatCard label="Revenue (all time)" value={formatMoney(Number(revAll._sum.total ?? 0))} icon="bi-cash-stack" />
+        <StatCard label="New customers (30d)" value={new30} icon="bi-person-plus" />
+        <StatCard label="Points liability" value={(points._sum.pointsBalance ?? 0).toLocaleString()} icon="bi-coin" />
         <StatCard label="Open invoices" value={openInvoices} icon="bi-receipt" href="/admin/trade" />
       </div>
 
-      <div className="row g-4">
+      <div className="row g-4 admin-chart-row">
         <div className="col-12 col-lg-7">
-          <AdminCard title="Revenue — last 6 months">
+          <AdminCard
+            title="Revenue — last 6 months"
+            className="admin-card--chart"
+            actions={<span className="admin-badge admin-badge--info admin-badge--no-dot">{formatMoney(months.reduce((a, m) => a + m.value, 0))}</span>}
+          >
             <BarChart data={months.map((m) => ({ label: m.label, value: m.value }))} money />
           </AdminCard>
         </div>
         <div className="col-12 col-lg-5">
-          <AdminCard title="Orders by status">
+          <AdminCard title="Orders by status" className="admin-card--chart">
             {statusSegments.length ? <Donut segments={statusSegments} centerValue={orderCount} centerLabel="orders" /> : <p className="td-muted">No orders yet.</p>}
           </AdminCard>
         </div>

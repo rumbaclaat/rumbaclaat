@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 export default function StatCard({
   label,
@@ -6,13 +7,20 @@ export default function StatCard({
   icon,
   href,
   delta,
+  variant,
+  foot,
 }: {
   label: string;
   value: string | number;
   icon?: string;
   href?: string;
   delta?: { value: string; direction: "up" | "down" };
+  /** "hero" = the dominant metric; "primary" = a primary-tier card. */
+  variant?: "hero" | "primary";
+  /** Optional content under the number (e.g. a <Sparkline />). */
+  foot?: ReactNode;
 }) {
+  const cls = `admin-stat${variant ? ` admin-stat--${variant}` : ""}`;
   const inner = (
     <>
       <div className="admin-stat-top">
@@ -30,15 +38,16 @@ export default function StatCard({
           {delta.value}
         </span>
       )}
+      {foot}
     </>
   );
 
   if (href) {
     return (
-      <Link href={href} className="admin-stat">
+      <Link href={href} className={cls}>
         {inner}
       </Link>
     );
   }
-  return <div className="admin-stat">{inner}</div>;
+  return <div className={cls}>{inner}</div>;
 }

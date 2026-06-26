@@ -1,0 +1,96 @@
+/* ============================================================================
+   AG Grid — "Champagne" theme overrides  (STYLING ONLY)
+   ----------------------------------------------------------------------------
+   ⚠ DO NOT change grid behaviour. This file only recolours AG Grid to match
+   the champagne system. Leave columnDefs, rowData / row models, sorting,
+   filtering, selection, pagination, cell renderers and every gridOption
+   exactly as they are. This is paint, not plumbing.
+
+   USAGE depends on your AG Grid version:
+
+   • Legacy CSS themes (ag-theme-alpine / -quartz, v31 and earlier, or v32+
+     with `theme="legacy"`): keep your theme class on the grid wrapper and
+     import this file AFTER the AG Grid theme CSS. The --ag-* variables below
+     do the recolouring.
+
+   • Theming API (v33+, the default): prefer translating the values below into
+     a theme object so you don't fight the injected styles, e.g.
+
+         import { themeQuartz } from 'ag-grid-community';
+         export const champagneGrid = themeQuartz.withParams({
+           backgroundColor:        '#1A1A20',
+           foregroundColor:        '#F3EFE6',
+           headerBackgroundColor:  '#141419',
+           headerTextColor:        '#C7C1B2',
+           borderColor:            'rgba(205,181,130,0.14)',
+           rowHoverColor:          'rgba(205,181,130,0.05)',
+           selectedRowBackgroundColor: 'rgba(205,181,130,0.10)',
+           accentColor:            '#CDB582',
+           fontFamily:             'Inter, system-ui, sans-serif',
+           headerFontSize:         11,
+         });
+
+     The CSS-variable block below is the source of truth for the values either
+     way.
+   ========================================================================== */
+
+.ag-theme-alpine,
+.ag-theme-alpine-dark,
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+  /* Core surfaces */
+  --ag-background-color:            #1A1A20;   /* grid body  (= --bg-card2) */
+  --ag-foreground-color:            #F3EFE6;   /* text       (= --text)     */
+  --ag-header-background-color:     #141419;   /* header     (= --bg-card3) */
+  --ag-header-foreground-color:     #C7C1B2;   /* (= --text-muted)          */
+  --ag-odd-row-background-color:    #1A1A20;   /* no zebra — hover only     */
+  --ag-control-panel-background-color: #141419;
+  --ag-subheader-background-color:  #141419;
+
+  /* Lines & borders */
+  --ag-border-color:                rgba(205,181,130,0.14);
+  --ag-row-border-color:            rgba(205,181,130,0.10);
+  --ag-secondary-border-color:      rgba(205,181,130,0.10);
+  --ag-header-column-separator-color: rgba(205,181,130,0.14);
+
+  /* Interaction */
+  --ag-row-hover-color:             rgba(205,181,130,0.05);
+  --ag-selected-row-background-color: rgba(205,181,130,0.10);
+  --ag-range-selection-background-color: rgba(205,181,130,0.14);
+  --ag-accent-color:                #CDB582;   /* checkboxes, focus, active */
+  --ag-checkbox-checked-color:      #CDB582;
+  --ag-input-focus-border-color:    #CDB582;
+  --ag-active-color:                #CDB582;
+
+  /* Inputs inside the grid (filters, editors) */
+  --ag-input-background-color:      #141419;
+  --ag-input-border-color:          rgba(205,181,130,0.16);
+
+  /* Chips / tags / menus */
+  --ag-chip-background-color:       rgba(205,181,130,0.12);
+  --ag-popup-shadow:                0 12px 32px rgba(0,0,0,0.45);
+  --ag-card-shadow:                 0 12px 32px rgba(0,0,0,0.45);
+
+  /* Type & metrics */
+  --ag-font-family:                 "Inter", system-ui, -apple-system, sans-serif;
+  --ag-font-size:                   14px;
+  --ag-header-height:               44px;
+  --ag-row-height:                  56px;       /* room for 40px thumbnails  */
+  --ag-border-radius:               9px;
+  --ag-wrapper-border-radius:       14px;
+}
+
+/* Uppercase header labels to match the rest of the system (visual only) */
+.ag-theme-alpine .ag-header-cell-text,
+.ag-theme-quartz .ag-header-cell-text,
+.ag-theme-alpine-dark .ag-header-cell-text,
+.ag-theme-quartz-dark .ag-header-cell-text {
+  font-size: .68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Status badges / type pills rendered inside cells via your cellRenderers —
+   reuse the .admin-badge classes from champagne-theme.css so list chips match
+   the rest of the UI. No grid logic touched. */
