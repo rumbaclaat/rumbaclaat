@@ -38,11 +38,18 @@ export default function TradePage() {
                 <form action="/trade/portal">
                   <div className="mb-3">
                     <label className="form-label" htmlFor="ts-email" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Business email *</label>
-                    <input className="form-control" type="email" id="ts-email" autoComplete="email" />
+                    <input className="form-control" type="email" id="ts-email" autoComplete="email" required />
                   </div>
-                  <div className="mb-4">
+                  <div className="mb-3">
                     <label className="form-label" htmlFor="ts-password" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Password *</label>
-                    <input className="form-control" type="password" id="ts-password" autoComplete="current-password" />
+                    <input className="form-control" type="password" id="ts-password" autoComplete="current-password" required />
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" id="ts-remember" />
+                      <label className="form-check-label" htmlFor="ts-remember" style={{ fontSize: ".875rem" }}>Remember this device</label>
+                    </div>
+                    <Link href="/account" style={{ fontSize: ".8125rem", color: "var(--gold-hi)" }}>Forgot password?</Link>
                   </div>
                   <button type="submit" className="btn btn-gold w-100">Sign in to trade portal</button>
                 </form>
@@ -61,26 +68,22 @@ export default function TradePage() {
         </div>
       </section>
 
-      {/* ---- Benefits band ---- */}
-      <section className="section section--surface">
-        <div className="container">
-          <div className="text-center reveal" style={{ maxWidth: 640, margin: "0 auto 40px" }}>
-            <span className="eyebrow eyebrow-center">Why apply</span>
-            <h2 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(1.9rem, 4vw, 3rem)", lineHeight: 1.08, margin: 0 }}>
-              Why open a trade account?
-            </h2>
-          </div>
-          <div className="row g-4">
-            {WHY.map((w) => (
-              <div className="col-12 col-md-4" key={w.h}>
-                <div className="card-brand h-100" style={{ padding: 26 }}>
-                  <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", color: "var(--gold-hi)", margin: "0 0 10px" }}>{w.h}</h3>
-                  <p style={{ fontSize: ".9375rem", color: "var(--text-muted)", lineHeight: 1.7, margin: 0 }}>{w.p}</p>
-                </div>
+      {/* ---- Why open a trade account? (matches trade.html gate) ---- */}
+      <section className="container" style={{ maxWidth: 760, marginTop: 8, paddingTop: 32, borderTop: "1px solid var(--gold-bdr)" }}>
+        <h2 className="h4 mb-3" style={{ textAlign: "center", fontFamily: "var(--serif)", fontWeight: 600 }}>
+          Why open a trade account?
+        </h2>
+        <div className="row g-3">
+          {WHY.map((w) => (
+            <div className="col-12 col-md-4" key={w.h}>
+              <div className="card-brand h-100">
+                <p style={{ fontSize: "1rem", fontWeight: 600, color: "var(--gold-hi)", marginBottom: 6 }}>{w.h}</p>
+                <p style={{ fontSize: ".875rem", color: "var(--text-muted)", margin: 0 }}>{w.p}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
+        <div style={{ height: "clamp(40px, 6vw, 80px)" }} aria-hidden="true" />
       </section>
     </>
   );
