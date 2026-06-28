@@ -21,28 +21,21 @@ export default async function EnquiryDetail({ params }: { params: Promise<{ id: 
     <>
       <PageHeader
         title={enq.subject || `Enquiry from ${enq.name}`}
+        titleBadge={<StatusBadge status={enq.status} />}
         subtitle={`${enq.type} · ${enq.email}`}
         breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Enquiries", href: "/admin/enquiries" }, { label: enq.name }]}
         action={
-          <div className="d-flex gap-2 align-items-center">
-            {enq.type === "trade" && (
-              <form action={approveTradeApplication}>
-                <input type="hidden" name="id" value={enq.id} />
-                <button className="btn btn-outline-gold btn-sm"><i className="bi bi-briefcase me-1" />Approve as trade account</button>
-              </form>
-            )}
-            <form action={updateEnquiryStatus} className="d-flex gap-1">
+          enq.type === "trade" ? (
+            <form action={approveTradeApplication}>
               <input type="hidden" name="id" value={enq.id} />
-              <select name="status" defaultValue={enq.status} className="form-select form-select-sm" style={{ width: "auto" }}>
-                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <button className="btn btn-ghost btn-sm">Set</button>
+              <button className="btn btn-outline-gold btn-sm"><i className="bi bi-briefcase me-1" />Approve as trade account</button>
             </form>
-          </div>
+          ) : undefined
         }
       />
 
       <div className="row g-4">
+        {/* Main */}
         <div className="col-12 col-lg-8">
           <AdminCard title="Conversation">
             <div className="mb-3 pb-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}>
@@ -62,25 +55,36 @@ export default async function EnquiryDetail({ params }: { params: Promise<{ id: 
               </div>
             ))}
           </AdminCard>
+        </div>
+
+        {/* Rail */}
+        <div className="col-12 col-lg-4">
+          <AdminCard title="Status">
+            <div className="mb-3"><StatusBadge status={enq.status} /></div>
+            <form action={updateEnquiryStatus} className="d-flex flex-column gap-2">
+              <input type="hidden" name="id" value={enq.id} />
+              <select name="status" defaultValue={enq.status} className="form-select form-select-sm">
+                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <button type="submit" className="btn btn-gold btn-sm">Update status</button>
+            </form>
+          </AdminCard>
+
+          <AdminCard title="Contact" className="mt-4">
+            <p className="mb-1" style={{ fontWeight: 600 }}>{enq.name}</p>
+            <p className="mb-1"><span className="td-muted">Type:</span> {enq.type}</p>
+            <p className="mb-1"><span className="td-muted">Email:</span> <a href={`mailto:${enq.email}`}>{enq.email}</a></p>
+            {enq.phone && <p className="mb-1"><span className="td-muted">Phone:</span> {enq.phone}</p>}
+            <p className="mb-0"><span className="td-muted">Received:</span> {new Date(enq.createdAt).toLocaleString("en-GB")}</p>
+          </AdminCard>
 
           <AdminCard title="Reply" className="mt-4">
             <form action={replyEnquiry} className="d-flex flex-column gap-2">
               <input type="hidden" name="id" value={enq.id} />
               <input name="subject" className="form-control form-control-sm" placeholder="Subject" defaultValue={`Re: ${enq.subject ?? "your enquiry"}`} />
               <textarea name="body" rows={4} className="form-control" placeholder="Your reply…" required />
-              <button className="btn btn-gold btn-sm align-self-start"><i className="bi bi-send me-1" />Send reply</button>
+              <button className="btn btn-outline-gold btn-sm align-self-start"><i className="bi bi-send me-1" />Send reply</button>
             </form>
-          </AdminCard>
-        </div>
-
-        <div className="col-12 col-lg-4">
-          <AdminCard title="Details">
-            <p className="mb-1"><span className="td-muted">Status:</span> <StatusBadge status={enq.status} /></p>
-            <p className="mb-1"><span className="td-muted">Type:</span> {enq.type}</p>
-            <p className="mb-1"><span className="td-muted">Name:</span> {enq.name}</p>
-            <p className="mb-1"><span className="td-muted">Email:</span> <a href={`mailto:${enq.email}`}>{enq.email}</a></p>
-            {enq.phone && <p className="mb-1"><span className="td-muted">Phone:</span> {enq.phone}</p>}
-            <p className="mb-0"><span className="td-muted">Received:</span> {new Date(enq.createdAt).toLocaleString("en-GB")}</p>
           </AdminCard>
         </div>
       </div>

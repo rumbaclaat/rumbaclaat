@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatMoney } from "@/lib/money";
-import PageHeader from "@/components/admin/ui/page-header";
+import Breadcrumbs from "@/components/admin/ui/breadcrumbs";
 import AdminCard from "@/components/admin/ui/admin-card";
 import StatusBadge from "@/components/admin/ui/status-badge";
 import {
@@ -37,11 +37,17 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
 
   return (
     <>
-      <PageHeader
-        title={`Order ${order.ref}`}
-        subtitle={order.customerName ?? order.email}
-        breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Orders", href: "/admin/orders" }, { label: order.ref }]}
-        action={
+      <Breadcrumbs items={[{ label: "Dashboard", href: "/admin" }, { label: "Orders", href: "/admin/orders" }, { label: order.ref }]} />
+      <div className="admin-page-head">
+        <div>
+          <h1 className="d-flex align-items-center flex-wrap gap-2">
+            <span>{`Order ${order.ref}`}</span>
+            <StatusBadge status={order.status} />
+            <StatusBadge status={order.paymentStatus} />
+          </h1>
+          <div className="admin-page-sub">{order.customerName ?? order.email}</div>
+        </div>
+        <div className="admin-page-actions">
           <div className="d-flex gap-2">
             <Link href={`/admin/orders/${order.id}/packing-slip`} target="_blank" className="btn btn-ghost btn-sm">
               <i className="bi bi-printer me-1" aria-hidden="true" />Packing slip
@@ -50,8 +56,8 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
               <i className="bi bi-file-earmark-text me-1" aria-hidden="true" />Invoice
             </Link>
           </div>
-        }
-      />
+        </div>
+      </div>
 
       <div className="row g-4">
         {/* Main */}
@@ -117,7 +123,6 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
         {/* Rail */}
         <div className="col-12 col-lg-4">
           <AdminCard title="Status">
-            <div className="mb-3"><StatusBadge status={order.status} /> <StatusBadge status={order.paymentStatus} /></div>
             <form action={updateOrderStatus} className="d-flex flex-column gap-2">
               <input type="hidden" name="id" value={order.id} />
               <select name="status" className="form-select form-select-sm" defaultValue={order.status}>

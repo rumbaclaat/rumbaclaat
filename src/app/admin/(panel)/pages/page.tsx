@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deletePage } from "./actions";
 import PageHeader from "@/components/admin/ui/page-header";
+import SectionLabel from "@/components/admin/ui/section-label";
 import PagesGrid, { type PageRow } from "@/components/admin/pages/pages-grid";
 import { MANAGED_PAGES } from "@/lib/section-images";
 
@@ -35,9 +36,11 @@ export default async function PagesList() {
       />
       <PagesGrid rows={rows} deleteAction={deletePage} />
 
+      {/* Subordinate secondary section — the page leads with the single pages
+          grid above; these code-built layouts are a smaller, lighter follow-on. */}
       <div className="mt-5">
-        <h2 className="admin-form-section-title" style={{ fontSize: "1.2rem" }}>Storefront layouts</h2>
-        <p className="admin-form-section-desc">
+        <SectionLabel>Storefront layouts</SectionLabel>
+        <p className="admin-form-section-desc mb-3" style={{ fontSize: ".82rem" }}>
           Hand-built pages — replace their hero &amp; parallax images in place, in page order. The other
           sections are managed in code.
         </p>

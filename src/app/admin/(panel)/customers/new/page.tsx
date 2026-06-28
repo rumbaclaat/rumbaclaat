@@ -23,15 +23,15 @@ export default function NewCustomerPage() {
           </div>
 
           <div className="admin-product-rail">
-            <FormSection title="Membership">
-              <p className="admin-form-section-desc" style={{ margin: 0 }}>
-                Tier, points and marketing preferences become available once the customer is created.
+            <FormSection title="Status" grid={false}>
+              <p className="admin-form-section-desc" style={{ margin: "0 0 .75rem" }}>
+                The customer is created as a standard account. Tier, points balance and marketing
+                preferences become available once the record exists.
               </p>
+              <SaveBar submitLabel="Create customer" cancelHref="/admin/customers" />
             </FormSection>
           </div>
         </div>
-
-        <SaveBar submitLabel="Create customer" cancelHref="/admin/customers" />
       </form>
     </>
   );

@@ -5,9 +5,11 @@ import { BLOCKS, BLOCK_TYPES, type BlockField } from "@/lib/blocks/registry";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import PageHeader from "@/components/admin/ui/page-header";
 import FormSection from "@/components/admin/ui/form-section";
+import SaveBar from "@/components/admin/ui/save-bar";
+import StatusBadge from "@/components/admin/ui/status-badge";
+import AdminTabs from "@/components/admin/ui/tabs";
 import RowActions from "@/components/admin/ui/row-actions";
 import ImageField from "@/components/admin/media/image-field";
-import { TextField, TextareaField, SelectField } from "@/components/admin/ui/field";
 import {
   updatePage,
   addBlock,
@@ -19,6 +21,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const PAGE_FORM_ID = "page-settings-form";
 const TEXTAREA_TYPES = new Set(["textarea", "lines", "pairs", "richtext"]);
 const STATUSES = ["draft", "published", "archived"];
 
@@ -61,41 +64,43 @@ export default async function PageEditor({
   });
   if (!page) notFound();
 
-  return (
+  // General + SEO tab content. These inputs are associated with the standalone
+  // <form id={PAGE_FORM_ID} action={updatePage}> via the HTML `form` attribute,
+  // so they can live inside the tab panels while the block forms below stay
+  // independent (never nested). Field names are unchanged — the server action
+  // receives the same FormData.
+  const generalTab = (
+    <FormSection title="Page settings" description="Title and slug for this page.">
+      <div className="col-md-8">
+        <label className="form-label" htmlFor="title">Title</label>
+        <input form={PAGE_FORM_ID} id="title" name="title" className="form-control" defaultValue={page.title} />
+      </div>
+      <div className="col-md-4">
+        <label className="form-label" htmlFor="slug">Slug</label>
+        <input form={PAGE_FORM_ID} id="slug" name="slug" className="form-control" defaultValue={page.slug} />
+      </div>
+    </FormSection>
+  );
+
+  const seoTab = (
+    <FormSection title="Search engine (SEO)" description="How this page appears in search and when shared.">
+      <div className="col-12">
+        <label className="form-label" htmlFor="seoTitle">SEO title</label>
+        <input form={PAGE_FORM_ID} id="seoTitle" name="seoTitle" className="form-control" defaultValue={page.seoTitle ?? ""} />
+      </div>
+      <div className="col-12">
+        <label className="form-label" htmlFor="seoDescription">SEO description</label>
+        <textarea form={PAGE_FORM_ID} id="seoDescription" name="seoDescription" rows={4} className="form-control" defaultValue={page.seoDescription ?? ""} />
+      </div>
+      {/* Social share image (OG) — rendered inside the bound settings form below,
+          because ImageField writes a hidden <input> that can't be attached to a
+          form via the HTML `form` attribute (and the shared component must not be
+          edited). */}
+    </FormSection>
+  );
+
+  const contentTab = (
     <>
-      <PageHeader
-        title={page.title}
-        subtitle={`/${page.slug}`}
-        breadcrumb={[
-          { label: "Dashboard", href: "/admin" },
-          { label: "Pages", href: "/admin/pages" },
-          { label: page.title },
-        ]}
-        action={
-          <Link href={`/${page.slug}`} target="_blank" className="btn btn-outline-gold btn-sm">
-            View ↗
-          </Link>
-        }
-      />
-
-      {/* Page settings */}
-      <form action={updatePage}>
-        <input type="hidden" name="id" value={page.id} />
-        <input type="hidden" name="templateType" value={page.templateType} />
-        <FormSection title="Page settings" description="Title, address and search-engine metadata.">
-          <TextField name="title" label="Title" defaultValue={page.title} col="col-md-6" />
-          <TextField name="slug" label="Slug" defaultValue={page.slug} col="col-md-3" />
-          <SelectField name="status" label="Status" options={STATUSES} defaultValue={page.status} col="col-md-3" />
-          <TextField name="seoTitle" label="SEO title" defaultValue={page.seoTitle ?? ""} col="col-md-6" />
-          <ImageField name="ogImage" label="Social share image (OG)" value={page.ogImage ?? ""} col="col-md-6" hint="Shown when the page is shared on social media." />
-          <TextareaField name="seoDescription" label="SEO description" defaultValue={page.seoDescription ?? ""} rows={4} />
-        </FormSection>
-        <div className="d-flex justify-content-end mb-4">
-          <button type="submit" className="btn btn-gold">Save settings</button>
-        </div>
-      </form>
-
-      {/* Content blocks */}
       <div className="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-3">
         <div>
           <h2 className="admin-form-section-title" style={{ fontSize: "1.3rem" }}>Content blocks</h2>
@@ -108,7 +113,7 @@ export default async function PageEditor({
               <option key={t} value={t}>{BLOCKS[t].label}</option>
             ))}
           </select>
-          <button type="submit" className="btn btn-gold btn-sm text-nowrap">
+          <button type="submit" className="btn btn-outline-gold btn-sm text-nowrap">
             <i className="bi bi-plus-lg me-1" aria-hidden="true" />Add block
           </button>
         </form>
@@ -196,6 +201,69 @@ export default async function PageEditor({
           </div>
         );
       })}
+    </>
+  );
+
+  return (
+    <>
+      <PageHeader
+        title={page.title}
+        subtitle={`/${page.slug}`}
+        breadcrumb={[
+          { label: "Dashboard", href: "/admin" },
+          { label: "Pages", href: "/admin/pages" },
+          { label: page.title },
+        ]}
+        action={
+          <Link href={`/${page.slug}`} target="_blank" className="btn btn-outline-gold btn-sm">
+            View ↗
+          </Link>
+        }
+      />
+
+      <div className="admin-product-grid">
+        {/* Tabbed main column — only the active section renders */}
+        <div className="admin-product-main">
+          <AdminTabs
+            tabs={[
+              { id: "general", label: "General", content: generalTab },
+              { id: "seo", label: "SEO", content: seoTab },
+              { id: "content", label: "Content", badge: page.blocks.length, content: contentTab },
+            ]}
+          />
+        </div>
+
+        {/* Persistent rail — Publish state lives here on every tab */}
+        <div className="admin-product-rail">
+          <FormSection title="Publish">
+            <div className="col-12 mb-1">
+              <StatusBadge status={page.status} />
+            </div>
+            <div className="col-12">
+              <label className="form-label" htmlFor="status">Status</label>
+              <select form={PAGE_FORM_ID} id="status" name="status" className="form-select" defaultValue={page.status}>
+                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div className="col-12">
+              <label className="form-label" htmlFor="templateType">Template</label>
+              <input form={PAGE_FORM_ID} id="templateType" name="templateType" className="form-control" defaultValue={page.templateType} />
+            </div>
+          </FormSection>
+        </div>
+      </div>
+
+      {/* Standalone page-settings form. The General / SEO / Publish inputs above
+          bind to it via the HTML `form` attribute, so the Content-tab block forms
+          are never nested inside it. The OG image lives here (ImageField can't be
+          bound via `form`), and the sticky save bar carries the one gold Save. */}
+      <form id={PAGE_FORM_ID} action={updatePage}>
+        <input type="hidden" name="id" value={page.id} />
+        <FormSection title="Social share image" description="Shown when the page is shared on social media (SEO).">
+          <ImageField name="ogImage" label="Social share image (OG)" value={page.ogImage ?? ""} col="col-md-6" />
+        </FormSection>
+        <SaveBar submitLabel="Save settings" cancelHref="/admin/pages" />
+      </form>
     </>
   );
 }

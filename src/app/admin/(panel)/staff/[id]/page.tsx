@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/ui/page-header";
-import FormSection from "@/components/admin/ui/form-section";
-import SaveBar from "@/components/admin/ui/save-bar";
+import AdminCard from "@/components/admin/ui/admin-card";
 import SectionLabel from "@/components/admin/ui/section-label";
+import StatusBadge from "@/components/admin/ui/status-badge";
 import ImageField from "@/components/admin/media/image-field";
 import { TextField, SelectField, CheckField } from "@/components/admin/ui/field";
 import { PERMISSION_GROUPS, resolvePermissions } from "@/lib/permissions";
@@ -22,43 +22,59 @@ export default async function EditStaff({ params }: { params: Promise<{ id: stri
 
   return (
     <>
-      <PageHeader title={u.name ?? u.email} subtitle={u.email} breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Staff", href: "/admin/staff" }, { label: u.name ?? u.email }]} />
+      <PageHeader
+        title={u.name ?? u.email}
+        subtitle={u.email}
+        breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Staff", href: "/admin/staff" }, { label: u.name ?? u.email }]}
+        action={<StatusBadge status={u.active ? "active" : "inactive"} />}
+      />
+
       <form action={updateStaff}>
         <input type="hidden" name="id" value={u.id} />
-        <div className="admin-product-grid">
-          {/* Main column */}
-          <div className="admin-product-main">
-            <FormSection title="Permissions" description="By default a role grants a preset. Tick “custom” to fine-tune exactly what this person can do.">
+        <div className="row g-4">
+          {/* Main — primary content: the permissions matrix */}
+          <div className="col-12 col-lg-8">
+            <AdminCard title="Permissions">
+              <p className="admin-form-section-desc">
+                By default a role grants a preset. Tick “custom” to fine-tune exactly what this person can do.
+              </p>
               <CheckField name="useCustomPerms" label="Use custom permissions (override the role preset)" defaultChecked={hasCustom} />
-              {PERMISSION_GROUPS.map((g) => (
-                <div className="col-md-6" key={g.group}>
-                  <SectionLabel>{g.group}</SectionLabel>
-                  {g.keys.map(([key, label]) => (
-                    <div className="form-check" key={key}>
-                      <input className="form-check-input" type="checkbox" name="permissions" value={key} id={`p-${key}`} defaultChecked={effective.includes(key) || effective.includes("*")} />
-                      <label className="form-check-label" htmlFor={`p-${key}`} style={{ fontSize: ".85rem" }}>{label}</label>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </FormSection>
+              <div className="row g-3 mt-1">
+                {PERMISSION_GROUPS.map((g) => (
+                  <div className="col-md-6" key={g.group}>
+                    <SectionLabel>{g.group}</SectionLabel>
+                    {g.keys.map(([key, label]) => (
+                      <div className="form-check" key={key}>
+                        <input className="form-check-input" type="checkbox" name="permissions" value={key} id={`p-${key}`} defaultChecked={effective.includes(key) || effective.includes("*")} />
+                        <label className="form-check-label" htmlFor={`p-${key}`} style={{ fontSize: ".85rem" }}>{label}</label>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </AdminCard>
           </div>
 
-          {/* Persistent rail — Publish/Status first, then Organisation/profile meta */}
-          <div className="admin-product-rail">
-            <FormSection title="Publish">
-              <SelectField name="role" label="Role" options={ROLES.map((r) => ({ value: r, label: r.replace(/_/g, " ") }))} defaultValue={u.role} col="col-12" />
-              <CheckField name="active" label="Active" defaultChecked={u.active} col="col-12" />
-            </FormSection>
+          {/* Rail — Status/action card first, then identity (Profile) */}
+          <div className="col-12 col-lg-4">
+            <AdminCard title="Status">
+              <div className="mb-3"><StatusBadge status={u.active ? "active" : "inactive"} /></div>
+              <div className="d-flex flex-column gap-3">
+                <SelectField name="role" label="Role" options={ROLES.map((r) => ({ value: r, label: r.replace(/_/g, " ") }))} defaultValue={u.role} col="col-12" />
+                <CheckField name="active" label="Active" defaultChecked={u.active} col="col-12" />
+                <button type="submit" className="btn btn-gold btn-sm align-self-start"><i className="bi bi-check2 me-1" aria-hidden="true" />Save changes</button>
+              </div>
+            </AdminCard>
 
-            <FormSection title="Profile">
-              <TextField name="name" label="Name" defaultValue={u.name ?? ""} col="col-12" />
-              <TextField name="title" label="Job title" defaultValue={u.title ?? ""} col="col-12" />
-              <ImageField name="photo" label="Photo" value={u.photo ?? ""} col="col-12" />
-            </FormSection>
+            <AdminCard title="Profile" className="mt-4">
+              <div className="row g-3">
+                <TextField name="name" label="Name" defaultValue={u.name ?? ""} col="col-12" />
+                <TextField name="title" label="Job title" defaultValue={u.title ?? ""} col="col-12" />
+                <ImageField name="photo" label="Photo" value={u.photo ?? ""} col="col-12" />
+              </div>
+            </AdminCard>
           </div>
         </div>
-        <SaveBar submitLabel="Save changes" cancelHref="/admin/staff" />
       </form>
     </>
   );
