@@ -19,7 +19,7 @@ const BLOCKS: { type: BlockType; data: Record<string, string | number> }[] = [
       lede: "From the canefields of Jamaica to your glass — a tribute to Caribbean culture, distilled into every drop.",
       ctaLabel: "Shop Rum",
       ctaUrl: "/shop",
-      cta2Label: "Join the Inner Circle",
+      cta2Label: "Join RPM",
       cta2Url: "/join",
     },
   },
@@ -38,7 +38,7 @@ const BLOCKS: { type: BlockType; data: Record<string, string | number> }[] = [
       imageSide: "right",
     },
   },
-  { type: "membership_tiers", data: { heading: "The Inner Circle of Rum" } },
+  { type: "membership_tiers", data: { heading: "RPM" } },
   {
     type: "cta_band",
     data: {
@@ -53,9 +53,11 @@ const BLOCKS: { type: BlockType; data: Record<string, string | number> }[] = [
 async function main() {
   const page = await prisma.page.upsert({
     where: { slug: "about" },
+    // Draft, not published: /about renders the bespoke designed page by default;
+    // publish this in admin to override it with these CMS blocks instead.
     update: {
       title: "About Rumbaclaat",
-      status: "published",
+      status: "draft",
       seoTitle: "About — Rumbaclaat",
       seoDescription: "The story behind Rumbaclaat premium Caribbean rum.",
     },
@@ -63,7 +65,7 @@ async function main() {
       slug: "about",
       title: "About Rumbaclaat",
       templateType: "content",
-      status: "published",
+      status: "draft",
       seoTitle: "About — Rumbaclaat",
       seoDescription: "The story behind Rumbaclaat premium Caribbean rum.",
     },

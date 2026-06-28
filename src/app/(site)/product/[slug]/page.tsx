@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import AddToCartButton from "@/components/cart/add-to-cart-button";
+import ProductPurchase, { type ProductPurchaseData } from "@/components/cart/product-purchase";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ async function getProduct(slug: string) {
     where: { slug, status: "published" },
     include: {
       category: true,
-      variants: { orderBy: { sku: "asc" } },
+      variants: { where: { active: true }, orderBy: { sortOrder: "asc" } },
       reviews: { where: { status: "live" }, orderBy: { createdAt: "desc" } },
     },
   });
@@ -44,28 +44,142 @@ export default async function ProductPage({
   ]);
   if (!product) notFound();
 
-  const price = product.onSale && product.salePrice != null
-    ? Number(product.salePrice)
-    : Number(product.basePrice);
+  const basePrice = Number(product.basePrice);
+  const price =
+    product.onSale && product.salePrice != null ? Number(product.salePrice) : basePrice;
   const maxDiscount = tiers[0]?.memberDiscountPct ?? 0;
-  const memberPrice = price * (1 - maxDiscount / 100);
+  const memberPrice = maxDiscount > 0 ? price * (1 - maxDiscount / 100) : null;
 
-  const colours = Array.from(
-    new Map(
-      product.variants
-        .filter((v) => v.colourName)
-        .map((v) => [v.colourName, v.colourHex])
-    ).entries()
-  );
-  const sizes = Array.from(
-    new Set(product.variants.map((v) => v.size).filter(Boolean))
-  );
+  const kind: "rum" | "apparel" =
+    product.type === "apparel" || product.type === "cap" ? "apparel" : "rum";
+
+  // Colours (first variant per colour wins for the swatch image).
+  const colourMap = new Map<string, { name: string; hex: string | null; image: string | null }>();
+  for (const v of product.variants) {
+    if (v.colourName && !colourMap.has(v.colourName)) {
+      colourMap.set(v.colourName, {
+        name: v.colourName,
+        hex: v.colourHex,
+        image: v.imageUrl ?? product.imageUrl ?? null,
+      });
+    }
+  }
+  const colours = [...colourMap.values()];
+  const sizes = [...new Set(product.variants.map((v) => v.size).filter(Boolean))] as string[];
+  const images = [product.imageUrl, ...product.galleryImages].filter(Boolean) as string[];
+
+  // Rum spec cells from real fields.
+  const specs: { label: string; value: string }[] = [];
+  if (kind === "rum") {
+    if (product.abv != null) specs.push({ label: "ABV", value: `${Number(product.abv)}%` });
+    if (product.ageStatement) specs.push({ label: "AGE", value: product.ageStatement });
+    if (product.origin) specs.push({ label: "ORIGIN", value: product.origin });
+    if (product.caskType) specs.push({ label: "CASK", value: product.caskType });
+  }
+
+  const composedSubtitle =
+    kind === "rum"
+      ? [
+          product.ageStatement,
+          product.abv != null ? `${Number(product.abv)}% ABV` : null,
+          product.volume,
+          product.origin,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : null;
+  const subtitle = product.subtitle ?? (composedSubtitle || null);
+
+  const saleEnds =
+    product.onSale && product.saleEndDate
+      ? new Date(product.saleEndDate).toLocaleDateString("en-GB", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+        })
+      : null;
+
+  const data: ProductPurchaseData = {
+    kind,
+    productId: product.id,
+    name: product.name,
+    subtitle,
+    description: product.description,
+    eyebrow: (product.category?.name ?? "Rumbaclaat").toUpperCase(),
+    images,
+    price,
+    basePrice,
+    onSale: product.onSale,
+    saleEnds,
+    memberPrice,
+    points: product.basePoints,
+    reviewCount: product.reviewCount,
+    stockQty: product.stockQty,
+    variants: product.variants.map((v) => ({
+      id: v.id,
+      colourName: v.colourName,
+      colourHex: v.colourHex,
+      size: v.size,
+      priceDelta: Number(v.priceDelta),
+      stockQty: v.stockQty,
+      imageUrl: v.imageUrl,
+    })),
+    colours,
+    sizes,
+    specs,
+    tastingNotes: kind === "rum" ? product.tastingNotes : null,
+  };
+
+  const accordions =
+    kind === "rum"
+      ? [
+          {
+            t: "Description",
+            b: product.description ?? "A signature Rumbaclaat expression, crafted with heritage.",
+          },
+          {
+            t: "Delivery & returns",
+            b: "Standard UK delivery £4.99 (free over £50), 3–5 working days. Someone aged 18+ must sign on delivery. 14-day returns on unopened bottles.",
+          },
+          {
+            t: "Drink responsibly",
+            b: "Rumbaclaat is for those of legal drinking age. Please enjoy responsibly. For guidance and support, visit drinkaware.co.uk.",
+          },
+        ]
+      : [
+          {
+            t: "Details & fabric",
+            b:
+              [product.material, product.gsm ? `${product.gsm}gsm` : null, product.careInstructions]
+                .filter(Boolean)
+                .join(" · ") ||
+              "Premium heavyweight construction with an embroidered gold Rumbaclaat mark.",
+          },
+          {
+            t: "Size & fit",
+            b: product.fit ?? "Relaxed fit. If you are between sizes, size down for a closer fit.",
+          },
+          {
+            t: "Delivery & returns",
+            b: "Standard UK delivery £4.99 (free over £50), 3–5 working days. Free returns within 30 days on unworn items.",
+          },
+        ];
+
+  const related = await prisma.product.findMany({
+    where: {
+      status: "published",
+      id: { not: product.id },
+      ...(product.categoryId ? { categoryId: product.categoryId } : {}),
+    },
+    orderBy: { createdAt: "desc" },
+    take: 3,
+  });
 
   return (
     <section className="section" style={{ paddingTop: 32 }}>
       <div className="container">
-        <nav aria-label="Breadcrumb" className="mb-3">
-          <ol className="breadcrumb" style={{ fontSize: ".75rem" }}>
+        <nav aria-label="Breadcrumb" className="mb-2">
+          <ol className="breadcrumb" style={{ fontSize: ".75rem", margin: 0 }}>
             <li className="breadcrumb-item"><Link href="/">Home</Link></li>
             <li className="breadcrumb-item"><Link href="/shop">Shop</Link></li>
             {product.category && (
@@ -77,142 +191,55 @@ export default async function ProductPage({
           </ol>
         </nav>
 
-        <div className="row g-5">
-          {/* Gallery — sticky on desktop */}
-          <div className="col-12 col-lg-6">
-            <div style={{ position: "sticky", top: 96 }}>
-              <div className="gallery-main mb-3">
-                {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} />
-                ) : (
-                  <div style={{ width: "100%", height: "100%", background: "var(--bg-card)" }} />
-                )}
-              </div>
-              {product.galleryImages.length > 0 && (
-                <div className="row g-2">
-                  {[product.imageUrl, ...product.galleryImages].filter(Boolean).slice(0, 4).map((src, i) => (
-                    <div className="col-3" key={i}>
-                      <div className="thumb w-100">
-                        <img src={src as string} alt="" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+        <ProductPurchase {...data} />
 
-          {/* Buy-box */}
-          <div className="col-12 col-lg-6">
-            {product.category && <span className="eyebrow">{product.category.name}</span>}
-            <h1 className="serif" style={{ fontSize: "clamp(2rem,4.4vw,3.4rem)", marginBottom: 8 }}>{product.name}</h1>
-            {product.subtitle && (
-              <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", marginBottom: 18 }}>{product.subtitle}</p>
-            )}
-
-            {/* Rating */}
-            <div className="d-flex align-items-center gap-2 mb-4" aria-hidden="true">
-              <span className="stars">★★★★★</span>
-              <span style={{ fontSize: ".8rem", color: "var(--text-dim)" }}>Trusted by the bold</span>
-            </div>
-
-            {/* Price · member price · points */}
-            <div
-              className="mb-4"
-              style={{
-                paddingBottom: 24,
-                borderBottom: "1px solid var(--line)",
-              }}
-            >
-              <div className="d-flex align-items-baseline gap-3 flex-wrap">
-                <span className="serif gold" style={{ fontSize: "2.6rem", lineHeight: 1 }}>£{price.toFixed(2)}</span>
-                {product.onSale && product.salePrice != null && (
-                  <span style={{ color: "var(--text-dim)", textDecoration: "line-through", fontSize: "1.1rem" }}>£{Number(product.basePrice).toFixed(2)}</span>
-                )}
-              </div>
-              {maxDiscount > 0 && (
-                <p style={{ fontSize: ".9rem", color: "var(--gold-hi)", margin: "10px 0 0" }}>
-                  Members from £{memberPrice.toFixed(2)} · earn {product.basePoints} pts
-                </p>
-              )}
-            </div>
-
-            {product.description && (
-              <p style={{ color: "var(--text-muted)", margin: "0 0 24px" }}>{product.description}</p>
-            )}
-
-            {/* Colours / sizes */}
-            {colours.length > 0 && (
-              <div className="mb-4">
-                <div className="eyebrow" style={{ marginBottom: 10 }}>Colour</div>
-                <div className="d-flex gap-2 flex-wrap">
-                  {colours.map(([name, hex]) => (
-                    <span key={name} className="badge-brand" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                      {hex && <span style={{ width: 12, height: 12, borderRadius: "50%", background: hex, display: "inline-block", border: "1px solid rgba(255,255,255,.2)" }} />}
-                      {name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {sizes.length > 0 && (
-              <div className="mb-4">
-                <div className="eyebrow" style={{ marginBottom: 10 }}>Size</div>
-                <div className="d-flex gap-2 flex-wrap">
-                  {sizes.map((sz) => (
-                    <span key={sz} className="badge-brand">{sz}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Add to cart — single gold primary action */}
-            <div className="d-flex gap-3 align-items-center mt-2">
-              {product.stockQty > 0 ? (
-                <AddToCartButton
-                  productId={product.id}
-                  name={product.name}
-                  price={price}
-                  className="btn btn-gold btn-lg"
-                />
-              ) : (
-                <button type="button" className="btn btn-gold btn-lg" disabled>
-                  Out of stock
-                </button>
-              )}
-              <span style={{ fontSize: ".78rem", color: "var(--text-dim)" }}>
-                {product.stockQty > 0 ? `${product.stockQty} in stock` : "Out of stock"}
-              </span>
-            </div>
-
-            {/* Trust line */}
-            <p style={{ fontSize: ".78rem", color: "var(--text-dim)", margin: "16px 0 0" }}>
-              Free UK shipping over £50 · 18+ only, age verified on delivery.
-            </p>
-
-            {/* Detail accordions (native details) */}
-            <div className="mt-4">
-              <details className="card-brand mb-2" open>
-                <summary className="serif" style={{ cursor: "pointer", fontWeight: 600, fontSize: "1.1rem" }}>Description</summary>
-                <p style={{ color: "var(--text-muted)", marginTop: 12, marginBottom: 0 }}>
-                  {product.description ?? "A signature Rumbaclaat expression."}
-                </p>
-              </details>
-              <details className="card-brand mb-2">
-                <summary className="serif" style={{ cursor: "pointer", fontWeight: 600, fontSize: "1.1rem" }}>Delivery &amp; returns</summary>
-                <p style={{ color: "var(--text-muted)", marginTop: 12, marginBottom: 0 }}>
-                  Standard UK delivery £4.99 (free over £50), 3–5 working days. Someone aged 18+ must sign on delivery.
-                </p>
-              </details>
-              <details className="card-brand">
-                <summary className="serif" style={{ cursor: "pointer", fontWeight: 600, fontSize: "1.1rem" }}>Drink responsibly</summary>
-                <p style={{ color: "var(--text-muted)", marginTop: 12, marginBottom: 0 }}>
-                  For those of legal drinking age. Please enjoy responsibly. Visit drinkaware.co.uk.
-                </p>
-              </details>
-            </div>
-          </div>
+        {/* Detail accordions (native details — no JS dependency) */}
+        <div className="mt-4" style={{ maxWidth: 720 }}>
+          {accordions.map((a, i) => (
+            <details className="card-brand mb-2" key={a.t} open={i === 0}>
+              <summary className="serif" style={{ cursor: "pointer", fontWeight: 600, fontSize: "1.1rem" }}>
+                {a.t}
+              </summary>
+              <p style={{ color: "var(--text-muted)", marginTop: 12, marginBottom: 0 }}>{a.b}</p>
+            </details>
+          ))}
         </div>
+
+        {/* Related */}
+        {related.length > 0 && (
+          <div className="mt-5 pt-4" style={{ borderTop: "1px solid var(--gold-bdr)" }}>
+            <h2 className="h3 mb-4">You may also like</h2>
+            <div className="row g-4">
+              {related.map((r) => {
+                const rPrice =
+                  r.onSale && r.salePrice != null ? Number(r.salePrice) : Number(r.basePrice);
+                return (
+                  <div className="col-12 col-md-4" key={r.id}>
+                    <article className="product-card h-100">
+                      <Link href={`/product/${r.slug}`} className="product-card-img-link">
+                        <div className="product-card-img">
+                          {r.imageUrl && <img src={r.imageUrl} alt={r.name} loading="lazy" />}
+                        </div>
+                      </Link>
+                      <div className="product-card-body">
+                        <h3>
+                          <Link href={`/product/${r.slug}`} style={{ color: "inherit", textDecoration: "none" }}>
+                            {r.name}
+                          </Link>
+                        </h3>
+                        {r.subtitle && <p className="subtitle">{r.subtitle}</p>}
+                        <div className="product-card-price">
+                          <div className="price">£{rPrice.toFixed(2)}</div>
+                          <Link href={`/product/${r.slug}`} className="btn btn-outline-gold btn-sm">View</Link>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Customer reviews — hidden per request (flip `false` to re-enable) */}
         {false && (product?.reviews?.length ?? 0) > 0 && (

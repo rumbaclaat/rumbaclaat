@@ -13,6 +13,8 @@ export async function registerCustomer(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const firstName = String(formData.get("firstName") ?? "").trim() || null;
   const lastName = String(formData.get("lastName") ?? "").trim() || null;
+  const dobRaw = String(formData.get("dateOfBirth") ?? "").trim();
+  const dateOfBirth = dobRaw ? new Date(dobRaw) : null;
 
   if (!email || password.length < 8) {
     redirect("/account?error=invalid");
@@ -32,12 +34,13 @@ export async function registerCustomer(formData: FormData) {
   const bronze = await prisma.membershipTier.findFirst({ where: { slug: "bronze" } });
   await prisma.customer.upsert({
     where: { email },
-    update: { authUserId: data.user.id, firstName, lastName },
+    update: { authUserId: data.user.id, firstName, lastName, ...(dateOfBirth ? { dateOfBirth } : {}) },
     create: {
       email,
       authUserId: data.user.id,
       firstName,
       lastName,
+      ...(dateOfBirth ? { dateOfBirth } : {}),
       membershipTierId: bronze?.id ?? null,
     },
   });
@@ -96,4 +99,56 @@ export async function redeemReward(formData: FormData) {
   });
   revalidatePath("/account");
   redirect("/account?redeemed=1");
+}
+
+export async function updateDetails(formData: FormData) {
+  const session = await getCustomer();
+  if (!session) redirect("/account");
+  const firstName = String(formData.get("firstName") ?? "").trim() || null;
+  const lastName = String(formData.get("lastName") ?? "").trim() || null;
+  const phone = String(formData.get("phone") ?? "").trim() || null;
+  const dobRaw = String(formData.get("dateOfBirth") ?? "").trim();
+
+  await prisma.customer.update({
+    where: { id: session!.customer.id },
+    data: {
+      firstName,
+      lastName,
+      phone,
+      ...(dobRaw ? { dateOfBirth: new Date(dobRaw) } : {}),
+    },
+  });
+  revalidatePath("/account");
+  redirect("/account?saved=details");
+}
+
+export async function saveAddress(formData: FormData) {
+  const session = await getCustomer();
+  if (!session) redirect("/account");
+  const id = String(formData.get("addressId") ?? "").trim();
+  const line1 = String(formData.get("line1") ?? "").trim();
+  const line2 = String(formData.get("line2") ?? "").trim() || null;
+  const city = String(formData.get("city") ?? "").trim();
+  const postcode = String(formData.get("postcode") ?? "").trim();
+  const country = String(formData.get("country") ?? "United Kingdom").trim();
+  const makeDefault = formData.get("isDefault") != null;
+  if (!line1 || !city || !postcode) redirect("/account?error=address");
+
+  const customerId = session!.customer.id;
+  if (makeDefault) {
+    await prisma.address.updateMany({ where: { customerId }, data: { isDefault: false } });
+  }
+  if (id) {
+    await prisma.address.update({
+      where: { id },
+      data: { line1, line2, city, postcode, country, ...(makeDefault ? { isDefault: true } : {}) },
+    });
+  } else {
+    const count = await prisma.address.count({ where: { customerId } });
+    await prisma.address.create({
+      data: { customerId, line1, line2, city, postcode, country, isDefault: makeDefault || count === 0 },
+    });
+  }
+  revalidatePath("/account");
+  redirect("/account?saved=address");
 }
