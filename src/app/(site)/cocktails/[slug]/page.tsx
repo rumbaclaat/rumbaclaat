@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import AddToCartButton from "@/components/cart/add-to-cart-button";
+import CocktailRatingWidget from "./cocktail-rating-widget";
 
 export const dynamic = "force-dynamic";
 
@@ -40,46 +42,94 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
   });
   const dc = cocktail.difficulty ? diffClass[cocktail.difficulty] ?? "diff-easy" : "diff-easy";
 
+  const ratingAvg = cocktail.ratingAvg != null ? Number(cocktail.ratingAvg) : null;
+  const ratingCount = cocktail.ratingCount ?? 0;
+
+  // Featured rum CTA — derive presentation from the real product record.
+  let featuredPrice: number | null = null;
+  let featuredTasting: string | null = null;
+  if (featured) {
+    const fBase = Number(featured.basePrice);
+    featuredPrice =
+      featured.onSale && featured.salePrice != null ? Number(featured.salePrice) : fBase;
+    featuredTasting =
+      [
+        featured.ageStatement,
+        featured.origin,
+        featured.abv != null ? `${Number(featured.abv)}% ABV` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ") || featured.tastingNotes || null;
+  }
+
   return (
     <>
-    <section className="section">
-      <div className="container">
-        <nav aria-label="Breadcrumb" className="mb-4">
-          <ol className="breadcrumb" style={{ fontSize: ".75rem" }}>
+    {/* ── Breadcrumb + intro ─────────────────────────────────── */}
+    <section
+      className="section-sm"
+      style={{
+        background: "linear-gradient(135deg,#161208,#0E0E0E)",
+        borderBottom: "1px solid var(--gold-bdr)",
+        paddingBottom: 36,
+      }}
+    >
+      <div className="container" style={{ maxWidth: 1080 }}>
+        <nav aria-label="Breadcrumb">
+          <ol className="breadcrumb" style={{ fontSize: ".75rem", marginBottom: 16 }}>
             <li className="breadcrumb-item"><Link href="/">Home</Link></li>
             <li className="breadcrumb-item"><Link href="/cocktails">Cocktails</Link></li>
             <li className="breadcrumb-item active" aria-current="page">{cocktail.name}</li>
           </ol>
         </nav>
+        <span className="eyebrow">{cocktail.eyebrow || "Craft Cocktail"}</span>
+        <h1 style={{ fontSize: "clamp(2rem,5vw,3.25rem)" }}>{cocktail.name}</h1>
+        {cocktail.lede && (
+          <p
+            className="lede"
+            style={{
+              maxWidth: 640,
+              fontSize: "1.075rem",
+              color: "var(--text-muted)",
+              marginTop: 14,
+            }}
+          >
+            {cocktail.lede}
+          </p>
+        )}
 
-        <header className="mb-5" style={{ maxWidth: 720 }}>
-          <span className="eyebrow">{cocktail.eyebrow || "Craft Cocktail"}</span>
-          <h1 className="serif" style={{ fontSize: "clamp(2rem,4.4vw,3.4rem)", margin: ".4rem 0 0" }}>{cocktail.name}</h1>
-          {cocktail.lede && <p className="hero-lede" style={{ margin: "16px 0 20px", textAlign: "left" }}>{cocktail.lede}</p>}
+        <div className="ck-meta-row mt-3">
+          {cocktail.difficulty && (
+            <span className="meta-pill"><span className={`diff-dot ${dc}`} />{cocktail.difficulty}</span>
+          )}
+          {cocktail.timeMins && <span className="meta-pill">⏱ {cocktail.timeMins} mins</span>}
+          {cocktail.occasion && <span className="meta-pill">{cocktail.occasion}</span>}
+          {ratingAvg != null && (
+            <span className="meta-pill meta-pill-plain">
+              ★ {ratingAvg.toFixed(1)}{" "}
+              <span style={{ color: "var(--text-dim)" }}>({ratingCount})</span>
+            </span>
+          )}
+        </div>
+      </div>
+    </section>
 
-          <div className="ck-meta-row">
-            {cocktail.difficulty && (
-              <span className="meta-pill"><span className={`diff-dot ${dc}`} />{cocktail.difficulty}</span>
-            )}
-            {cocktail.timeMins && <span className="meta-pill meta-pill-plain">⏱ {cocktail.timeMins} mins</span>}
-            {cocktail.occasion && <span className="meta-pill">{cocktail.occasion}</span>}
-          </div>
-        </header>
-
+    {/* ── Main layout: portrait image + recipe ─────────────── */}
+    <section className="section">
+      <div className="container" style={{ maxWidth: 1080 }}>
         <div className="ck-layout">
-          {/* Image */}
+          {/* Portrait image card */}
           <div className="ck-image-card">
             <div className="ck-image-frame">
               {cocktail.image ? (
-                <img src={cocktail.image} alt={cocktail.name} />
+                <img src={cocktail.image} alt={cocktail.name} loading="lazy" />
               ) : (
                 <div style={{ width: "100%", height: "100%" }} />
               )}
             </div>
-            <div className="ck-image-caption">{cocktail.name}{featured ? ` · made with ${featured.name}` : ""}</div>
+            <p className="ck-image-caption">{cocktail.name}{featured ? ` · made with ${featured.name}` : ""}</p>
           </div>
 
-          {/* Recipe */}
+          {/* Recipe content */}
           <div>
             {ingredients.length > 0 && (
               <div className="ck-section">
@@ -87,22 +137,21 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
                 <ul className="ck-ings">
                   {ingredients.map((ing, i) => <li key={i}>{ing}</li>)}
                 </ul>
-              </div>
-            )}
-
-            {Object.keys(serviceNotes).length > 0 && (
-              <div className="ck-glance">
-                {Object.entries(serviceNotes).map(([k, v]) => (
-                  <div key={k}>
-                    <span className="lbl">{k}</span>
-                    <span className="val">{v}</span>
+                {Object.keys(serviceNotes).length > 0 && (
+                  <div className="ck-glance" aria-label="Service notes">
+                    {Object.entries(serviceNotes).map(([k, v]) => (
+                      <div key={k}>
+                        <span className="lbl">{k}</span>
+                        <span className="val">{v}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             )}
 
             {method.length > 0 && (
-              <div className="ck-section" style={{ marginTop: 32 }}>
+              <div className="ck-section">
                 <h2 className="ck-section-title">Method</h2>
                 <ol className="ck-method-list">
                   {method.map((step, i) => (
@@ -112,23 +161,31 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
                     </li>
                   ))}
                 </ol>
-              </div>
-            )}
-
-            {cocktail.bartenderTip && (
-              <div className="recipe-tip">
-                <span className="eyebrow">Bartender&apos;s tip</span>
-                <p style={{ color: "var(--text-muted)", margin: "4px 0 0" }}>{cocktail.bartenderTip}</p>
-              </div>
-            )}
-
-            {featured && (
-              <div className="card-brand card-brand--feature mt-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
-                <div>
-                  <span className="eyebrow">The Bottle Behind the Bar</span>
-                  <h3 className="serif mb-0" style={{ fontSize: "1.35rem", marginTop: ".3rem" }}>Made with {featured.name}</h3>
-                </div>
-                <Link href={`/product/${featured.slug}`} className="btn btn-gold">Shop {featured.name} →</Link>
+                {cocktail.bartenderTip && (
+                  <div className="recipe-tip">
+                    <p
+                      style={{
+                        fontSize: ".75rem",
+                        fontWeight: 600,
+                        color: "var(--gold-hi)",
+                        marginBottom: 4,
+                        letterSpacing: ".08em",
+                      }}
+                    >
+                      BARTENDER&apos;S TIP
+                    </p>
+                    <p
+                      style={{
+                        fontSize: ".9375rem",
+                        color: "var(--text-muted)",
+                        lineHeight: 1.7,
+                        margin: 0,
+                      }}
+                    >
+                      {cocktail.bartenderTip}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -136,31 +193,126 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
       </div>
     </section>
 
-    {related.length > 0 && (
-      <section className="section section--surface">
-        <div className="container">
-          <div className="mb-5">
-            <span className="eyebrow">More to Pour</span>
-            <h2 className="serif" style={{ fontSize: "clamp(1.9rem,4vw,3rem)", margin: ".25rem 0 0" }}>Try next</h2>
-          </div>
-          <div className="row g-4">
-            {related.map((r) => (
-              <div className="col-12 col-md-4" key={r.id}>
-                <Link href={`/cocktails/${r.slug}`} className="ck-rel-card">
-                  <div className="ck-rel-img">
-                    {r.image ? (
-                      <img src={r.image} alt={r.name} />
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#1a1a1a,#0f0f0f)" }} />
-                    )}
-                  </div>
-                  <div className="ck-rel-meta">
-                    {r.difficulty}{r.difficulty && r.timeMins ? " · " : ""}{r.timeMins ? `${r.timeMins} mins` : ""}
-                  </div>
-                  <h3>{r.name}</h3>
-                </Link>
+    {/* ── Member rating ─────────────────────────────────────── */}
+    <section className="section-sm" aria-labelledby="rate-h">
+      <div className="container" style={{ maxWidth: 880 }}>
+        <h2 id="rate-h" className="h5 mb-3" style={{ fontFamily: "var(--serif)", fontWeight: 600 }}>
+          Rate this cocktail
+        </h2>
+        <CocktailRatingWidget average={ratingAvg ?? 0} count={ratingCount} />
+        <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "10px 0 0" }}>
+          Members only — one rating per cocktail.{" "}
+          <Link href="/account#my-ratings" style={{ color: "var(--gold-hi)" }}>
+            See your rating history
+          </Link>
+          .
+        </p>
+      </div>
+    </section>
+
+    {/* ── Featured rum CTA ───────────────────────────────────── */}
+    {featured && (
+      <section
+        className="section-sm"
+        style={{
+          background: "#0A0A0A",
+          borderTop: "1px solid var(--gold-bdr)",
+          borderBottom: "1px solid var(--gold-bdr)",
+        }}
+      >
+        <div className="container" style={{ maxWidth: 880 }}>
+          <div
+            className="card-brand d-flex align-items-center gap-4 flex-wrap"
+            style={{ borderColor: "var(--gold-md)", padding: 24 }}
+          >
+            <div style={{ flex: "0 0 auto" }}>
+              {featured.imageUrl ? (
+                <img
+                  src={featured.imageUrl}
+                  alt=""
+                  width={120}
+                  height={120}
+                  style={{
+                    width: 120,
+                    height: 120,
+                    objectFit: "cover",
+                    borderRadius: 12,
+                    border: "1px solid var(--gold-bdr)",
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: 120,
+                    height: 120,
+                    borderRadius: 12,
+                    border: "1px solid var(--gold-bdr)",
+                    background: "linear-gradient(180deg,#1a1a1a,#0f0f0f)",
+                  }}
+                />
+              )}
+            </div>
+            <div style={{ flex: "1 1 280px", minWidth: 240 }}>
+              <p className="eyebrow" style={{ marginBottom: 4 }}>THE RUM</p>
+              <h2 className="h4" style={{ marginBottom: 6 }}>{featured.name}</h2>
+              {featuredTasting && (
+                <p style={{ fontSize: ".875rem", color: "var(--text-muted)", margin: 0 }}>
+                  {featuredTasting}
+                </p>
+              )}
+            </div>
+            <div
+              className="d-flex flex-column align-items-end gap-2"
+              style={{ flex: "0 0 auto" }}
+            >
+              {featuredPrice != null && (
+                <p style={{ fontFamily: "var(--serif)", fontSize: "1.5rem", color: "var(--gold-hi)", margin: 0 }}>
+                  £{featuredPrice.toFixed(2)}
+                </p>
+              )}
+              <div className="d-flex gap-2 flex-wrap">
+                <Link href={`/product/${featured.slug}`} className="btn btn-outline-gold btn-sm">View</Link>
+                <AddToCartButton
+                  productId={featured.id}
+                  name={featured.name}
+                  price={featuredPrice ?? 0}
+                  className="btn btn-gold btn-sm"
+                  label="＋ Add to cart"
+                />
               </div>
-            ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {/* ── Related cocktails ──────────────────────────────────── */}
+    {related.length > 0 && (
+      <section className="section">
+        <div className="container">
+          <h2 className="h3 mb-4">Try next</h2>
+          <div className="row g-4">
+            {related.map((r) => {
+              const rdc = r.difficulty ? diffClass[r.difficulty] ?? "diff-easy" : "diff-easy";
+              return (
+                <div className="col-12 col-md-4" key={r.id}>
+                  <Link href={`/cocktails/${r.slug}`} className="ck-rel-card" aria-label={`View ${r.name} recipe`}>
+                    <div className="ck-rel-img">
+                      {r.image ? (
+                        <img src={r.image} alt="" loading="lazy" />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#1a1a1a,#0f0f0f)" }} />
+                      )}
+                    </div>
+                    <div className="ck-rel-meta">
+                      {r.difficulty && <span className={`diff-dot ${rdc}`} style={{ marginRight: 6 }} />}
+                      {r.difficulty}{r.difficulty && r.occasion ? " · " : ""}{r.occasion}
+                    </div>
+                    <h3>{r.name}</h3>
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

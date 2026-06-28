@@ -61,17 +61,12 @@ export default function AccountAuth({
       <div className="container" style={{ maxWidth: 460 }}>
         <div className="text-center mb-4">
           <span className="eyebrow eyebrow-center">{isLogin ? "Member Access" : "Join Free"}</span>
-          <h1>{isLogin ? "Welcome back" : "Create your account"}</h1>
+          <h1 style={{ fontSize: "2.25rem" }}>{isLogin ? "Welcome back" : "Create your account"}</h1>
           <p style={{ color: "var(--text-muted)", marginTop: 8, marginBottom: 0, fontSize: ".9375rem" }}>
             {isLogin
-              ? "Sign in to access your account and rewards dashboard."
-              : "Free Bronze membership — instant member pricing and points on every order."}
+              ? "Sign in to access your account and RPM dashboard."
+              : "Free Bronze membership included — instant member pricing and RPM points from day one."}
           </p>
-        </div>
-
-        <div className="billing-toggle mb-4" role="group" aria-label="Login or register" style={{ display: "flex", width: "100%" }}>
-          <button type="button" className={`btn btn-sm flex-grow-1 ${isLogin ? "btn-gold" : "btn-outline-gold"}`} onClick={() => setMode("login")}>Sign in</button>
-          <button type="button" className={`btn btn-sm flex-grow-1 ${!isLogin ? "btn-gold" : "btn-outline-gold"}`} onClick={() => setMode("register")}>Create account</button>
         </div>
 
         {registered && isLogin && (
@@ -87,30 +82,28 @@ export default function AccountAuth({
         <div className="card-brand">
           {isLogin ? (
             <form onSubmit={onLogin}>
-              <div className="mb-3"><label className="form-label" htmlFor="l-email">Email</label><input id="l-email" type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required /></div>
-              <div className="mb-2"><label className="form-label" htmlFor="l-pass">Password</label><input id="l-pass" type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required /></div>
-              <div className="d-flex justify-content-end mb-4">
+              <div className="mb-3"><label className="form-label" htmlFor="l-email">Email address *</label><input id="l-email" type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required /></div>
+              <div className="mb-2"><label className="form-label" htmlFor="l-pass">Password *</label><input id="l-pass" type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required /></div>
+              <div className="d-flex justify-content-end mb-3">
                 <button type="button" className="btn-link-gold" onClick={onForgot} style={{ background: "none", border: 0, padding: 0, color: "var(--gold-hi)", fontSize: ".8125rem", cursor: "pointer" }}>Forgot password?</button>
               </div>
-              <button type="submit" className="btn btn-gold w-100" disabled={loading}>{loading ? "Signing in…" : "Sign in"}</button>
+              <button type="submit" className="btn btn-gold w-100" disabled={loading}>{loading ? "Signing in…" : "Sign In"}</button>
+              <hr style={{ borderColor: "var(--gold-bdr)" }} />
+              <button type="button" className="btn btn-outline-gold w-100" onClick={() => setMode("register")}>Create Account</button>
             </form>
           ) : (
             <form action={registerCustomer}>
-              <div className="row g-2 mb-3">
-                <div className="col-6"><label className="form-label" htmlFor="r-first">First name</label><input id="r-first" name="firstName" className="form-control" autoComplete="given-name" /></div>
-                <div className="col-6"><label className="form-label" htmlFor="r-last">Last name</label><input id="r-last" name="lastName" className="form-control" autoComplete="family-name" /></div>
+              <div className="row g-3">
+                <div className="col-sm-6"><label className="form-label" htmlFor="r-first">First name *</label><input id="r-first" name="firstName" className="form-control" autoComplete="given-name" required /></div>
+                <div className="col-sm-6"><label className="form-label" htmlFor="r-last">Last name *</label><input id="r-last" name="lastName" className="form-control" autoComplete="family-name" required /></div>
+                <div className="col-12"><label className="form-label" htmlFor="r-email">Email *</label><input id="r-email" name="email" type="email" className="form-control" autoComplete="email" required /></div>
+                <div className="col-12"><label className="form-label" htmlFor="r-pass">Password *</label><input id="r-pass" name="password" type="password" className="form-control" autoComplete="new-password" minLength={8} required /><span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>Minimum 8 characters.</span></div>
+                <div className="col-12"><label className="form-label" htmlFor="r-dob">Date of birth *</label><input id="r-dob" name="dateOfBirth" type="date" className="form-control" autoComplete="bday" required /><span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>You must be 18 or over.</span></div>
+                <div className="col-12"><div className="form-check"><input className="form-check-input" type="checkbox" id="r-terms" required /><label className="form-check-label" htmlFor="r-terms" style={{ fontSize: ".8125rem", color: "var(--text-muted)" }}>I am 18+ and agree to the <a href="/terms" className="gold">Terms &amp; Conditions</a> and <a href="/privacy" className="gold">Privacy Policy</a>.</label></div></div>
               </div>
-              <div className="mb-3"><label className="form-label" htmlFor="r-email">Email</label><input id="r-email" name="email" type="email" className="form-control" autoComplete="email" required /></div>
-              <div className="mb-3"><label className="form-label" htmlFor="r-dob">Date of birth</label><input id="r-dob" name="dateOfBirth" type="date" className="form-control" required /><div style={{ fontSize: ".75rem", color: "var(--text-dim)", marginTop: 4 }}>You must be 18 or over to join.</div></div>
-              <div className="mb-3"><label className="form-label" htmlFor="r-pass">Password</label><input id="r-pass" name="password" type="password" className="form-control" autoComplete="new-password" minLength={8} required /><div style={{ fontSize: ".75rem", color: "var(--text-dim)", marginTop: 4 }}>At least 8 characters.</div></div>
-              <div className="form-check mb-3">
-                <input className="form-check-input" type="checkbox" id="r-terms" required />
-                <label className="form-check-label" htmlFor="r-terms" style={{ fontSize: ".8125rem", color: "var(--text-muted)" }}>
-                  I am 18 or over and agree to the <a href="/terms" className="gold">Terms</a> and <a href="/privacy" className="gold">Privacy Policy</a>.
-                </label>
-              </div>
-              <button type="submit" className="btn btn-gold w-100">Create free account</button>
-              <p style={{ fontSize: ".75rem", color: "var(--text-dim)", marginTop: 10, marginBottom: 0 }}>Free Bronze membership — 5% off, points on every order. 18+ only.</p>
+              <button type="submit" className="btn btn-gold w-100 mt-4">Create Account — Join Free</button>
+              <hr style={{ borderColor: "var(--gold-bdr)" }} />
+              <button type="button" className="btn btn-outline-gold w-100" onClick={() => setMode("login")}>Already a member? Sign In</button>
             </form>
           )}
         </div>

@@ -1,38 +1,188 @@
 import Link from "next/link";
+import { type ReactNode } from "react";
 
 export const metadata = {
   title: "FAQ",
-  description: "Answers to common questions about Rumbaclaat orders, delivery, membership, products and your account.",
+  description:
+    "Answers to common questions about Rumbaclaat orders, shipping, age verification, returns, membership, and the rum itself.",
 };
 
-const GROUPS: { eyebrow: string; heading: string; items: { q: string; a: string }[] }[] = [
+type Item = { q: string; a: ReactNode };
+type Group = { id: string; nav: string; heading: string; items: Item[] };
+
+const GROUPS: Group[] = [
   {
-    eyebrow: "Getting your order",
-    heading: "Orders, delivery & returns",
+    id: "g1",
+    nav: "Orders & shipping",
+    heading: "Orders & shipping",
     items: [
-      { q: "How do I return an item?", a: "Email hello@rumbaclaat.com with your order number and we'll send return instructions. You pay return postage unless the item is faulty." },
-      { q: "When will I get my refund?", a: "Refunds are issued within 14 days of us receiving the return, to your original payment method." },
-      { q: "My bottle arrived damaged. What do I do?", a: "We're sorry. Email us within 48 hours with a photo of the damage and we'll arrange a replacement or refund — no need to return the damaged item." },
+      {
+        q: "How long does UK delivery take?",
+        a: "Standard UK delivery is 3–5 working days. Express options are available at checkout. Free shipping on orders over £50.",
+      },
+      {
+        q: "Do you ship internationally?",
+        a: (
+          <>
+            We currently ship throughout the UK and EU. International orders outside the EU are handled
+            case-by-case via our trade team — <Link href="/contact">contact us</Link>.
+          </>
+        ),
+      },
+      {
+        q: "Will my order arrive in time for Christmas?",
+        a: "Order by Saturday 13 December for guaranteed UK delivery before the 25th. Express options extend this by a few days.",
+      },
+      {
+        q: "How do I track my order?",
+        a: (
+          <>
+            You&apos;ll receive a tracking link by email once your order ships. You can also find tracking in your{" "}
+            <Link href="/account">account</Link> under Order History.
+          </>
+        ),
+      },
+      {
+        q: "Can I change or cancel my order?",
+        a: (
+          <>
+            Contact <a href="mailto:hello@rumbaclaat.com">hello@rumbaclaat.com</a> within 1 hour of placing the
+            order and we&apos;ll do our best. After dispatch, orders can&apos;t be changed but you can return them.
+          </>
+        ),
+      },
     ],
   },
   {
-    eyebrow: "Rewards & tiers",
+    id: "g2",
+    nav: "Age verification",
+    heading: "Age verification",
+    items: [
+      {
+        q: "Why do I have to verify my age?",
+        a: "UK law requires us to confirm everyone buying alcohol is at least 18 years old. We verify at checkout and our couriers also verify on delivery.",
+      },
+      {
+        q: "Who needs to sign for the delivery?",
+        a: "Someone aged 18 or over must be at the address to sign. Our couriers may ask for ID. If no one suitable is home, they'll attempt redelivery or leave a card.",
+      },
+      {
+        q: "What happens if you can't verify my age?",
+        a: "We may cancel and refund the order. You're welcome to contact us if you think there's an issue.",
+      },
+    ],
+  },
+  {
+    id: "g3",
+    nav: "Returns & refunds",
+    heading: "Returns & refunds",
+    items: [
+      {
+        q: "What's your returns policy?",
+        a: "You have 14 days to cancel most orders under the UK Consumer Contracts Regulations. Items must be unopened, unused and in resaleable condition. Perishables and personalised items are excluded.",
+      },
+      {
+        q: "How do I return an item?",
+        a: (
+          <>
+            Email <a href="mailto:hello@rumbaclaat.com">hello@rumbaclaat.com</a> with your order number and we&apos;ll
+            send return instructions. You pay return postage unless the item is faulty.
+          </>
+        ),
+      },
+      {
+        q: "When will I get my refund?",
+        a: "Refunds are issued within 14 days of us receiving the return, to your original payment method.",
+      },
+      {
+        q: "My bottle arrived damaged. What do I do?",
+        a: "We're sorry. Email us within 48 hours with a photo of the damage and we'll arrange a replacement or refund — no need to return the damaged item.",
+      },
+    ],
+  },
+  {
+    id: "g4",
+    nav: "Membership & points",
     heading: "Membership & points",
     items: [
-      { q: "Is Bronze membership really free?", a: "Yes. Bronze gives you 5% off every order, 1× RPM points, birthday bonus and early newsletter access at no cost." },
-      { q: "Can I cancel my paid membership?", a: "Anytime from your member portal. Cancellation takes effect at the end of your current billing period. New paid memberships have a 14-day money-back guarantee." },
-      { q: "How do RPM points work?", a: "You earn points on every purchase, multiplied by your tier (1× Bronze, 1.5× Silver, 2× Gold, 3× Black Reserve). Redeem points for credits, products and experiences from the Rewards tab." },
-      { q: "What happens when I upgrade tiers?", a: "Upgrades are immediate. You start earning at the new rate from your next purchase. Downgrades take effect at the end of your billing period." },
+      {
+        q: "Is Bronze membership really free?",
+        a: "Yes. Bronze gives you 5% off every order, 1× RPM points, birthday bonus and early newsletter access at no cost.",
+      },
+      {
+        q: "Can I cancel my paid membership?",
+        a: (
+          <>
+            Anytime from your <Link href="/membership">member portal</Link>. Cancellation takes effect at the end of
+            your current billing period. New paid memberships have a 14-day money-back guarantee.
+          </>
+        ),
+      },
+      {
+        q: "How do RPM points work?",
+        a: "You earn RPM points on every purchase, multiplied by your tier (1× Bronze, 1.5× Silver, 2× Gold, 3× Black Reserve). Redeem points for credits, products and experiences from the Rewards tab.",
+      },
+      {
+        q: "What happens when I upgrade tiers?",
+        a: "Upgrades are immediate. You start earning at the new rate from your next purchase. Downgrades take effect at the end of your billing period.",
+      },
     ],
   },
   {
-    eyebrow: "The rum itself",
-    heading: "Products",
+    id: "g5",
+    nav: "The rum",
+    heading: "The rum",
     items: [
-      { q: "Where is Rumbaclaat made?", a: "Our Original Reserve is distilled in Jamaica and aged in American oak. Each expression comes from selected Caribbean distilleries — see each product page for origin details." },
-      { q: "What's the ABV and bottle size?", a: "Original Reserve and Spiced Gold are 700ml; ABV varies by expression (43% Original Reserve, 40% Spiced Gold). Check the product page for the specific bottle." },
-      { q: "Are there allergens or animal products?", a: "Our rums contain no allergens listed under UK FSA rules and are suitable for vegetarians. Spiced expressions may contain natural botanicals — see the product page ingredients." },
-      { q: "How should I store opened rum?", a: "Upright, sealed, away from direct sunlight. An opened bottle keeps its character for around 6–12 months." },
+      {
+        q: "Where is Rumbaclaat made?",
+        a: "Our Original Reserve is distilled in Jamaica and aged in American oak. Each expression comes from selected Caribbean distilleries — see each product page for origin details.",
+      },
+      {
+        q: "What's the ABV and bottle size?",
+        a: "Original Reserve and Spiced Gold are 700ml; ABV varies by expression (43% Original Reserve, 40% Spiced Gold). Check the product page for the specific bottle.",
+      },
+      {
+        q: "Are there allergens or animal products?",
+        a: "Our rums contain no allergens listed under UK FSA rules and are suitable for vegetarians. Spiced expressions may contain natural botanicals — see the product page ingredients.",
+      },
+      {
+        q: "How should I store opened rum?",
+        a: "Upright, sealed, away from direct sunlight. An opened bottle keeps its character for around 6–12 months.",
+      },
+    ],
+  },
+  {
+    id: "g6",
+    nav: "Account & privacy",
+    heading: "Account & privacy",
+    items: [
+      {
+        q: "How do I reset my password?",
+        a: (
+          <>
+            On the <Link href="/account">sign-in page</Link>, click &quot;Forgot password&quot;. You&apos;ll get a
+            reset link by email valid for 60 minutes.
+          </>
+        ),
+      },
+      {
+        q: "How do you use my data?",
+        a: (
+          <>
+            We process personal data under our <Link href="/privacy">Privacy Policy</Link>, in line with UK GDPR. We
+            never sell your data. You can request access, correction or deletion at any time.
+          </>
+        ),
+      },
+      {
+        q: "How do I manage my emails?",
+        a: (
+          <>
+            From your <Link href="/unsubscribe">email preferences</Link> page. You can turn off categories
+            individually or unsubscribe from all marketing in one click.
+          </>
+        ),
+      },
     ],
   },
 ];
@@ -40,22 +190,51 @@ const GROUPS: { eyebrow: string; heading: string; items: { q: string; a: string 
 export default function FaqPage() {
   return (
     <>
-      <section className="section-sm section--sunken">
+      <section
+        className="section-sm"
+        style={{
+          background: "linear-gradient(135deg,#161208,#0E0E0E)",
+          borderBottom: "1px solid var(--gold-bdr)",
+        }}
+      >
         <div className="container reveal" style={{ maxWidth: 820 }}>
-          <span className="eyebrow">Help Centre</span>
-          <h1 className="serif" style={{ fontSize: "clamp(2rem, 4.4vw, 3.4rem)" }}>Frequently asked questions</h1>
-          <p style={{ maxWidth: 560, marginTop: 14, color: "var(--text-muted)", fontSize: "1.0625rem", lineHeight: 1.7 }}>
-            Everything about orders, delivery, membership and our rum. Can&apos;t find it? <Link href="/contact">Contact us</Link>.
+          <span className="eyebrow">HELP CENTRE</span>
+          <h1>Frequently asked questions</h1>
+          <p style={{ color: "var(--text-muted)", maxWidth: 560 }}>
+            Quick answers to the questions we hear most. If you can&apos;t find what you need,{" "}
+            <Link href="/contact" style={{ color: "var(--gold-hi)" }}>
+              drop us a line
+            </Link>
+            .
           </p>
         </div>
       </section>
 
       <section className="section">
         <div className="container" style={{ maxWidth: 820 }}>
+          <nav aria-label="FAQ topics" className="mb-4">
+            <p className="eyebrow">JUMP TO</p>
+            <div className="d-flex flex-wrap gap-2">
+              {GROUPS.map((g) => (
+                <a key={g.id} href={`#${g.id}`} className="btn btn-ghost btn-sm">
+                  {g.nav}
+                </a>
+              ))}
+            </div>
+          </nav>
+
           {GROUPS.map((g) => (
-            <div key={g.heading} style={{ marginBottom: 56 }}>
-              <span className="eyebrow">{g.eyebrow}</span>
-              <h2 className="serif" style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", marginBottom: 18 }}>{g.heading}</h2>
+            <section key={g.id} aria-labelledby={`${g.id}-h`} className="mb-5">
+              <h2
+                id={`${g.id}-h`}
+                className="h3 mb-3"
+                style={{ color: "var(--gold-hi)", scrollMarginTop: 120 }}
+                tabIndex={-1}
+              >
+                <a id={g.id} style={{ textDecoration: "none", color: "inherit" }}>
+                  {g.heading}
+                </a>
+              </h2>
 
               <div className="d-flex flex-column gap-3">
                 {g.items.map((it) => (
@@ -75,14 +254,47 @@ export default function FaqPage() {
                       }}
                     >
                       <span>{it.q}</span>
-                      <span aria-hidden="true" className="gold" style={{ fontSize: "1.4rem", lineHeight: 1, flexShrink: 0 }}>+</span>
+                      <span
+                        aria-hidden="true"
+                        className="gold"
+                        style={{ fontSize: "1.4rem", lineHeight: 1, flexShrink: 0 }}
+                      >
+                        +
+                      </span>
                     </summary>
-                    <p style={{ color: "var(--text-muted)", marginTop: 14, marginBottom: 0, fontSize: ".95rem", lineHeight: 1.7 }}>{it.a}</p>
+                    <p
+                      style={{
+                        color: "var(--text-muted)",
+                        marginTop: 14,
+                        marginBottom: 0,
+                        fontSize: ".95rem",
+                        lineHeight: 1.7,
+                      }}
+                    >
+                      {it.a}
+                    </p>
                   </details>
                 ))}
               </div>
-            </div>
+            </section>
           ))}
+
+          <div className="card-brand mt-5">
+            <p
+              style={{
+                margin: "0 0 6px",
+                fontFamily: "var(--serif)",
+                fontSize: "1.15rem",
+                color: "var(--gold-hi)",
+              }}
+            >
+              Still need help?
+            </p>
+            <p style={{ margin: "0 0 14px" }}>
+              Email <a href="mailto:hello@rumbaclaat.com">hello@rumbaclaat.com</a> or use our{" "}
+              <Link href="/contact">contact form</Link>. We reply within 1 business day.
+            </p>
+          </div>
         </div>
       </section>
     </>

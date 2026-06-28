@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSectionImageMap, sectionImage } from "@/lib/section-images";
+import CocktailAddButton from "./cocktail-add-button";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,18 @@ export default async function CocktailsIndex() {
   });
   const imgs = await getSectionImageMap();
 
+  // The card "＋" button adds the cocktail's featured rum to the cart — live DB data.
+  const featuredIds = Array.from(
+    new Set(cocktails.map((c) => c.featuredProductId).filter((id): id is string => Boolean(id)))
+  );
+  const featuredProducts = featuredIds.length
+    ? await prisma.product.findMany({
+        where: { id: { in: featuredIds } },
+        select: { id: true, name: true, basePrice: true, salePrice: true, onSale: true },
+      })
+    : [];
+  const featuredById = new Map(featuredProducts.map((p) => [p.id, p]));
+
   return (
     <>
       {/* Hero (parallax) — static-source/cocktails.html */}
@@ -37,7 +50,7 @@ export default async function CocktailsIndex() {
       </section>
 
       {/* Filter / search bar */}
-      <div className="section--sunken" style={{ padding: "20px 0" }}>
+      <div style={{ background: "var(--bg-card3)", borderBottom: "1px solid var(--gold-bdr)", padding: "16px 0" }}>
         <div className="container d-flex align-items-center gap-3 flex-wrap">
           <div className="ck-search">
             <label className="visually-hidden" htmlFor="ck-search">Search cocktails or ingredients</label>
@@ -55,13 +68,9 @@ export default async function CocktailsIndex() {
 
       <section className="section">
         <div className="container">
-          <div className="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-5">
-            <div>
-              <span className="eyebrow">The Collection</span>
-              <h2 className="serif" style={{ fontSize: "clamp(1.9rem,4vw,3rem)", margin: ".25rem 0 0" }}>Cocktail Recipes</h2>
-            </div>
-            <p className="mb-0" style={{ fontSize: ".8125rem", color: "var(--text-dim)", fontVariantNumeric: "tabular-nums" }}>{cocktails.length} cocktails</p>
-          </div>
+          <p id="ck-count" className="mb-4" style={{ fontSize: ".8125rem", color: "var(--text-dim)" }} aria-live="polite">
+            {cocktails.length} cocktail{cocktails.length !== 1 ? "s" : ""}
+          </p>
 
           {cocktails.length === 0 ? (
             <p style={{ color: "var(--text-dim)" }}>No recipes yet.</p>
@@ -71,6 +80,10 @@ export default async function CocktailsIndex() {
                 const ings = Array.isArray(c.ingredients) ? (c.ingredients as string[]) : [];
                 const dc = c.difficulty ? diffClass[c.difficulty] ?? "diff-easy" : "diff-easy";
                 const dt = c.difficulty ? diffText[c.difficulty] ?? "diff-text-easy" : "diff-text-easy";
+                const fp = c.featuredProductId ? featuredById.get(c.featuredProductId) : undefined;
+                const fpPrice = fp
+                  ? Number(fp.onSale && fp.salePrice != null ? fp.salePrice : fp.basePrice)
+                  : 0;
                 return (
                   <div className="col-12 col-md-6 col-lg-4" key={c.id}>
                     <article className="ck-card reveal">
@@ -107,6 +120,7 @@ export default async function CocktailsIndex() {
                         </div>
                         <div className="d-flex gap-2">
                           <Link href={`/cocktails/${c.slug}`} className="btn btn-gold btn-sm flex-grow-1" role="button">View Recipe ›</Link>
+                          {fp && <CocktailAddButton productId={fp.id} name={fp.name} price={fpPrice} />}
                         </div>
                       </div>
                     </article>

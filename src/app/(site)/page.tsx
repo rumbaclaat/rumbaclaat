@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import BrandImage from "@/components/brand-image";
 import { prisma } from "@/lib/prisma";
 import BlockRenderer from "@/components/blocks/block-renderer";
 import { getSectionImageMap, sectionImage } from "@/lib/section-images";
+import HeroCarousel from "@/components/home/hero-carousel";
 
 export const dynamic = "force-dynamic";
 
@@ -25,21 +25,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Static hero banner */}
-      <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: `url('${sectionImage(imgs, "home.hero")}')` }} />
-        <div className="hero-overlay" />
-        <div className="hero-content">
-          <BrandImage src="/brand/logo.png" alt="Rumbaclaat Rum" className="hero-logo" />
-          <span className="eyebrow eyebrow-center">Premium Caribbean Rum</span>
-          <h1>Born in the Caribbean.<br /><em className="gold">Bottled for the Bold.</em></h1>
-          <p className="hero-lede">Aged in American oak. Crafted with heritage. Rumbaclaat rum is a tribute to Caribbean culture, distilled into every drop.</p>
-          <div className="d-flex gap-3 justify-content-center flex-wrap mt-4">
-            <Link href="/shop" className="btn btn-gold btn-lg">Shop Rum</Link>
-            <Link href="/join" className="btn btn-outline-gold btn-lg">Join RPM</Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero carousel (2 slides) */}
+      <HeroCarousel />
 
       {/* Announcement ticker */}
       <section className="announcement-ticker" role="region" aria-label="Site announcements">
@@ -62,6 +49,7 @@ export default async function HomePage() {
                 <span className="at-det">— London, RSVP via Member Portal</span>
               </div>
             </div>
+            <button type="button" className="at-toggle" aria-label="Pause announcements" aria-pressed="false">⏸</button>
           </div>
         </div>
       </section>
@@ -136,7 +124,7 @@ export default async function HomePage() {
             />
           </div>
           <div className="text-center mt-5 d-flex gap-2 justify-content-center flex-wrap">
-            <Link href="/shop" className="btn btn-gold btn-lg">View Full Rum Collection →</Link>
+            <Link href="/shop" className="btn btn-outline-gold btn-lg">View Full Rum Collection →</Link>
             <Link href="/shop?category=mens-apparel" className="btn btn-outline-gold btn-lg">View All Apparel →</Link>
           </div>
         </div>
@@ -167,39 +155,37 @@ export default async function HomePage() {
       </section>
 
       {/* Cocktails — 3-up */}
-      <section className="section section--surface" aria-labelledby="cocktails-title">
+      <section className="section" aria-labelledby="cocktails-title">
         <div className="container">
-          <div className="text-center reveal mb-5">
-            <span className="eyebrow eyebrow-center">Cocktail Recipes</span>
-            <h2 className="serif" id="cocktails-title">Mix it up</h2>
-            <p style={{ maxWidth: 720, margin: "12px auto 0", color: "var(--text-muted)" }}>Three signature serves to pour at home — from a five-minute sour to a slow evening sipper.</p>
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5 reveal">
+            <div>
+              <span className="eyebrow">Cocktail Recipes</span>
+              <h2 className="serif" id="cocktails-title">Mix it up</h2>
+            </div>
+            <Link href="/cocktails" className="btn btn-outline-gold">View All Recipes →</Link>
           </div>
           <div className="row g-4">
             <CocktailCard href="/cocktails/rumbaclaat-sour" img={U("photo-1748674755168-266c309d4712", 600)} badge="Easy · 5 mins" title="Rumbaclaat Sour" desc="Fresh lime, egg white, bitters. Elegant aperitif." />
             <CocktailCard href="/cocktails" img={U("photo-1767745455688-49391131f751", 600)} badge="Medium · 8 mins" title="Dark & Smoky" desc="Mezcal, dark honey, mole bitters. An evening classic." />
             <CocktailCard href="/cocktails/spiced-mule" img={U("photo-1609189123897-42db027571c9", 600)} badge="Easy · 3 mins" title="Spiced Mule" desc="Spiced Gold, ginger beer, lime. Refreshing and easy." />
           </div>
-          <div className="text-center mt-5 reveal">
-            <Link href="/cocktails" className="btn btn-gold btn-lg">View All Recipes →</Link>
-          </div>
         </div>
       </section>
 
       {/* Journal — 3-up */}
-      <section className="section" aria-labelledby="blog-title">
+      <section className="section" aria-labelledby="blog-title" style={{ background: "var(--bg-card)", borderTop: "1px solid var(--gold-bdr)" }}>
         <div className="container">
-          <div className="text-center reveal mb-5">
-            <span className="eyebrow eyebrow-center">From the Journal</span>
-            <h2 className="serif" id="blog-title">Stories &amp; Craft</h2>
-            <p style={{ maxWidth: 720, margin: "12px auto 0", color: "var(--text-muted)" }}>Heritage, craft and cocktail culture — dispatches from behind the bar and inside the distillery.</p>
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5 reveal">
+            <div>
+              <span className="eyebrow">From the Journal</span>
+              <h2 className="serif" id="blog-title">Stories &amp; Craft</h2>
+            </div>
+            <Link href="/blog" className="btn btn-outline-gold">All Posts →</Link>
           </div>
           <div className="row g-4">
             <BlogCard href="/blog/the-story-behind-rumbaclaat" img={U("photo-1642963036562-affa2703f5ad")} badge="Heritage" title="The Story Behind Rumbaclaat" desc="From the Caribbean canefields to your glass — the origins of our brand." meta="Jan 20, 2025 · 6 min read" />
             <BlogCard href="/blog/the-art-of-rum-ageing" img={U("photo-1764699186296-9dac0ddb5edb")} badge="Craft" title="The Art of Rum Ageing" desc="Understanding the journey from distillate to reserve expression." meta="Jan 10, 2025 · 8 min read" />
             <BlogCard href="/blog/cocktail-culture-in-2025" img={U("photo-1767745455688-49391131f751")} badge="Cocktails" title="Cocktail Culture in 2025" desc="The trends shaping premium cocktail experiences worldwide." meta="Jan 5, 2025 · 5 min read" />
-          </div>
-          <div className="text-center mt-5 reveal">
-            <Link href="/blog" className="btn btn-gold btn-lg">Read All Posts →</Link>
           </div>
         </div>
       </section>

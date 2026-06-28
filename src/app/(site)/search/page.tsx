@@ -4,6 +4,44 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Search" };
 
+type ResultRow = {
+  key: string;
+  href: string;
+  kind: string;
+  img: string | null;
+  title: string;
+  desc: string;
+  score: number;
+};
+
+// Split text into highlighted/plain segments for matched search terms.
+// Returns React nodes with <mark> around matched terms.
+function highlight(text: string, terms: string[]): React.ReactNode {
+  if (!text || terms.length === 0) return text;
+  const cleaned = terms.filter(Boolean);
+  if (cleaned.length === 0) return text;
+  const escaped = cleaned.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const lowered = cleaned.map((t) => t.toLowerCase());
+  // Split on the matched terms, keeping the delimiters (capture group).
+  const parts = text.split(new RegExp(`(${escaped.join("|")})`, "ig"));
+  return parts.map((part, i) =>
+    lowered.includes(part.toLowerCase()) ? (
+      <mark key={i}>{part}</mark>
+    ) : (
+      <span key={i}>{part}</span>
+    )
+  );
+}
+
+function scoreOf(haystack: string, terms: string[]): number {
+  const hay = haystack.toLowerCase();
+  let score = 0;
+  for (const t of terms) {
+    if (t && hay.indexOf(t) !== -1) score++;
+  }
+  return score;
+}
+
 export default async function SearchPage({
   searchParams,
 }: {
@@ -11,178 +49,132 @@ export default async function SearchPage({
 }) {
   const { q } = await searchParams;
   const query = (q ?? "").trim();
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const hasQuery = query.length >= 2;
 
-  let products: { slug: string; name: string; subtitle: string | null }[] = [];
-  let cocktails: { slug: string; name: string; lede: string | null }[] = [];
-  let posts: { slug: string; title: string; excerpt: string | null }[] = [];
+  let products: { slug: string; name: string; subtitle: string | null; imageUrl: string | null }[] = [];
+  let cocktails: { slug: string; name: string; lede: string | null; image: string | null }[] = [];
+  let posts: { slug: string; title: string; excerpt: string | null; heroImage: string | null }[] = [];
 
-  if (query.length >= 2) {
+  if (hasQuery) {
     [products, cocktails, posts] = await Promise.all([
-      prisma.product.findMany({ where: { status: "published", name: { contains: query, mode: "insensitive" } }, select: { slug: true, name: true, subtitle: true }, take: 8 }),
-      prisma.cocktail.findMany({ where: { status: "published", name: { contains: query, mode: "insensitive" } }, select: { slug: true, name: true, lede: true }, take: 8 }),
-      prisma.blogPost.findMany({ where: { status: "published", title: { contains: query, mode: "insensitive" } }, select: { slug: true, title: true, excerpt: true }, take: 8 }),
+      prisma.product.findMany({ where: { status: "published", name: { contains: query, mode: "insensitive" } }, select: { slug: true, name: true, subtitle: true, imageUrl: true }, take: 8 }),
+      prisma.cocktail.findMany({ where: { status: "published", name: { contains: query, mode: "insensitive" } }, select: { slug: true, name: true, lede: true, image: true }, take: 8 }),
+      prisma.blogPost.findMany({ where: { status: "published", title: { contains: query, mode: "insensitive" } }, select: { slug: true, title: true, excerpt: true, heroImage: true }, take: 8 }),
     ]);
   }
 
-  const total = products.length + cocktails.length + posts.length;
-  const hasQuery = query.length >= 2;
+  // Mix all matches into a single, score-ranked list (design renders one flat list).
+  const rows: ResultRow[] = [
+    ...products.map((p) => ({
+      key: `p-${p.slug}`,
+      href: `/product/${p.slug}`,
+      kind: "PRODUCT",
+      img: p.imageUrl,
+      title: p.name,
+      desc: p.subtitle ?? "",
+      score: scoreOf(`${p.name} ${p.subtitle ?? ""}`, terms),
+    })),
+    ...cocktails.map((c) => ({
+      key: `c-${c.slug}`,
+      href: `/cocktails/${c.slug}`,
+      kind: "COCKTAIL",
+      img: c.image,
+      title: c.name,
+      desc: c.lede ?? "",
+      score: scoreOf(`${c.name} ${c.lede ?? ""}`, terms),
+    })),
+    ...posts.map((b) => ({
+      key: `b-${b.slug}`,
+      href: `/blog/${b.slug}`,
+      kind: "JOURNAL",
+      img: b.heroImage,
+      title: b.title,
+      desc: b.excerpt ?? "",
+      score: scoreOf(`${b.title} ${b.excerpt ?? ""}`, terms),
+    })),
+  ].sort((a, b) => b.score - a.score);
+
+  const total = rows.length;
+
+  let statusText = "Type at least 2 characters to search.";
+  if (hasQuery) {
+    statusText = total
+      ? `${total} result${total === 1 ? "" : "s"} for "${query}"`
+      : `No results for "${query}"`;
+  }
 
   return (
-    <section className="section">
-      <div className="container">
-        {/* Query header */}
-        <header style={{ maxWidth: 760, marginBottom: 36 }}>
-          <span className="eyebrow">Search</span>
-          <h1 className="mb-3">
-            {hasQuery ? <>Results for <em className="gold">“{query}”</em></> : "Find your serve"}
-          </h1>
-          <form action="/search" className="ck-search" style={{ maxWidth: "100%" }} role="search">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
-            <label htmlFor="q" className="visually-hidden">Search rum, cocktails and journal</label>
-            <input id="q" type="search" name="q" className="form-control" placeholder="Search rum, cocktails, journal…" defaultValue={query} />
+    <>
+      <section
+        className="section-sm"
+        style={{ background: "linear-gradient(135deg,#161208,#0E0E0E)", borderBottom: "1px solid var(--gold-bdr)" }}
+      >
+        <div className="container reveal" style={{ maxWidth: 760 }}>
+          <span className="eyebrow">SEARCH</span>
+          <h1>Find what you&apos;re looking for</h1>
+          <form id="search-form" action="/search" role="search" className="mt-3">
+            <label className="visually-hidden" htmlFor="search-input">Search products, cocktails and articles</label>
+            <div className="d-flex gap-2">
+              <input
+                className="form-control form-control-lg"
+                type="search"
+                id="search-input"
+                name="q"
+                defaultValue={query}
+                placeholder={'Try "rum", "hoodie", "cocktail"…'}
+                autoComplete="off"
+              />
+              <button type="submit" className="btn btn-gold">Search</button>
+            </div>
           </form>
-          {hasQuery && (
-            <p style={{ fontSize: ".8125rem", color: "var(--text-dim)", margin: "14px 0 0" }}>
-              {total} result{total === 1 ? "" : "s"} across rum &amp; apparel, cocktails and journal
-            </p>
-          )}
-        </header>
+        </div>
+      </section>
 
-        {hasQuery && total > 0 && (
-          <div className="row g-4 g-lg-5">
-            {/* Filter rail — anchors to result groups */}
-            <aside className="col-12 col-lg-3" aria-label="Filter results">
-              <div className="card-brand" style={{ position: "sticky", top: 90, padding: 20 }}>
-                <div style={{ fontSize: ".6875rem", letterSpacing: ".14em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600, marginBottom: 12 }}>Jump to</div>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-                  {products.length > 0 && (
-                    <li><a href="#results-products" style={filterLink}><span>Rum &amp; Apparel</span><span style={filterCount}>{products.length}</span></a></li>
+      <section className="section">
+        <div className="container" style={{ maxWidth: 820 }}>
+          <div id="search-status" style={{ fontSize: ".875rem", color: "var(--text-muted)", marginBottom: 18 }} aria-live="polite">
+            {statusText}
+          </div>
+
+          <div id="search-results">
+            {rows.map((r) => (
+              <Link key={r.key} href={r.href} className="search-result">
+                <img
+                  src={r.img ?? "https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"}
+                  alt=""
+                  style={{ width: 72, height: 72, borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
+                />
+                <div>
+                  <span className="kind" style={{ fontSize: ".6875rem", letterSpacing: ".15em", color: "var(--text-dim)" }}>{r.kind}</span>
+                  <h3 style={{ fontFamily: "var(--serif)", fontSize: "1.1rem", margin: "2px 0", color: "var(--text)" }}>
+                    {highlight(r.title, terms)}
+                  </h3>
+                  {r.desc && (
+                    <p style={{ fontSize: ".875rem", color: "var(--text-muted)", margin: 0 }}>
+                      {highlight(r.desc, terms)}
+                    </p>
                   )}
-                  {cocktails.length > 0 && (
-                    <li><a href="#results-cocktails" style={filterLink}><span>Cocktails</span><span style={filterCount}>{cocktails.length}</span></a></li>
-                  )}
-                  {posts.length > 0 && (
-                    <li><a href="#results-journal" style={filterLink}><span>Journal</span><span style={filterCount}>{posts.length}</span></a></li>
-                  )}
-                </ul>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {hasQuery && total === 0 && (
+            <div id="search-empty">
+              <p style={{ color: "var(--text-muted)" }}>No results found. Try a different keyword or browse:</p>
+              <div className="d-flex gap-2 flex-wrap mt-3">
+                <Link className="btn btn-ghost btn-sm" href="/shop?category=rum">Rum</Link>
+                <Link className="btn btn-ghost btn-sm" href="/shop?category=mens-apparel">Men&apos;s</Link>
+                <Link className="btn btn-ghost btn-sm" href="/shop?category=womens-apparel">Women&apos;s</Link>
+                <Link className="btn btn-ghost btn-sm" href="/cocktails">Cocktails</Link>
+                <Link className="btn btn-ghost btn-sm" href="/blog">Journal</Link>
+                <Link className="btn btn-ghost btn-sm" href="/faq">FAQ</Link>
               </div>
-            </aside>
-
-            {/* Result grid */}
-            <div className="col-12 col-lg-9">
-              {products.length > 0 && (
-                <section id="results-products" aria-labelledby="h-products" style={{ marginBottom: 40, scrollMarginTop: 90 }}>
-                  <h2 id="h-products" className="h4 mb-3">Rum &amp; Apparel</h2>
-                  <div className="row g-3">
-                    {products.map((p) => (
-                      <div className="col-12 col-sm-6 col-xl-4" key={`p-${p.slug}`}>
-                        <Link href={`/product/${p.slug}`} className="card-brand h-100 d-block" style={resultCard}>
-                          <span className="badge-brand" style={{ marginBottom: 12 }}>Rum &amp; Apparel</span>
-                          <h3 className="serif" style={resultTitle}>{p.name}</h3>
-                          {p.subtitle && <p style={resultLede}>{p.subtitle}</p>}
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {cocktails.length > 0 && (
-                <section id="results-cocktails" aria-labelledby="h-cocktails" style={{ marginBottom: 40, scrollMarginTop: 90 }}>
-                  <h2 id="h-cocktails" className="h4 mb-3">Cocktails</h2>
-                  <div className="row g-3">
-                    {cocktails.map((c) => (
-                      <div className="col-12 col-sm-6 col-xl-4" key={`c-${c.slug}`}>
-                        <Link href={`/cocktails/${c.slug}`} className="card-brand h-100 d-block" style={resultCard}>
-                          <span className="badge-brand" style={{ marginBottom: 12 }}>Cocktail</span>
-                          <h3 className="serif" style={resultTitle}>{c.name}</h3>
-                          {c.lede && <p style={resultLede}>{c.lede}</p>}
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {posts.length > 0 && (
-                <section id="results-journal" aria-labelledby="h-journal" style={{ scrollMarginTop: 90 }}>
-                  <h2 id="h-journal" className="h4 mb-3">Journal</h2>
-                  <div className="row g-3">
-                    {posts.map((b) => (
-                      <div className="col-12 col-sm-6 col-xl-4" key={`b-${b.slug}`}>
-                        <Link href={`/blog/${b.slug}`} className="card-brand h-100 d-block" style={resultCard}>
-                          <span className="badge-brand" style={{ marginBottom: 12 }}>Journal</span>
-                          <h3 className="serif" style={resultTitle}>{b.title}</h3>
-                          {b.excerpt && <p style={resultLede}>{b.excerpt}</p>}
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
             </div>
-          </div>
-        )}
-
-        {/* Empty state */}
-        {hasQuery && total === 0 && (
-          <div className="card-brand text-center" style={{ maxWidth: 560, margin: "0 auto", padding: "48px 28px" }}>
-            <div className="info-icon" style={{ width: 52, height: 52, margin: "0 auto 18px", fontSize: "1.4rem" }} aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
-            </div>
-            <h2 className="h4 mb-2">No matches for “{query}”</h2>
-            <p style={{ color: "var(--text-muted)", marginBottom: 22 }}>We couldn&apos;t find anything by that name. Try a different spelling, or explore the collections below.</p>
-            <div className="d-flex gap-2 justify-content-center flex-wrap">
-              <Link href="/shop" className="btn btn-gold">Browse the shop</Link>
-              <Link href="/cocktails" className="btn btn-outline-gold">View cocktails</Link>
-            </div>
-          </div>
-        )}
-
-        {/* Prompt before a query is entered */}
-        {!hasQuery && (
-          <p style={{ color: "var(--text-muted)", maxWidth: 560 }}>Start typing to search across rum &amp; apparel, cocktails and the journal. Enter at least two characters.</p>
-        )}
-      </div>
-    </section>
+          )}
+        </div>
+      </section>
+    </>
   );
 }
-
-const filterLink: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: 10,
-  padding: "8px 10px",
-  borderRadius: 9,
-  color: "var(--text-muted)",
-  textDecoration: "none",
-  fontSize: ".875rem",
-};
-const filterCount: React.CSSProperties = {
-  fontSize: ".75rem",
-  color: "var(--gold-hi)",
-  background: "var(--gold-lt)",
-  border: "1px solid var(--gold-bdr)",
-  borderRadius: 999,
-  padding: "1px 9px",
-  fontVariantNumeric: "tabular-nums",
-};
-const resultCard: React.CSSProperties = {
-  padding: 20,
-  textDecoration: "none",
-  color: "var(--text)",
-};
-const resultTitle: React.CSSProperties = {
-  fontSize: "1.15rem",
-  margin: "0 0 6px",
-};
-const resultLede: React.CSSProperties = {
-  fontSize: ".875rem",
-  color: "var(--text-muted)",
-  margin: 0,
-  display: "-webkit-box",
-  WebkitLineClamp: 2,
-  WebkitBoxOrient: "vertical",
-  overflow: "hidden",
-};

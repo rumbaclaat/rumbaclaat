@@ -413,6 +413,9 @@ em { font-style: italic; }
 .ck-ings li { display: flex; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--gold-bdr); font-size: 1rem; color: var(--text); }
 .ck-ings li::before { content: ""; flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); transform: translateY(-2px); }
 .ck-ings li:last-child { border-bottom: 0; }
+/* Compact ingredient line used on cocktail cards (from cocktails.html) */
+.ck-ing { display: flex; align-items: flex-start; gap: 8px; font-size: .75rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 4px; }
+.ck-ing::before { content: '\25CF'; color: var(--gold); font-size: .5rem; margin-top: 5px; flex-shrink: 0; }
 .ck-glance { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; padding: 16px 18px; background: var(--bg-card2); border: 1px solid var(--gold-bdr); border-radius: var(--radius); margin-top: 18px; }
 @media (max-width: 480px) { .ck-glance { grid-template-columns: 1fr; } }
 .ck-glance .lbl { font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
@@ -523,6 +526,17 @@ mark { background: var(--gold-lt); color: var(--gold-hi); padding: 0 2px; border
 .rte-content .ProseMirror h3 { font-size: 1.15rem; margin: .4em 0 .3em; }
 .rte-content .ProseMirror blockquote { border-left: 3px solid var(--gold); padding-left: 12px; color: var(--text-muted); margin: .5em 0; }
 .rte-content .ProseMirror ul, .rte-content .ProseMirror ol { padding-left: 1.4em; margin: 0 0 .6em; }
+
+/* Rendered blog-post article body (from blog-post.html #post-body) */
+.blog-body { color: var(--text); line-height: 1.8; }
+.blog-body p { margin: 0 0 1.2em; }
+.blog-body h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.5rem, 3vw, 2rem); margin: 1.6em 0 .5em; }
+.blog-body h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; margin: 1.4em 0 .4em; }
+.blog-body ul, .blog-body ol { padding-left: 1.4em; margin: 0 0 1.2em; }
+.blog-body li { margin-bottom: .5em; }
+.blog-body blockquote { border-left: 3px solid var(--gold); padding: 16px 22px; margin: 32px 0; background: var(--gold-lt); font-family: var(--serif); font-style: italic; font-size: 1.25rem; color: var(--text); }
+.blog-body img { max-width: 100%; border-radius: var(--radius); margin: 1.2em 0; }
+.blog-body a { color: var(--gold-hi); }
 
 /* ---------- Brand logos ---------- */
 .brand-logo-img { height: 26px; width: auto; display: block; }
