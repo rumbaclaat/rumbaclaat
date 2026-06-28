@@ -5,8 +5,8 @@ import { getSectionImageMap, sectionImage } from "@/lib/section-images";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Membership",
-  description: "Join the Rumbaclaat Inner Circle. Four loyalty tiers from free Bronze to Black Reserve, with member pricing and exclusive drops.",
+  title: "RPM",
+  description: "Join RPM. Four loyalty tiers from free Bronze to Black Reserve, with member pricing and exclusive drops.",
 };
 
 const STATS = [
@@ -24,9 +24,9 @@ const STEPS = [
 
 const FAQ = [
   { q: "Is Bronze membership really free?", a: "Yes — Bronze is completely free. Create an account and you are automatically enrolled, gaining instant access to member discounts and points earning." },
-  { q: "How do I earn loyalty points?", a: "You earn points on every purchase, plus bonus points for referrals, reviews, and birthday rewards. Higher tiers multiply your points by up to 3×." },
+  { q: "How do I earn RPM points?", a: "You earn points on every purchase, plus bonus points for referrals, reviews, and birthday rewards. Higher tiers multiply your points by up to 3×." },
   { q: "Can I upgrade or downgrade at any time?", a: "Yes. Upgrades are instant. Downgrades take effect at the end of your current billing cycle so you are never penalised." },
-  { q: "What payment methods are accepted?", a: "All major credit and debit cards via Stripe, plus PayPal and Google Pay." },
+  { q: "What payment methods are accepted?", a: "All major credit and debit cards, plus PayPal and Google Pay." },
   { q: "Will my points ever expire?", a: "Points are valid for 24 months from the date earned. We send reminders before any points expire." },
   { q: "Is there a minimum commitment on paid tiers?", a: "No — monthly billing has no minimum term. Annual plans offer 2 free months. Full refund within 14 days." },
 ];
@@ -39,8 +39,8 @@ export default async function JoinPage() {
         <div className="hero-bg" style={{ backgroundImage: `url('${sectionImage(imgs, "join.hero")}')` }} />
         <div className="hero-overlay" />
         <div className="hero-content reveal">
-          <span className="eyebrow eyebrow-center">Rumbaclaat Loyalty Programme</span>
-          <h1>The Inner Circle<br /><em className="gold">of Rum.</em></h1>
+          <span className="eyebrow eyebrow-center">Rumbaclaat Membership</span>
+          <h1>Welcome to<br /><em className="gold">RPM.</em></h1>
           <p className="hero-lede">Four tiers. Exclusive drops. Member-only pricing. Points that multiply with every purchase. Join free or unlock premium access from £9.99/month.</p>
           <div className="d-flex gap-3 justify-content-center flex-wrap mt-4">
             <Link href="#plans" className="btn btn-gold btn-lg">✦ View All Plans</Link>

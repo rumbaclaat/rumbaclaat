@@ -120,7 +120,7 @@ export const BLOCKS: Record<string, BlockDef> = {
       { key: "ctaLabel", label: "CTA label", type: "text" },
       { key: "ctaUrl", label: "CTA URL", type: "url" },
     ],
-    defaults: { heading: "Join the Inner Circle", ctaLabel: "Join free", ctaUrl: "/join" },
+    defaults: { heading: "Join RPM", ctaLabel: "Join free", ctaUrl: "/join" },
   },
   newsletter: {
     label: "Newsletter signup",
@@ -136,7 +136,7 @@ export const BLOCKS: Record<string, BlockDef> = {
     label: "Membership tiers (from DB)",
     description: "Renders the live membership tiers.",
     fields: [{ key: "heading", label: "Heading", type: "text" }],
-    defaults: { heading: "The Inner Circle of Rum" },
+    defaults: { heading: "RPM" },
     dataDriven: true,
   },
   featured_products: {

@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { label: "Shop", href: "/shop" },
   { label: "Cocktails", href: "/cocktails" },
   { label: "Blog", href: "/blog" },
-  { label: "Membership", href: "/membership" },
+  { label: "RPM", href: "/membership" },
   { label: "Trade", href: "/trade" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },

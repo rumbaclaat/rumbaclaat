@@ -145,7 +145,7 @@ export default async function ShopPage({
           <div className="card-brand card-brand--feature reveal d-flex align-items-center justify-content-between flex-wrap gap-3" style={{ marginTop: "clamp(32px, 4vw, 56px)" }}>
             <div>
               <p style={{ fontFamily: "var(--serif)", fontSize: "1.25rem", fontWeight: 600, color: "var(--gold-hi)", marginBottom: 4 }}>Members save up to 20% on every order</p>
-              <p style={{ fontSize: ".9rem", color: "var(--text-muted)", margin: 0 }}>Join the loyalty programme — free Bronze tier with instant discounts.</p>
+              <p style={{ fontSize: ".9rem", color: "var(--text-muted)", margin: 0 }}>Join RPM — free Bronze tier with instant discounts.</p>
             </div>
             <Link href="/join" className="btn btn-gold btn-lg">Join Free →</Link>
           </div>

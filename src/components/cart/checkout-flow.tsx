@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "@/components/cart/cart-provider";
-import { createOrder } from "@/app/(site)/checkout/actions";
+import { createOrder, createPaypalOrder, capturePaypalOrder, type OrderInput } from "@/app/(site)/checkout/actions";
+
+const PP_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? "";
 
 type Settings = {
   freeShippingThreshold: number;
@@ -11,18 +14,74 @@ type Settings = {
   shippingExpressCost: number;
 };
 
+/** Saved details for a signed-in member, used to pre-fill the delivery form. */
+export type CheckoutPrefill = {
+  fname?: string; lname?: string; email?: string; phone?: string;
+  addr1?: string; addr2?: string; city?: string; postcode?: string; country?: string;
+};
+
 const STEP_LABELS = ["Delivery", "Payment", "Confirm", "Complete"];
 
-export default function CheckoutFlow({ settings }: { settings: Settings }) {
+// --- Payment-method brand marks (decorative; the text label carries the a11y name) ---
+function Chip({ children }: { children: React.ReactNode }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff", borderRadius: 4, padding: "2px 5px", height: 22 }}>
+      {children}
+    </span>
+  );
+}
+const brandFont = "Arial, Helvetica, sans-serif";
+function VisaMark() {
+  return <Chip><span style={{ fontFamily: brandFont, fontWeight: 800, fontStyle: "italic", fontSize: ".72rem", color: "#1A1F71", letterSpacing: "-.02em", lineHeight: 1 }}>VISA</span></Chip>;
+}
+function MastercardMark() {
+  return (
+    <Chip>
+      <svg width="24" height="15" viewBox="0 0 38 24" aria-hidden="true" focusable="false">
+        <circle cx="15" cy="12" r="11" fill="#EB001B" />
+        <circle cx="23" cy="12" r="11" fill="#F79E1B" />
+        <path d="M19 3.5a11 11 0 000 17 11 11 0 000-17z" fill="#FF5F00" />
+      </svg>
+    </Chip>
+  );
+}
+function PayPalMark() {
+  return <Chip><span style={{ fontFamily: brandFont, fontWeight: 800, fontStyle: "italic", fontSize: ".72rem", lineHeight: 1 }}><span style={{ color: "#003087" }}>Pay</span><span style={{ color: "#009cde" }}>Pal</span></span></Chip>;
+}
+function GooglePayMark() {
+  return (
+    <Chip>
+      <span style={{ fontFamily: brandFont, fontWeight: 600, fontSize: ".72rem", lineHeight: 1 }}>
+        <span style={{ color: "#4285F4" }}>G</span><span style={{ color: "#EA4335" }}>o</span><span style={{ color: "#FBBC04" }}>o</span><span style={{ color: "#4285F4" }}>g</span><span style={{ color: "#34A853" }}>l</span><span style={{ color: "#EA4335" }}>e</span>
+        <span style={{ color: "#5F6368", marginLeft: 3 }}>Pay</span>
+      </span>
+    </Chip>
+  );
+}
+const PAY_METHODS = [
+  { id: "card", label: "Card", logo: <><VisaMark /><MastercardMark /></> },
+  { id: "paypal", label: "PayPal", logo: <PayPalMark /> },
+  { id: "googlepay", label: "Google Pay", logo: <GooglePayMark /> },
+];
+
+export default function CheckoutFlow({ settings, initial }: { settings: Settings; initial?: CheckoutPrefill }) {
   const { items, subtotal, clear } = useCart();
   const [step, setStep] = useState(1);
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<{ ref: string; total: number } | null>(null);
 
+  const isMember = Boolean(initial?.email);
   const [form, setForm] = useState({
-    fname: "", lname: "", email: "", phone: "",
-    addr1: "", addr2: "", city: "", postcode: "", country: "United Kingdom",
+    fname: initial?.fname ?? "",
+    lname: initial?.lname ?? "",
+    email: initial?.email ?? "",
+    phone: initial?.phone ?? "",
+    addr1: initial?.addr1 ?? "",
+    addr2: initial?.addr2 ?? "",
+    city: initial?.city ?? "",
+    postcode: initial?.postcode ?? "",
+    country: initial?.country || "United Kingdom",
   });
   const [delivery, setDelivery] = useState<"standard" | "express">("standard");
   const [payment, setPayment] = useState("card");
@@ -49,18 +108,20 @@ export default function CheckoutFlow({ settings }: { settings: Settings }) {
     go(2);
   }
 
+  const buildInput = (): OrderInput => ({
+    items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, qty: i.qty })),
+    email: form.email,
+    name: `${form.fname} ${form.lname}`.trim(),
+    phone: form.phone || undefined,
+    address: { line1: form.addr1, line2: form.addr2 || undefined, city: form.city, postcode: form.postcode, country: form.country },
+    deliveryMethod: delivery,
+    paymentMethod: payment,
+  });
+
   async function placeOrder() {
     setPlacing(true); setError("");
     try {
-      const res = await createOrder({
-        items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, qty: i.qty })),
-        email: form.email,
-        name: `${form.fname} ${form.lname}`.trim(),
-        phone: form.phone || undefined,
-        address: { line1: form.addr1, line2: form.addr2 || undefined, city: form.city, postcode: form.postcode, country: form.country },
-        deliveryMethod: delivery,
-        paymentMethod: payment,
-      });
+      const res = await createOrder(buildInput());
       setResult(res);
       clear();
       go(4);
@@ -109,6 +170,11 @@ export default function CheckoutFlow({ settings }: { settings: Settings }) {
           {step === 1 && (
             <div className="card-brand">
               <h2 className="h3 mb-4">Delivery Details</h2>
+              {isMember && (
+                <p style={{ fontSize: ".8125rem", color: "var(--gold-hi)", background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: 8, padding: "8px 12px", marginBottom: 18 }}>
+                  ✓ Signed in{form.email ? ` as ${form.email}` : ""} — we’ve pre-filled your saved details. Edit anything below before continuing.
+                </p>
+              )}
               <form onSubmit={submitDelivery} noValidate>
                 <div className="row g-3">
                   <div className="col-sm-6"><label className="form-label">First name *</label><input className="form-control" value={form.fname} onChange={set("fname")} autoComplete="given-name" /></div>
@@ -140,10 +206,13 @@ export default function CheckoutFlow({ settings }: { settings: Settings }) {
             <div className="card-brand">
               <h2 className="h3 mb-4">Payment</h2>
               <div className="row g-2 mb-3" role="radiogroup" aria-label="Payment method">
-                {["card", "paypal", "googlepay"].map((m) => (
-                  <div className="col-4" key={m}>
-                    <input type="radio" className="btn-check" name="paymethod" id={`pm-${m}`} checked={payment === m} onChange={() => setPayment(m)} />
-                    <label className="btn btn-outline-gold w-100" htmlFor={`pm-${m}`}>{m === "card" ? "Card" : m === "paypal" ? "PayPal" : "Google Pay"}</label>
+                {PAY_METHODS.map((m) => (
+                  <div className="col-4" key={m.id}>
+                    <input type="radio" className="btn-check" name="paymethod" id={`pm-${m.id}`} checked={payment === m.id} onChange={() => setPayment(m.id)} />
+                    <label className="btn btn-outline-gold w-100 d-flex flex-column align-items-center justify-content-center gap-2 py-3" htmlFor={`pm-${m.id}`} style={{ minHeight: 72 }}>
+                      <span className="d-flex align-items-center gap-1" aria-hidden="true">{m.logo}</span>
+                      <span style={{ fontSize: ".75rem", fontWeight: 600 }}>{m.label}</span>
+                    </label>
                   </div>
                 ))}
               </div>
@@ -157,7 +226,7 @@ export default function CheckoutFlow({ settings }: { settings: Settings }) {
                   </div>
                 </div>
               )}
-              <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "16px 0" }}>🔒 256-bit SSL · No card data stored · Payments are simulated in this build (Stripe drops in here).</p>
+              <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "16px 0" }}>🔒 No card data stored. Card &amp; Google Pay are simulated in this build — choose <strong style={{ color: "var(--gold-hi)" }}>PayPal</strong> for a live (sandbox) payment.</p>
               <button type="button" className="btn btn-gold w-100" onClick={() => go(3)}>Review order →</button>
               <button type="button" className="btn btn-outline-gold mt-3" onClick={() => go(1)}>← Back to Delivery</button>
             </div>
@@ -176,7 +245,37 @@ export default function CheckoutFlow({ settings }: { settings: Settings }) {
                 <span>Total charged</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(total)}</span>
               </div>
               <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "8px 0 24px" }}>By placing this order you confirm you are 18 or over and agree to our <Link href="/terms">Terms</Link>. Age is verified on delivery.</p>
-              <button type="button" className="btn btn-gold btn-lg w-100" onClick={placeOrder} disabled={placing}>{placing ? "Placing order…" : "Place Order"}</button>
+              {payment === "paypal" ? (
+                PP_CLIENT_ID ? (
+                  <PayPalScriptProvider options={{ clientId: PP_CLIENT_ID, currency: "GBP", intent: "capture" }}>
+                    <PayPalButtons
+                      style={{ layout: "vertical", color: "gold", shape: "pill", label: "paypal" }}
+                      disabled={placing}
+                      createOrder={async () => {
+                        setError("");
+                        const r = await createPaypalOrder(buildInput());
+                        return r.id;
+                      }}
+                      onApprove={async (data) => {
+                        setPlacing(true);
+                        try {
+                          const res = await capturePaypalOrder(String(data.orderID), buildInput());
+                          setResult(res); clear(); go(4);
+                        } catch (e) {
+                          setError(e instanceof Error ? e.message : "Payment could not be completed.");
+                        } finally {
+                          setPlacing(false);
+                        }
+                      }}
+                      onError={() => setError("PayPal could not process the payment. Please try again.")}
+                    />
+                  </PayPalScriptProvider>
+                ) : (
+                  <p style={{ color: "var(--yellow)", fontSize: ".85rem" }}>PayPal isn’t configured yet — choose another payment method.</p>
+                )
+              ) : (
+                <button type="button" className="btn btn-gold btn-lg w-100" onClick={placeOrder} disabled={placing}>{placing ? "Placing order…" : "Place Order"}</button>
+              )}
               <button type="button" className="btn btn-outline-gold mt-3" onClick={() => go(2)}>← Back to Payment</button>
             </div>
           )}

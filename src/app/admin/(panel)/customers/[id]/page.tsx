@@ -169,7 +169,7 @@ export default async function CustomerDetail({ params }: { params: Promise<{ id:
             ),
           },
           {
-            id: "membership", label: "Membership",
+            id: "membership", label: "RPM",
             content: (
               <AdminCard title="Subscription">
                 {subscription ? (

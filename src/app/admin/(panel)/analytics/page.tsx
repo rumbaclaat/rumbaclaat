@@ -186,7 +186,7 @@ export default async function AnalyticsPage({
           </AdminCard>
         </div>
         <div className="col-12 col-lg-5">
-          <AdminCard title="Membership tiers" className="admin-card--chart">
+          <AdminCard title="RPM tiers" className="admin-card--chart">
             {tierSegments.length ? <Donut segments={tierSegments} centerValue={totalCustomers} centerLabel="customers" /> : <p className="td-muted">No data.</p>}
           </AdminCard>
         </div>

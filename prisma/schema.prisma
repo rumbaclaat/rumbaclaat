@@ -472,6 +472,7 @@ model Order {
   deliveryMethod  String?
   paymentMethod   String?
   paymentStatus   String      @default("simulated") // simulated|paid|pending|refunded
+  paymentRef      String?     @unique // gateway order/capture id (PayPal) — idempotency key
   stripePaymentIntentId String?
   shippingAddress Json?
   internalNotes   String?

@@ -16,8 +16,8 @@ export default async function MembershipPage() {
   return (
     <>
       <PageHeader
-        title="Membership tiers"
-        breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Membership tiers" }]}
+        title="RPM tiers"
+        breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "RPM tiers" }]}
         action={<Link href="/admin/membership/new" className="btn btn-gold btn-sm"><i className="bi bi-plus-lg me-1" />New tier</Link>}
       />
       <EntityGrid

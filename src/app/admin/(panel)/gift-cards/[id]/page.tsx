@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { formatMoney } from "@/lib/money";
 import PageHeader from "@/components/admin/ui/page-header";
-import AdminCard from "@/components/admin/ui/admin-card";
+import FormSection from "@/components/admin/ui/form-section";
 import StatusBadge from "@/components/admin/ui/status-badge";
+import { Field } from "@/components/admin/ui/field";
 import { adjustGiftCard, setGiftCardStatus } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -15,9 +16,9 @@ export default async function GiftCardDetail({ params }: { params: Promise<{ id:
   return (
     <>
       <PageHeader title={card.code} subtitle={`Balance ${formatMoney(Number(card.balance))}`} breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Gift cards", href: "/admin/gift-cards" }, { label: card.code }]} />
-      <div className="row g-4">
-        <div className="col-12 col-lg-7">
-          <AdminCard title="Transactions">
+      <div className="admin-product-grid">
+        <div className="admin-product-main">
+          <FormSection title="Transactions" grid={false}>
             <div className="table-responsive">
               <table className="admin-table">
                 <thead><tr><th>Date</th><th>Reason</th><th>Change</th></tr></thead>
@@ -28,30 +29,35 @@ export default async function GiftCardDetail({ params }: { params: Promise<{ id:
                 </tbody>
               </table>
             </div>
-          </AdminCard>
+          </FormSection>
         </div>
-        <div className="col-12 col-lg-5">
-          <AdminCard title="Details">
+
+        <div className="admin-product-rail">
+          <FormSection title="Details" grid={false}>
             <p className="mb-1"><span className="td-muted">Status:</span> <StatusBadge status={card.status} /></p>
             <p className="mb-1"><span className="td-muted">Initial:</span> {formatMoney(Number(card.initialAmount))}</p>
             <p className="mb-1"><span className="td-muted">Balance:</span> {formatMoney(Number(card.balance))}</p>
             {card.recipient && <p className="mb-1"><span className="td-muted">Recipient:</span> {card.recipient}</p>}
             {card.sender && <p className="mb-0"><span className="td-muted">Sender:</span> {card.sender}</p>}
-          </AdminCard>
-          <AdminCard title="Adjust balance" className="mt-4">
+          </FormSection>
+
+          <FormSection title="Adjust balance" grid={false}>
             <form action={adjustGiftCard} className="d-flex gap-2 align-items-end">
               <input type="hidden" name="id" value={card.id} />
-              <div className="flex-grow-1"><label className="form-label" htmlFor="delta">Amount (+/−)</label><input id="delta" name="delta" type="number" step="0.01" className="form-control form-control-sm" placeholder="-10" /></div>
-              <button className="btn btn-outline-gold btn-sm">Apply</button>
+              <Field label="Amount (+/−)" htmlFor="delta" col="flex-grow-1">
+                <input id="delta" name="delta" type="number" step="0.01" className="form-control" placeholder="-10" />
+              </Field>
+              <button className="btn btn-outline-gold">Apply</button>
             </form>
-          </AdminCard>
-          <AdminCard title="Status" className="mt-4">
+          </FormSection>
+
+          <FormSection title="Status" grid={false}>
             <form action={setGiftCardStatus} className="d-flex gap-2">
               <input type="hidden" name="id" value={card.id} />
-              <select name="status" defaultValue={card.status} className="form-select form-select-sm"><option value="active">active</option><option value="redeemed">redeemed</option><option value="disabled">disabled</option></select>
-              <button className="btn btn-ghost btn-sm">Set</button>
+              <select name="status" defaultValue={card.status} className="form-select"><option value="active">active</option><option value="redeemed">redeemed</option><option value="disabled">disabled</option></select>
+              <button className="btn btn-ghost">Set</button>
             </form>
-          </AdminCard>
+          </FormSection>
         </div>
       </div>
     </>

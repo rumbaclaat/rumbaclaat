@@ -19,9 +19,9 @@ const GROUPS: { eyebrow: string; heading: string; items: { q: string; a: string 
     eyebrow: "Rewards & tiers",
     heading: "Membership & points",
     items: [
-      { q: "Is Bronze membership really free?", a: "Yes. Bronze gives you 5% off every order, 1× loyalty points, birthday bonus and early newsletter access at no cost." },
+      { q: "Is Bronze membership really free?", a: "Yes. Bronze gives you 5% off every order, 1× RPM points, birthday bonus and early newsletter access at no cost." },
       { q: "Can I cancel my paid membership?", a: "Anytime from your member portal. Cancellation takes effect at the end of your current billing period. New paid memberships have a 14-day money-back guarantee." },
-      { q: "How do loyalty points work?", a: "You earn points on every purchase, multiplied by your tier (1× Bronze, 1.5× Silver, 2× Gold, 3× Black Reserve). Redeem points for credits, products and experiences from the Rewards tab." },
+      { q: "How do RPM points work?", a: "You earn points on every purchase, multiplied by your tier (1× Bronze, 1.5× Silver, 2× Gold, 3× Black Reserve). Redeem points for credits, products and experiences from the Rewards tab." },
       { q: "What happens when I upgrade tiers?", a: "Upgrades are immediate. You start earning at the new rate from your next purchase. Downgrades take effect at the end of your billing period." },
     ],
   },

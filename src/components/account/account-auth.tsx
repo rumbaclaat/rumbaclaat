@@ -44,7 +44,7 @@ export default function AccountAuth({
     <section className="section">
       <div className="container" style={{ maxWidth: 460 }}>
         <div className="text-center mb-4">
-          <span className="eyebrow eyebrow-center">Inner Circle</span>
+          <span className="eyebrow eyebrow-center">RPM</span>
           <h1>My Account</h1>
         </div>
 

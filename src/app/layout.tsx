@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s — Rumbaclaat",
   },
   description:
-    "Premium Caribbean rum, aged in American oak. Shop signature expressions, join the Inner Circle membership, and explore cocktail recipes. 18+ only.",
+    "Premium Caribbean rum, aged in American oak. Shop signature expressions, join RPM, and explore cocktail recipes. 18+ only.",
   metadataBase: new URL("https://rumbaclaat.com"),
 };
 

@@ -186,11 +186,15 @@ em { font-style: italic; }
   padding-top: 10px; padding-bottom: 10px;
 }
 .navbar-brand-rc .nav-link {
-  color: var(--text-muted); font-size: .875rem; letter-spacing: .02em; padding-inline: .85rem;
+  color: var(--text-muted); font-size: .875rem; letter-spacing: .02em;
+  padding: .42rem .9rem; border-radius: 999px; border: 1px solid transparent; transition: background .15s, color .15s;
 }
 .navbar-brand-rc .nav-link:hover,
-.navbar-brand-rc .nav-link:focus,
-.navbar-brand-rc .nav-link.active { color: var(--gold-hi); }
+.navbar-brand-rc .nav-link:focus { color: var(--gold-hi); }
+/* Champagne active-pill nav state */
+.navbar-brand-rc .nav-link.active {
+  color: var(--gold-hi); font-weight: 600; background: var(--gold-lt); border-color: var(--gold-bdr);
+}
 .navbar-brand-rc .navbar-toggler { border-color: var(--gold-bdr); }
 
 .brand-wordmark {

@@ -29,6 +29,7 @@ export default async function NewOrderPage({ searchParams }: { searchParams: Pro
     <>
       <PageHeader
         title={from ? "Reorder" : "Create order"}
+        subtitle={from ? "Start a new order from a copy of an existing one — adjust the customer and line items below." : "Create a manual order — pick or enter the customer, add line items, then review the summary and place it."}
         breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Orders", href: "/admin/orders" }, { label: from ? "Reorder" : "Create order" }]}
       />
       <OrderBuilder

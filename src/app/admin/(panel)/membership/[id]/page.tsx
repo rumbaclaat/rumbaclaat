@@ -12,7 +12,7 @@ export default async function EditTier({ params }: { params: Promise<{ id: strin
   if (!tier) notFound();
   return (
     <>
-      <PageHeader title="Edit tier" breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Membership tiers", href: "/admin/membership" }, { label: tier.name }]} />
+      <PageHeader title="Edit tier" breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "RPM tiers", href: "/admin/membership" }, { label: tier.name }]} />
       <TierForm action={updateTier} tier={tier} submitLabel="Save changes" />
     </>
   );

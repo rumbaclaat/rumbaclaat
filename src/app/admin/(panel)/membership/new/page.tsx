@@ -5,7 +5,7 @@ import { createTier } from "../actions";
 export default function NewTierPage() {
   return (
     <>
-      <PageHeader title="New tier" breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Membership tiers", href: "/admin/membership" }, { label: "New" }]} />
+      <PageHeader title="New tier" breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "RPM tiers", href: "/admin/membership" }, { label: "New" }]} />
       <TierForm action={createTier} submitLabel="Create tier" />
     </>
   );

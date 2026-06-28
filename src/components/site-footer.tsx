@@ -16,7 +16,7 @@ const COLUMNS = [
     links: [
       { label: "Cocktail Recipes", href: "/cocktails" },
       { label: "Blog & Stories", href: "/blog" },
-      { label: "Membership", href: "/join" },
+      { label: "RPM", href: "/join" },
       { label: "Member Portal", href: "/membership" },
       { label: "Newsletter", href: "/newsletter" },
       { label: "Gift Cards", href: "/gift-cards" },
