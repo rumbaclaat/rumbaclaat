@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import CocktailForm from "@/components/admin/cocktail-form";
+import PageHeader from "@/components/admin/ui/page-header";
 import { updateCocktail } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -19,9 +20,11 @@ export default async function EditCocktailPage({
 
   return (
     <>
-      <div className="admin-page-head">
-        <h1>Edit cocktail</h1>
-      </div>
+      <PageHeader
+        title="Edit cocktail"
+        subtitle={cocktail.name}
+        breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Cocktails", href: "/admin/cocktails" }, { label: cocktail.name }]}
+      />
       <CocktailForm action={updateCocktail} cocktail={cocktail} products={products} submitLabel="Save changes" />
     </>
   );

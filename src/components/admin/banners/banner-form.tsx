@@ -32,10 +32,13 @@ export default function BannerForm({
 
         <div className="admin-product-rail">
           <FormSection title="Publish">
-            <SelectField name="type" label="Type" options={["announcement", "promotional", "info", "warning", "success"]} defaultValue={banner?.type ?? "announcement"} col="col-12" />
             <CheckField name="active" label="Active" defaultChecked={banner?.active ?? true} col="col-12" />
             <TextField name="startDate" label="Starts" type="date" defaultValue={dateInput(banner?.startDate)} col="col-12" />
             <TextField name="endDate" label="Ends" type="date" defaultValue={dateInput(banner?.endDate)} col="col-12" />
+          </FormSection>
+
+          <FormSection title="Organisation">
+            <SelectField name="type" label="Type" options={["announcement", "promotional", "info", "warning", "success"]} defaultValue={banner?.type ?? "announcement"} col="col-12" />
           </FormSection>
         </div>
       </div>

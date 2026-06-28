@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import PageHeader from "@/components/admin/ui/page-header";
-import AdminCard from "@/components/admin/ui/admin-card";
+import SectionLabel from "@/components/admin/ui/section-label";
+import FormSection from "@/components/admin/ui/form-section";
+import { TextField, SelectField } from "@/components/admin/ui/field";
 import EntityGrid, { type GridRow } from "@/components/admin/grid/entity-grid";
 import { inviteStaff, deleteStaff } from "./actions";
 
@@ -16,22 +18,35 @@ export default async function StaffPage() {
   }));
   return (
     <>
-      <PageHeader title="Staff & roles" breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Staff" }]} subtitle="Invite managers and control what each can edit." />
+      <PageHeader
+        title="Staff & roles"
+        breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Staff" }]}
+        subtitle="Invite managers and control what each can edit."
+        action={<a href="#invite-staff" className="btn btn-gold btn-sm"><i className="bi bi-person-plus me-1" aria-hidden="true" />New staff</a>}
+      />
       <EntityGrid
         rows={rows}
         columns={[{ field: "name", header: "Name", flex: 1.4 }, { field: "email", header: "Email", flex: 1.6 }, { field: "role", header: "Role", width: 170 }, { field: "status", header: "Status", type: "status", width: 120 }, { field: "lastLogin", header: "Last login", type: "date", width: 150 }]}
         nameField="name" editBase="/admin/staff" deleteAction={deleteStaff}
         resultsLabel="staff" quickFilter="Search staff…" exportName="staff"
       />
-      <AdminCard title="Invite a manager" className="mt-4">
-        <form action={inviteStaff} className="row g-2 align-items-end">
-          <div className="col-md-4"><label className="form-label" htmlFor="ie">Email</label><input id="ie" name="email" type="email" className="form-control form-control-sm" required /></div>
-          <div className="col-md-3"><label className="form-label" htmlFor="in">Name</label><input id="in" name="name" className="form-control form-control-sm" /></div>
-          <div className="col-md-3"><label className="form-label" htmlFor="ir">Role</label><select id="ir" name="role" className="form-select form-select-sm">{ROLES.map((r) => <option key={r} value={r}>{r.replace(/_/g, " ")}</option>)}</select></div>
-          <div className="col-md-2"><button className="btn btn-gold btn-sm w-100">Send invite</button></div>
-        </form>
-        <p className="td-muted mt-2 mb-0" style={{ fontSize: ".78rem" }}>Sends a Supabase email invite when SMTP is configured; otherwise creates a pending account you can link later.</p>
-      </AdminCard>
+      <div id="invite-staff" className="mt-4">
+        <SectionLabel>Invite</SectionLabel>
+        <FormSection
+          title="Invite a manager"
+          description="Sends a Supabase email invite when SMTP is configured; otherwise creates a pending account you can link later."
+          grid={false}
+        >
+          <form action={inviteStaff} className="row g-3 align-items-end">
+            <TextField name="email" label="Email" type="email" required col="col-md-4" />
+            <TextField name="name" label="Name" col="col-md-3" />
+            <SelectField name="role" label="Role" options={ROLES.map((r) => ({ value: r, label: r.replace(/_/g, " ") }))} col="col-md-3" />
+            <div className="col-md-2">
+              <button className="btn btn-outline-gold w-100">Send invite</button>
+            </div>
+          </form>
+        </FormSection>
+      </div>
     </>
   );
 }

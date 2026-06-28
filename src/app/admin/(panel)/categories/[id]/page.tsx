@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import PageHeader from "@/components/admin/ui/page-header";
 import CategoryForm from "@/components/admin/category-form";
 import { updateCategory } from "../actions";
 
@@ -16,9 +17,15 @@ export default async function EditCategoryPage({
 
   return (
     <>
-      <div className="admin-page-head">
-        <h1>Edit category</h1>
-      </div>
+      <PageHeader
+        title="Edit category"
+        subtitle="Update the category details, slug and ordering."
+        breadcrumb={[
+          { label: "Dashboard", href: "/admin" },
+          { label: "Categories", href: "/admin/categories" },
+          { label: category.name },
+        ]}
+      />
       <CategoryForm
         action={updateCategory}
         category={category}

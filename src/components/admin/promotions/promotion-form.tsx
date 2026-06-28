@@ -30,20 +30,21 @@ export default function PromotionForm({
             <TextField name="value" label="Value" type="number" step="0.01" defaultValue={promotion ? Number(promotion.value) : 10} col="col-md-6" hint="% or £ depending on type." />
           </FormSection>
 
-          <FormSection title="Conditions">
-            <SelectField name="appliesTo" label="Applies to" options={[{ value: "all", label: "All products" }, { value: "category", label: "Category" }, { value: "collection", label: "Collection" }, { value: "product", label: "Product" }, { value: "tier", label: "Membership tier" }, { value: "min_spend", label: "Minimum spend" }]} defaultValue={promotion?.appliesTo ?? "all"} col="col-md-4" />
-            <TextField name="targetId" label="Target id" defaultValue={promotion?.targetId ?? ""} col="col-md-4" hint="Category/collection/product/tier id when scoped." />
-            <TextField name="minSpend" label="Minimum spend (£)" type="number" step="0.01" defaultValue={promotion?.minSpend != null ? Number(promotion.minSpend) : ""} col="col-md-4" />
-            <TextField name="usageLimit" label="Total uses limit" type="number" defaultValue={promotion?.usageLimit ?? ""} col="col-md-6" />
-            <TextField name="perCustomerLimit" label="Per-customer limit" type="number" defaultValue={promotion?.perCustomerLimit ?? ""} col="col-md-6" />
-          </FormSection>
         </div>
 
         <div className="admin-product-rail">
-          <FormSection title="Schedule">
+          <FormSection title="Publish">
             <CheckField name="active" label="Active" defaultChecked={promotion?.active ?? true} col="col-12" />
             <TextField name="startDate" label="Starts" type="date" defaultValue={dateInput(promotion?.startDate)} col="col-12" />
             <TextField name="endDate" label="Ends" type="date" defaultValue={dateInput(promotion?.endDate)} col="col-12" />
+          </FormSection>
+
+          <FormSection title="Organisation">
+            <SelectField name="appliesTo" label="Applies to" options={[{ value: "all", label: "All products" }, { value: "category", label: "Category" }, { value: "collection", label: "Collection" }, { value: "product", label: "Product" }, { value: "tier", label: "Membership tier" }, { value: "min_spend", label: "Minimum spend" }]} defaultValue={promotion?.appliesTo ?? "all"} col="col-12" />
+            <TextField name="targetId" label="Target id" defaultValue={promotion?.targetId ?? ""} col="col-12" hint="Category/collection/product/tier id when scoped." />
+            <TextField name="minSpend" label="Minimum spend (£)" type="number" step="0.01" defaultValue={promotion?.minSpend != null ? Number(promotion.minSpend) : ""} col="col-12" />
+            <TextField name="usageLimit" label="Total uses limit" type="number" defaultValue={promotion?.usageLimit ?? ""} col="col-12" />
+            <TextField name="perCustomerLimit" label="Per-customer limit" type="number" defaultValue={promotion?.perCustomerLimit ?? ""} col="col-12" />
           </FormSection>
         </div>
       </div>

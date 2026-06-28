@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function TaxClassesPage() {
   const items = await prisma.taxClass.findMany({ orderBy: { sortOrder: "asc" } });
-  const rows: GridRow[] = items.map((t) => ({ id: t.id, name: t.name, rate: `${Number(t.ratePct)}%`, def: t.isDefault ? "default" : "—" }));
+  const rows: GridRow[] = items.map((t) => ({ id: t.id, name: t.name, rate: `${Number(t.ratePct)}%`, def: t.isDefault ? "default" : "" }));
   return (
     <>
       <PageHeader
@@ -19,7 +19,7 @@ export default async function TaxClassesPage() {
       />
       <EntityGrid
         rows={rows}
-        columns={[{ field: "name", header: "Name", flex: 2 }, { field: "rate", header: "VAT rate", width: 140 }, { field: "def", header: "Default", width: 120 }]}
+        columns={[{ field: "name", header: "Name", flex: 2 }, { field: "rate", header: "VAT rate", width: 140 }, { field: "def", header: "Default", width: 120, type: "status" }]}
         nameField="name" editBase="/admin/tax-classes" deleteAction={deleteTaxClass} reorderAction={reorderTaxClasses}
         resultsLabel="classes" quickFilter="Search tax classes…" exportName="tax-classes"
       />

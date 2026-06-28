@@ -12,7 +12,7 @@ export default async function EditPromotion({ params }: { params: Promise<{ id: 
   if (!promotion) notFound();
   return (
     <>
-      <PageHeader title="Edit promotion" breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Promotions", href: "/admin/promotions" }, { label: promotion.name }]} />
+      <PageHeader title="Edit promotion" subtitle={promotion.code ?? undefined} breadcrumb={[{ label: "Dashboard", href: "/admin" }, { label: "Promotions", href: "/admin/promotions" }, { label: promotion.name }]} />
       <PromotionForm action={updatePromotion} promotion={promotion} submitLabel="Save changes" />
     </>
   );
