@@ -444,12 +444,19 @@ em { font-style: italic; }
 .step-circle.pending { background: var(--bg-card2); border: 1px solid var(--gold-bdr); color: var(--text-dim); }
 .step-label { font-size: .6875rem; margin-top: 5px; white-space: nowrap; }
 .step-connector { width: 48px; height: 1px; background: var(--gold-bdr); margin: 0 4px 20px; }
+@media (max-width: 575.98px) { .step-label { display: none; } }
 .pay-panel { display: none; } .pay-panel.active { display: block; }
 .order-summary-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(198, 167, 94, .06); font-size: .875rem; }
 
 /* cart */
 .cart-item { display: grid; grid-template-columns: 80px 1fr auto; gap: 16px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--gold-bdr); }
 .cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; }
+.cart-line-total { white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 575.98px) {
+  .cart-item { grid-template-columns: 64px 1fr; }
+  .cart-item img { width: 64px; height: 64px; }
+  .cart-line-total { grid-column: 2; text-align: left; }
+}
 
 /* order timeline */
 .order-timeline { position: relative; padding-left: 30px; }
@@ -879,8 +886,8 @@ p a, li:not(.breadcrumb-item):not(.nav-item) a, .rte-content a { text-decoration
 .admin-tabs .nav-link:hover { color: var(--gold-hi); }
 .admin-tabs .nav-link.active { background: var(--gold-lt); color: var(--gold-hi); border-color: var(--gold-md); }
 
-/* ---- Order timeline ---- */
-.order-timeline { list-style: none; margin: 0; padding: 0; }
+/* ---- Order timeline (admin: <ul> variant — scoped so it doesn't override the storefront <div.order-timeline>) ---- */
+ul.order-timeline { list-style: none; margin: 0; padding: 0; }
 .order-timeline li { position: relative; padding: 0 0 16px 24px; }
 .order-timeline li:last-child { padding-bottom: 0; }
 .order-timeline li::before {

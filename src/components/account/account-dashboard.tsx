@@ -67,7 +67,8 @@ export type AccountDashboardProps = {
 const TABS = [
   { id: "overview", label: "Overview" },
   { id: "orders", label: "Orders" },
-  { id: "tiers", label: "Membership" },
+  { id: "tiers", label: "Tiers" },
+  { id: "manage", label: "Manage Tier" },
   { id: "earn", label: "Earn Points" },
   { id: "rewards", label: "Rewards" },
   { id: "refer", label: "Refer & Earn" },
@@ -87,16 +88,34 @@ const TIER_STYLE: Record<string, { color: string; grad?: string; border: string 
   gold: { color: "var(--gold-hi)", border: "var(--gold)" },
   black: { color: "var(--gold-hi)", grad: "linear-gradient(135deg,#0A0A0A,#161208)", border: "rgba(198,167,94,.35)" },
 };
+// Points thresholds keyed to each tier's RPM identity (presentation label only —
+// the tier model carries no threshold field; live tier data still drives everything else).
+const TIER_THRESHOLD: Record<string, number> = {
+  bronze: 0,
+  silver: 1000,
+  gold: 2500,
+  black: 5000,
+};
 
-const notifItem: React.CSSProperties = {
-  padding: "10px 0",
-  borderBottom: "1px solid var(--gold-bdr)",
+// .notif-item is defined only in the static source's page <style>, not theme.css,
+// so reproduce its look with an inline style object.
+const notifCard: React.CSSProperties = {
+  background: "var(--bg-card2)",
+  border: "1px solid var(--gold-bdr)",
+  borderRadius: "var(--radius)",
+  padding: "12px 16px",
+  marginBottom: 10,
+};
+const notifCardUnread: React.CSSProperties = {
+  ...notifCard,
+  borderColor: "rgba(198,167,94,.3)",
 };
 
 export default function AccountDashboard(props: AccountDashboardProps) {
   const { customer, tier, tiers, orders, rewards, ledger, addresses, flash, actions } = props;
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("overview");
-  const [cycle, setCycle] = useState<"monthly" | "annual">("monthly");
+  // Subscriptions default to monthly billing; the Manage Tier flow applies the chosen tier.
+  const [cycle] = useState<"monthly" | "annual">("monthly");
   const [editAddr, setEditAddr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -113,6 +132,18 @@ export default function AccountDashboard(props: AccountDashboardProps) {
   const progressPct = nextReward
     ? Math.min(100, Math.round((customer.pointsBalance / nextReward.pointsCost) * 100))
     : 100;
+
+  // Tiers ordered by points threshold so we can find the member's "next tier up".
+  const orderedTiers = [...tiers].sort(
+    (a, b) => TIER_THRESHOLD[tierKey(a)] - TIER_THRESHOLD[tierKey(b)],
+  );
+  const currentIdx = props.currentTierId
+    ? orderedTiers.findIndex((t) => t.id === props.currentTierId)
+    : 0;
+  const nextTier = currentIdx >= 0 ? orderedTiers[currentIdx + 1] : orderedTiers[1];
+  const pointsToNext = nextTier
+    ? Math.max(0, TIER_THRESHOLD[tierKey(nextTier)] - customer.pointsBalance)
+    : 0;
 
   function copyLink() {
     if (!refLink) return;
@@ -167,7 +198,11 @@ export default function AccountDashboard(props: AccountDashboardProps) {
           <Stat label="Loyalty points" value={customer.pointsBalance.toLocaleString()} sub="Ready to redeem" />
           <Stat label="Tier discount" value={`${tier?.memberDiscountPct ?? 5}%`} sub="On every order" />
           <Stat label="Lifetime spend" value={`£${customer.lifetimeSpend.toFixed(2)}`} sub="Thank you" />
-          <Stat label="Points rate" value={`${mult}×`} sub={`${tier?.name ?? "Bronze"} multiplier`} />
+          <Stat
+            label="Points to Next Tier"
+            value={nextTier ? pointsToNext.toLocaleString() : "—"}
+            sub={nextTier ? `Reach ${nextTier.name}` : "Top tier reached"}
+          />
         </div>
 
         {/* Progress to next reward */}
@@ -256,13 +291,25 @@ export default function AccountDashboard(props: AccountDashboardProps) {
               </div>
               <div className="col-12 col-lg-4">
                 <div className="card-brand h-100">
-                  <h2 className="h4 mb-3">Recent activity</h2>
+                  <div className="d-flex justify-content-between mb-3">
+                    <h2 className="h4 mb-0">Notifications</h2>
+                    {ledger.length > 0 && (
+                      <span className="badge-brand">{Math.min(ledger.length, 2)} new</span>
+                    )}
+                  </div>
                   {ledger.length === 0 ? (
                     <p style={{ color: "var(--text-dim)", margin: 0, fontSize: ".875rem" }}>No points activity yet.</p>
                   ) : (
-                    ledger.slice(0, 4).map((l) => (
-                      <div key={l.id} style={notifItem}>
-                        <p style={{ fontSize: ".8125rem", fontWeight: 600, color: "var(--text)", marginBottom: 2 }}>
+                    ledger.slice(0, 4).map((l, i) => (
+                      <div key={l.id} style={i < 2 ? notifCardUnread : notifCard}>
+                        <p
+                          style={{
+                            fontSize: ".8125rem",
+                            fontWeight: i < 2 ? 600 : 400,
+                            color: i < 2 ? "var(--text)" : "var(--text-muted)",
+                            marginBottom: 2,
+                          }}
+                        >
                           {l.label}
                         </p>
                         <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: 0 }}>
@@ -321,36 +368,30 @@ export default function AccountDashboard(props: AccountDashboardProps) {
           </div>
         )}
 
-        {/* ---------------- MEMBERSHIP / TIERS ---------------- */}
+        {/* ---------------- TIERS (comparison grid) ---------------- */}
         {tab === "tiers" && (
           <>
-            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-              <div className="card-brand mb-0" style={{ borderColor: "var(--gold-md)", flexGrow: 1 }}>
-                <p className="serif" style={{ fontSize: "1rem", fontWeight: 600, color: "var(--gold-hi)", marginBottom: 4 }}>
-                  ✦ {tier?.name ?? "Bronze"} — your current tier
-                </p>
-                <p style={{ margin: 0, fontSize: ".875rem", color: "var(--text-muted)" }}>
-                  Upgrade or downgrade anytime. Upgrades are immediate; downgrades apply at the end of the billing period.
-                </p>
-              </div>
-              <div className="billing-toggle" role="group" aria-label="Billing cycle" style={{ display: "flex" }}>
-                <button type="button" className={`btn btn-sm ${cycle === "monthly" ? "btn-gold" : "btn-outline-gold"}`} onClick={() => setCycle("monthly")}>
-                  Monthly
-                </button>
-                <button type="button" className={`btn btn-sm ${cycle === "annual" ? "btn-gold" : "btn-outline-gold"}`} onClick={() => setCycle("annual")}>
-                  Annual <span style={{ opacity: 0.8 }}>· 2 months free</span>
-                </button>
-              </div>
+            <div className="card-brand mb-3" style={{ borderColor: "var(--gold-md)" }}>
+              <p className="serif" style={{ fontSize: "1rem", fontWeight: 600, color: "var(--gold-hi)", marginBottom: 6 }}>
+                ✦ {tier?.name ?? "Bronze"} — Your Current Tier
+              </p>
+              <p style={{ margin: 0, color: "var(--text-muted)" }}>
+                {nextTier ? (
+                  <>
+                    You need <strong style={{ color: "var(--text)" }}>{pointsToNext.toLocaleString()} more points</strong> to reach {nextTier.name}.
+                    Keep shopping and referring to advance your tier.
+                  </>
+                ) : (
+                  <>You’ve reached the top tier — enjoy every benefit available.</>
+                )}
+              </p>
             </div>
             <div className="row g-4">
-              {tiers.map((t) => {
+              {orderedTiers.map((t) => {
                 const k = tierKey(t);
                 const st = TIER_STYLE[k];
                 const current = t.id === props.currentTierId;
-                const priceNum = cycle === "annual" ? t.priceAnnual : t.priceMonthly;
-                const priceLabel = t.isFree
-                  ? "Free"
-                  : `£${priceNum.toFixed(2)}/${cycle === "annual" ? "yr" : "mo"}`;
+                const threshold = TIER_THRESHOLD[k];
                 return (
                   <div className="col-6 col-lg-3" key={t.id}>
                     <div
@@ -365,53 +406,146 @@ export default function AccountDashboard(props: AccountDashboardProps) {
                         <div
                           style={{
                             position: "absolute",
-                            top: -10,
+                            top: -12,
                             left: "50%",
                             transform: "translateX(-50%)",
                             background: "var(--gold)",
                             color: "#0E0E0E",
-                            fontSize: ".5875rem",
+                            fontSize: ".625rem",
                             fontWeight: 700,
-                            padding: "3px 10px",
+                            padding: "4px 12px",
                             borderRadius: 999,
                             whiteSpace: "nowrap",
                           }}
                         >
-                          CURRENT
+                          YOUR TIER
                         </div>
                       )}
-                      <div style={{ color: st.color, fontSize: "1.5rem", margin: "8px 0 10px" }}>✦</div>
+                      <div style={{ color: st.color, fontSize: "1.5rem", margin: current ? "8px 0 10px" : "0 0 10px" }}>✦</div>
                       <h3 className="serif" style={{ fontSize: "1.25rem", fontWeight: 700, color: st.color, marginBottom: 4 }}>
                         {t.name}
                       </h3>
-                      <p className="serif" style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: 6 }}>{priceLabel}</p>
-                      <span className="badge-brand my-2 d-inline-flex" style={{ color: st.color, borderColor: st.border }}>
+                      <p style={{ fontSize: ".7rem", color: "var(--text-dim)" }}>{threshold.toLocaleString()}+ pts</p>
+                      <span
+                        className={`badge-brand my-2 d-inline-flex${current ? " badge-gold" : ""}`}
+                        style={current ? undefined : { color: st.color, borderColor: st.border }}
+                      >
                         {t.pointsMultiplier}× points
                       </span>
-                      <ul style={{ fontSize: ".75rem", color: "var(--text-muted)", listStyle: "none", padding: 0, margin: "8px 0 14px" }}>
+                      <ul style={{ fontSize: ".75rem", color: "var(--text-muted)", listStyle: "none", padding: 0, margin: 0 }}>
                         <li className="mb-1">{t.memberDiscountPct}% member discount</li>
                         {t.benefits.slice(0, 4).map((b, i) => (
                           <li className="mb-1" key={i}>{b}</li>
                         ))}
                       </ul>
-                      {current ? (
-                        <span className="badge-brand">Current plan</span>
-                      ) : (
-                        <form action={actions.subscribe}>
-                          <input type="hidden" name="tierId" value={t.id} />
-                          <input type="hidden" name="billingCycle" value={cycle} />
-                          <button type="submit" className="btn btn-outline-gold btn-sm w-100">
-                            {t.isFree ? "Switch to free" : "Choose"}
-                          </button>
-                        </form>
-                      )}
                     </div>
                   </div>
                 );
               })}
             </div>
-            <p style={{ fontSize: ".72rem", color: "var(--text-dim)", marginTop: 16, textAlign: "center" }}>
-              Billing is simulated during the build — choosing a tier applies it instantly. 14-day money-back guarantee.
+          </>
+        )}
+
+        {/* ---------------- MANAGE TIER ---------------- */}
+        {tab === "manage" && (
+          <>
+            <div
+              className="card-brand mb-4 d-flex align-items-center gap-3 flex-wrap"
+              style={{ borderColor: "var(--gold-md)" }}
+            >
+              <div
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  background: "var(--gold-lt)",
+                  border: "1px solid var(--gold-md)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{ color: "var(--gold-hi)", fontSize: "1.5rem" }}>✦</span>
+              </div>
+              <div className="flex-grow-1">
+                <p style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>YOUR CURRENT TIER</p>
+                <h2 className="h3" style={{ color: "var(--gold-hi)" }}>
+                  {tier?.name ?? "Bronze"}
+                  {tier && !tier.isFree ? ` — £${tier.priceMonthly.toFixed(2)}/mo` : tier?.isFree ? " — Free" : ""}
+                </h2>
+                <p style={{ fontSize: ".75rem", margin: 0 }}>
+                  {mult}× points · {customer.pointsBalance.toLocaleString()} pts balance
+                </p>
+              </div>
+            </div>
+            <p style={{ fontSize: ".6875rem", letterSpacing: ".18em", color: "var(--text-muted)", marginBottom: 16 }}>
+              ALL TIERS — UPGRADE OR DOWNGRADE
+            </p>
+            <div className="row g-4">
+              {orderedTiers.map((t) => {
+                const k = tierKey(t);
+                const st = TIER_STYLE[k];
+                const current = t.id === props.currentTierId;
+                const idx = orderedTiers.findIndex((x) => x.id === t.id);
+                const isUp = idx > currentIdx;
+                const priceLabel = t.isFree ? "Free" : `£${t.priceMonthly.toFixed(2)}/mo`;
+                const cardStyle: React.CSSProperties = current
+                  ? { border: "2px solid var(--gold)", position: "relative" }
+                  : { background: st.grad, borderColor: st.border };
+                const body = (
+                  <>
+                    {current && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: -10,
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          background: "var(--gold)",
+                          color: "#0E0E0E",
+                          fontSize: ".5875rem",
+                          fontWeight: 700,
+                          padding: "3px 10px",
+                          borderRadius: 999,
+                        }}
+                      >
+                        CURRENT
+                      </div>
+                    )}
+                    <div className={`d-flex align-items-center justify-content-between mb-2${current ? " mt-2" : ""}`}>
+                      <span className="serif" style={{ color: st.color, fontWeight: 700 }}>{t.name}</span>
+                      <span className="serif" style={{ fontWeight: 700 }}>{priceLabel}</span>
+                    </div>
+                    <p style={{ fontSize: ".75rem", color: "var(--text-muted)", margin: current ? 0 : "0 0 10px" }}>
+                      {t.pointsMultiplier}× points · {t.memberDiscountPct}% discount
+                    </p>
+                    {!current && (
+                      <span style={{ fontSize: ".75rem", color: isUp ? "var(--gold-hi)" : "var(--text-dim)" }}>
+                        {isUp ? "↑ Upgrade →" : "↓ Downgrade"}
+                      </span>
+                    )}
+                  </>
+                );
+                return (
+                  <div className="col-6 col-lg-3" key={t.id}>
+                    {current ? (
+                      <div className="card-brand h-100" style={cardStyle}>{body}</div>
+                    ) : (
+                      <form action={actions.subscribe} className="h-100">
+                        <input type="hidden" name="tierId" value={t.id} />
+                        <input type="hidden" name="billingCycle" value={cycle} />
+                        <button type="submit" className="card-brand w-100 text-start h-100" style={cardStyle}>
+                          {body}
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p style={{ fontSize: ".75rem", color: "var(--text-dim)", textAlign: "center", marginTop: 20 }}>
+              Upgrades are immediate. Downgrades take effect at end of billing period. Cancel anytime.
             </p>
           </>
         )}
@@ -586,6 +720,28 @@ export default function AccountDashboard(props: AccountDashboardProps) {
                   </div>
                   <button type="submit" className="btn btn-gold mt-3">Save details</button>
                 </form>
+              </div>
+            </div>
+
+            <div className="col-12 col-lg-6">
+              <div className="card-brand h-100">
+                <h2 className="h4 mb-3">Notifications</h2>
+                <div className="form-check mb-2">
+                  <input className="form-check-input" type="checkbox" id="n1" defaultChecked />
+                  <label className="form-check-label" htmlFor="n1" style={{ fontSize: ".875rem" }}>New drop announcements</label>
+                </div>
+                <div className="form-check mb-2">
+                  <input className="form-check-input" type="checkbox" id="n2" defaultChecked />
+                  <label className="form-check-label" htmlFor="n2" style={{ fontSize: ".875rem" }}>Points &amp; tier updates</label>
+                </div>
+                <div className="form-check mb-2">
+                  <input className="form-check-input" type="checkbox" id="n3" />
+                  <label className="form-check-label" htmlFor="n3" style={{ fontSize: ".875rem" }}>Marketing emails</label>
+                </div>
+                <div className="form-check">
+                  <input className="form-check-input" type="checkbox" id="n4" defaultChecked />
+                  <label className="form-check-label" htmlFor="n4" style={{ fontSize: ".875rem" }}>Order updates</label>
+                </div>
               </div>
             </div>
 

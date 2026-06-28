@@ -47,9 +47,8 @@ export default async function TradePortalPage() {
     );
   }
 
-  const [orders, invoices, messages, pricingRows] = await Promise.all([
+  const [orders, messages, pricingRows] = await Promise.all([
     prisma.tradeOrder.findMany({ where: { tradeAccountId: account.id }, orderBy: { placedAt: "desc" } }),
-    prisma.invoice.findMany({ where: { tradeAccountId: account.id }, orderBy: { issuedAt: "desc" } }),
     prisma.tradeMessage.findMany({ where: { tradeAccountId: account.id }, orderBy: { createdAt: "desc" } }),
     prisma.tradeProductPricing.findMany({ orderBy: { sortOrder: "asc" } }),
   ]);
@@ -68,6 +67,22 @@ export default async function TradePortalPage() {
   const ytdSpend = orders.reduce((s, o) => s + Number(o.grandTotal), 0);
   const openOrders = orders.filter((o) => o.status === "processing").length;
   const unread = messages.filter((m) => !m.read).length;
+
+  const now = new Date();
+  const ordersThisMonth = orders.filter((o) => {
+    const d = new Date(o.placedAt);
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  }).length;
+  const minPpb = pricingRows.length ? Math.min(...pricingRows.map((r) => Number(r.pricePerBottle))) : 0;
+
+  // Build a concise "Items" summary from each order's line JSON
+  const orderItems = (lines: unknown): string => {
+    if (!Array.isArray(lines)) return "—";
+    const parts = (lines as { name?: string; cases?: number }[])
+      .map((l) => (l?.name ? `${l.name} × ${l.cases ?? 0} cases` : null))
+      .filter(Boolean) as string[];
+    return parts.length ? parts.join(" + ") : "—";
+  };
 
   const tabs = [
     {
@@ -99,9 +114,43 @@ export default async function TradePortalPage() {
                       </tbody>
                     </table>
                   </div>
+                  <p style={{ fontSize: ".8125rem", color: "var(--text-muted)", margin: "12px 22px 18px" }}>VAT 20% incl. · Min. 1 case (6 btl) · 60-day terms</p>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "orders",
+      label: "Orders",
+      content: (
+        <div>
+          {sectionHead("History", "Your orders")}
+          <div className="card-brand p-0" style={{ overflow: "hidden" }}>
+            <div className="table-responsive">
+              <table className="trade-table">
+                <thead><tr><th style={thBase}>Order ID</th><th style={thBase}>Date</th><th style={thBase}>Items</th><th style={thNum}>Total (inc VAT)</th><th style={thBase}>Status</th><th style={thBase}>Delivery</th></tr></thead>
+                <tbody>
+                  {orders.length === 0 && <tr><td colSpan={6} style={{ color: "var(--text-dim)" }}>No orders yet.</td></tr>}
+                  {orders.map((o) => (
+                    <tr key={o.id}>
+                      <td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{o.ref}</td>
+                      <td>{new Date(o.placedAt).toLocaleDateString("en-GB")}</td>
+                      <td style={{ color: "var(--text-muted)" }}>{orderItems(o.lines)}</td>
+                      <td style={{ ...tdNum, fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(o.grandTotal))}</td>
+                      <td>
+                        <span className="badge-brand" style={o.status === "delivered"
+                          ? { color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)", textTransform: "capitalize" }
+                          : { color: "var(--yellow)", background: "rgba(232,182,90,.12)", borderColor: "rgba(232,182,90,.3)", textTransform: "capitalize" }}>{o.status}</span>
+                      </td>
+                      <td style={{ color: "var(--text-muted)" }}>{o.status === "delivered" ? new Date(o.placedAt).toLocaleDateString("en-GB") : "TBC"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       ),
@@ -117,65 +166,6 @@ export default async function TradePortalPage() {
       ),
     },
     {
-      id: "orders",
-      label: "Orders",
-      content: (
-        <div>
-          {sectionHead("History", "Your orders")}
-          <div className="card-brand p-0" style={{ overflow: "hidden" }}>
-            <div className="table-responsive">
-              <table className="trade-table">
-                <thead><tr><th style={thBase}>Order</th><th style={thBase}>Date</th><th style={thNum}>Total (inc VAT)</th><th style={thBase}>Status</th></tr></thead>
-                <tbody>
-                  {orders.length === 0 && <tr><td colSpan={4} style={{ color: "var(--text-dim)" }}>No orders yet.</td></tr>}
-                  {orders.map((o) => (
-                    <tr key={o.id}>
-                      <td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{o.ref}</td>
-                      <td>{new Date(o.placedAt).toLocaleDateString("en-GB")}</td>
-                      <td style={{ ...tdNum, fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(o.grandTotal))}</td>
-                      <td style={{ textTransform: "capitalize" }}>{o.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "invoices",
-      label: "Invoices",
-      content: (
-        <div>
-          {sectionHead("Billing", "Your invoices")}
-          <div className="card-brand p-0" style={{ overflow: "hidden" }}>
-            <div className="table-responsive">
-              <table className="trade-table">
-                <thead><tr><th style={thBase}>Invoice</th><th style={thBase}>Issued</th><th style={thNum}>Amount</th><th style={thBase}>Terms</th><th style={thBase}>Status</th></tr></thead>
-                <tbody>
-                  {invoices.length === 0 && <tr><td colSpan={5} style={{ color: "var(--text-dim)" }}>No invoices yet.</td></tr>}
-                  {invoices.map((iv) => (
-                    <tr key={iv.id}>
-                      <td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{iv.ref}</td>
-                      <td>{new Date(iv.issuedAt).toLocaleDateString("en-GB")}</td>
-                      <td style={{ ...tdNum, fontFamily: "var(--serif)" }}>{money(Number(iv.amount))}</td>
-                      <td>{iv.terms}</td>
-                      <td>
-                        <span className="badge-brand" style={iv.status === "paid"
-                          ? { color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)", textTransform: "capitalize" }
-                          : { color: "var(--yellow)", background: "rgba(232,182,90,.12)", borderColor: "rgba(232,182,90,.3)", textTransform: "capitalize" }}>{iv.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
       id: "messages",
       label: "Messages",
       badge: unread || undefined,
@@ -187,7 +177,12 @@ export default async function TradePortalPage() {
               {messages.length === 0 && <p style={{ color: "var(--text-dim)" }}>No messages yet.</p>}
               {messages.map((m) => (
                 <div className={`msg-item${m.read ? "" : " unread"}`} key={m.id}>
-                  <div className="d-flex justify-content-between mb-1"><span style={{ fontSize: ".875rem", fontWeight: 600, color: "var(--text)" }}>{m.subject ?? "Message"}</span></div>
+                  <div className="d-flex justify-content-between mb-1">
+                    <span style={{ fontSize: ".875rem", fontWeight: 600, color: "var(--text)" }}>{m.subject ?? "Message"}</span>
+                    {!m.read ? (
+                      <span aria-label="Unread" style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "var(--gold)", flex: "0 0 auto", marginTop: 4 }} />
+                    ) : null}
+                  </div>
                   <span className="d-block" style={{ fontSize: ".875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>{m.body}</span>
                   <span className="d-block" style={{ fontSize: ".6875rem", color: "var(--text-dim)", marginTop: 6 }}>{m.direction === "inbound" ? "You" : "Rumbaclaat Trade Team"} · {new Date(m.createdAt).toLocaleDateString("en-GB")}</span>
                 </div>
@@ -252,13 +247,58 @@ export default async function TradePortalPage() {
       content: (
         <div>
           {sectionHead("Your account", "Account summary")}
-          <div className="card-brand" style={{ maxWidth: 480, padding: 24 }}>
-            <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Company</span><span style={{ color: "var(--text)" }}>{account.companyName}</span></div>
-            <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Status</span><span className="badge-brand" style={{ color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)" }}>{account.status}</span></div>
-            <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Pricing tier</span><span className="badge-brand badge-gold">{account.pricingTier}</span></div>
-            <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Payment terms</span><span style={{ color: "var(--text)" }}>{account.paymentTerms}</span></div>
-            <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Credit limit</span><span style={{ fontFamily: "var(--serif)", color: "var(--gold-hi)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.creditLimit))}</span></div>
-            <div className="d-flex justify-content-between py-2"><span style={{ color: "var(--text-muted)" }}>Outstanding balance</span><span style={{ fontFamily: "var(--serif)", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.outstandingBalance))}</span></div>
+          <div className="row g-4">
+            <div className="col-12 col-lg-6">
+              <div className="card-brand h-100" style={{ padding: 24 }}>
+                <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Company details</h3>
+                <form>
+                  <div className="mb-3">
+                    <label className="form-label" htmlFor="ta-company" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Company name</label>
+                    <input id="ta-company" name="companyName" className="form-control" defaultValue={account.companyName} autoComplete="organization" />
+                  </div>
+                  <div className="row g-3">
+                    <div className="col-sm-6">
+                      <label className="form-label" htmlFor="ta-contact" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Contact name</label>
+                      <input id="ta-contact" name="contactName" className="form-control" defaultValue={account.contactName} autoComplete="name" />
+                    </div>
+                    <div className="col-sm-6">
+                      <label className="form-label" htmlFor="ta-email" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Email</label>
+                      <input id="ta-email" name="contactEmail" type="email" className="form-control" defaultValue={account.contactEmail} autoComplete="email" />
+                    </div>
+                  </div>
+                  <div className="mb-3 mt-3">
+                    <label className="form-label" htmlFor="ta-btype" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Business type</label>
+                    <select id="ta-btype" name="businessType" className="form-select" defaultValue={account.businessType ?? "Off-licence / Retailer"}>
+                      <option>Restaurant / Bar</option>
+                      <option>Off-licence / Retailer</option>
+                      <option>Wholesale Distributor</option>
+                      <option>Export / International</option>
+                    </select>
+                  </div>
+                  <div className="row g-3">
+                    <div className="col-sm-6">
+                      <label className="form-label" htmlFor="ta-vat" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>VAT number</label>
+                      <input id="ta-vat" name="vatNumber" className="form-control" defaultValue={account.vatNumber ?? ""} />
+                    </div>
+                    <div className="col-sm-6">
+                      <label className="form-label" htmlFor="ta-terms" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Payment terms</label>
+                      <input id="ta-terms" name="paymentTerms" className="form-control" defaultValue={account.paymentTerms} readOnly style={{ opacity: 0.6 }} />
+                    </div>
+                  </div>
+                  <button type="submit" className="btn btn-gold mt-3">Save changes</button>
+                </form>
+              </div>
+            </div>
+            <div className="col-12 col-lg-6">
+              <div className="card-brand h-100" style={{ padding: 24 }}>
+                <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Account summary</h3>
+                <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Account status</span><span className="badge-brand" style={{ color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)", textTransform: "capitalize" }}>{account.status}</span></div>
+                <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Pricing tier</span><span className="badge-brand badge-gold">{account.pricingTier}</span></div>
+                <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Credit limit</span><span style={{ fontFamily: "var(--serif)", color: "var(--gold-hi)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.creditLimit))}</span></div>
+                <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Outstanding balance</span><span style={{ fontFamily: "var(--serif)", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.outstandingBalance))}</span></div>
+                <div className="d-flex justify-content-between py-2"><span style={{ color: "var(--text-muted)" }}>Account manager</span><span style={{ fontSize: ".875rem" }}><a href={`mailto:${account.accountManager ?? "trade@rumbaclaat.com"}`}>{account.accountManager ?? "trade@rumbaclaat.com"}</a></span></div>
+              </div>
+            </div>
           </div>
         </div>
       ),
@@ -266,10 +306,10 @@ export default async function TradePortalPage() {
   ];
 
   const stats = [
-    { label: "YTD Orders", value: String(orders.length) },
-    { label: "YTD Spend", value: money(ytdSpend) },
-    { label: "Open Orders", value: String(openOrders) },
-    { label: "Outstanding", value: money(Number(account.outstandingBalance)) },
+    { label: "YTD Orders", value: String(orders.length), sub: `+${ordersThisMonth} this month`, subColor: "var(--green)" },
+    { label: "YTD Spend", value: money(ytdSpend), sub: `Across ${orders.length} orders`, subColor: "var(--green)" },
+    { label: "Current Pricing", value: account.pricingTier, sub: minPpb ? `From ${money(minPpb)}/btl` : "Locked rate card", subColor: "var(--green)" },
+    { label: "Open Orders", value: String(openOrders), sub: "Processing", subColor: "var(--yellow)" },
   ];
 
   return (
@@ -280,7 +320,10 @@ export default async function TradePortalPage() {
             <span className="eyebrow">Trade Portal</span>
             <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(2rem, 4.4vw, 3.4rem)", lineHeight: 1.05, margin: 0 }}>Wholesale &amp; Export</h1>
           </div>
-          <span className="badge-brand badge-gold">Signed in · {account.companyName}</span>
+          <div className="d-flex gap-2 align-items-center">
+            <span className="badge-brand badge-gold">Signed in · {account.companyName}</span>
+            <Link href="/trade" className="btn btn-ghost btn-sm">Sign out</Link>
+          </div>
         </div>
 
         <div className="row g-3">
@@ -289,6 +332,7 @@ export default async function TradePortalPage() {
               <div className="card-brand h-100" style={{ padding: 20 }}>
                 <div style={{ fontSize: ".66rem", fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-dim)" }}>{s.label}</div>
                 <div className="serif" style={{ fontSize: "1.9rem", color: "var(--gold-hi)", fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{s.value}</div>
+                <div style={{ fontSize: ".6875rem", color: s.subColor, marginTop: 4 }}>{s.sub}</div>
               </div>
             </div>
           ))}

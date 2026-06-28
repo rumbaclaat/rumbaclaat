@@ -98,37 +98,11 @@ export default async function ProductPage({
           month: "long",
         })
       : null;
-
-  const data: ProductPurchaseData = {
-    kind,
-    productId: product.id,
-    name: product.name,
-    subtitle,
-    description: product.description,
-    eyebrow: (product.category?.name ?? "Rumbaclaat").toUpperCase(),
-    images,
-    price,
-    basePrice,
-    onSale: product.onSale,
-    saleEnds,
-    memberPrice,
-    points: product.basePoints,
-    reviewCount: product.reviewCount,
-    stockQty: product.stockQty,
-    variants: product.variants.map((v) => ({
-      id: v.id,
-      colourName: v.colourName,
-      colourHex: v.colourHex,
-      size: v.size,
-      priceDelta: Number(v.priceDelta),
-      stockQty: v.stockQty,
-      imageUrl: v.imageUrl,
-    })),
-    colours,
-    sizes,
-    specs,
-    tastingNotes: kind === "rum" ? product.tastingNotes : null,
-  };
+  // ISO date for the semantic <time datetime> on the sale-ends label (apparel).
+  const saleEndsIso =
+    product.onSale && product.saleEndDate
+      ? new Date(product.saleEndDate).toISOString().slice(0, 10)
+      : null;
 
   const accordions =
     kind === "rum"
@@ -165,6 +139,39 @@ export default async function ProductPage({
           },
         ];
 
+  const data: ProductPurchaseData = {
+    kind,
+    productId: product.id,
+    name: product.name,
+    subtitle,
+    description: product.description,
+    eyebrow: (product.category?.name ?? "Rumbaclaat").toUpperCase(),
+    images,
+    price,
+    basePrice,
+    onSale: product.onSale,
+    saleEnds,
+    saleEndsIso,
+    memberPrice,
+    points: product.basePoints,
+    reviewCount: product.reviewCount,
+    stockQty: product.stockQty,
+    variants: product.variants.map((v) => ({
+      id: v.id,
+      colourName: v.colourName,
+      colourHex: v.colourHex,
+      size: v.size,
+      priceDelta: Number(v.priceDelta),
+      stockQty: v.stockQty,
+      imageUrl: v.imageUrl,
+    })),
+    colours,
+    sizes,
+    specs,
+    tastingNotes: kind === "rum" ? product.tastingNotes : null,
+    accordions,
+  };
+
   const related = await prisma.product.findMany({
     where: {
       status: "published",
@@ -192,18 +199,6 @@ export default async function ProductPage({
         </nav>
 
         <ProductPurchase {...data} />
-
-        {/* Detail accordions (native details — no JS dependency) */}
-        <div className="mt-4" style={{ maxWidth: 720 }}>
-          {accordions.map((a, i) => (
-            <details className="card-brand mb-2" key={a.t} open={i === 0}>
-              <summary className="serif" style={{ cursor: "pointer", fontWeight: 600, fontSize: "1.1rem" }}>
-                {a.t}
-              </summary>
-              <p style={{ color: "var(--text-muted)", marginTop: 12, marginBottom: 0 }}>{a.b}</p>
-            </details>
-          ))}
-        </div>
 
         {/* Related */}
         {related.length > 0 && (

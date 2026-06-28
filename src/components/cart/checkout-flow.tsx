@@ -70,6 +70,14 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<{ ref: string; total: number } | null>(null);
+  // Snapshot of the order lines/totals taken before the cart is cleared, for the success recap.
+  const [recap, setRecap] = useState<{ lines: { name: string; qty: number; lineTotal: number }[]; subtotal: number; shipping: number; total: number } | null>(null);
+  const snapshotRecap = () => setRecap({
+    lines: items.map((i) => ({ name: i.name, qty: i.qty, lineTotal: i.price * i.qty })),
+    subtotal,
+    shipping,
+    total,
+  });
 
   const isMember = Boolean(initial?.email);
   const [form, setForm] = useState({
@@ -123,6 +131,7 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
     try {
       const res = await createOrder(buildInput());
       setResult(res);
+      snapshotRecap();
       clear();
       go(4);
     } catch (err) {
@@ -224,10 +233,26 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
                     <div className="col-6"><label className="form-label">Expiry</label><input className="form-control" placeholder="MM/YY" /></div>
                     <div className="col-6"><label className="form-label">CVV</label><input className="form-control" type="password" inputMode="numeric" /></div>
                   </div>
+                  <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "16px 0 0" }}>🔒 256-bit SSL · No card data stored · Card &amp; Google Pay are simulated in this build — choose <strong style={{ color: "var(--gold-hi)" }}>PayPal</strong> for a live (sandbox) payment.</p>
                 </div>
               )}
-              <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "16px 0" }}>🔒 No card data stored. Card &amp; Google Pay are simulated in this build — choose <strong style={{ color: "var(--gold-hi)" }}>PayPal</strong> for a live (sandbox) payment.</p>
-              <button type="button" className="btn btn-gold w-100" onClick={() => go(3)}>Review order →</button>
+              {payment === "paypal" && (
+                <div className="text-center" style={{ background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 28 }}>
+                  <h3 className="h4 mb-2">Continue with PayPal</h3>
+                  <p style={{ fontSize: ".875rem", marginBottom: 24 }}>You&apos;ll be redirected to PayPal to authorise payment of <strong style={{ color: "var(--text)" }}>{money(total)}</strong>.</p>
+                  <button type="button" className="btn btn-gold w-100" onClick={() => go(3)}>Continue to PayPal →</button>
+                </div>
+              )}
+              {payment === "googlepay" && (
+                <div className="text-center" style={{ background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 28 }}>
+                  <h3 className="h4 mb-2">Pay with Google Pay</h3>
+                  <p style={{ fontSize: ".875rem", marginBottom: 24 }}>Confirm payment of <strong style={{ color: "var(--text)" }}>{money(total)}</strong> using your saved Google Pay method.</p>
+                  <button type="button" className="btn btn-gold w-100" onClick={() => go(3)}>Pay with Google Pay</button>
+                </div>
+              )}
+              {payment === "card" && (
+                <button type="button" className="btn btn-gold w-100 mt-3" onClick={() => go(3)}>Review order →</button>
+              )}
               <button type="button" className="btn btn-outline-gold mt-3" onClick={() => go(1)}>← Back to Delivery</button>
             </div>
           )}
@@ -237,6 +262,7 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
             <div className="card-brand">
               <h2 className="h3 mb-4">Confirm Your Order</h2>
               <div style={{ background: "var(--bg-card2)", borderRadius: "var(--radius)", padding: 20, marginBottom: 20 }}>
+                <p style={{ fontSize: ".75rem", color: "var(--text-dim)", marginBottom: 10, letterSpacing: ".15em" }}>ITEMS</p>
                 {items.map((i) => (
                   <div className="order-summary-item" key={i.key}><span>{i.name} ×{i.qty}</span><span>{money(i.price * i.qty)}</span></div>
                 ))}
@@ -260,7 +286,7 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
                         setPlacing(true);
                         try {
                           const res = await capturePaypalOrder(String(data.orderID), buildInput());
-                          setResult(res); clear(); go(4);
+                          setResult(res); snapshotRecap(); clear(); go(4);
                         } catch (e) {
                           setError(e instanceof Error ? e.message : "Payment could not be completed.");
                         } finally {
@@ -289,10 +315,25 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
               <p style={{ fontSize: ".6875rem", letterSpacing: ".3em", color: "var(--gold-hi)", marginBottom: 12 }}>PAYMENT SUCCESSFUL · ORDER CONFIRMED</p>
               <h2 className="mb-3" style={{ fontSize: "clamp(1.5rem,3vw,2.25rem)" }}>Thank you for your order</h2>
               <p style={{ maxWidth: 460, margin: "0 auto 8px" }}>Your order <strong className="gold">#{result.ref}</strong> has been placed.</p>
-              <p style={{ maxWidth: 460, margin: "0 auto 28px", fontSize: ".9375rem", color: "var(--text-muted)" }}>We&apos;ve emailed a receipt to <strong style={{ color: "var(--text)" }}>{form.email}</strong>. Someone aged 18+ must sign for the parcel.</p>
-              <div className="d-flex gap-2 justify-content-center flex-wrap">
-                <Link href="/shop" className="btn btn-gold">Continue shopping</Link>
+              <p style={{ maxWidth: 460, margin: "0 auto 28px", fontSize: ".9375rem", color: "var(--text-muted)" }}>We&apos;ve emailed a receipt to <strong style={{ color: "var(--text)" }}>{form.email}</strong>. Standard UK delivery — expect dispatch within 1 working day, then 3–5 working days to arrive. Someone aged 18+ must sign for the parcel.</p>
+
+              {/* Compact order recap */}
+              {recap && recap.lines.length > 0 && (
+                <div className="text-start mx-auto" style={{ maxWidth: 460, background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 20 }}>
+                  <div style={{ fontSize: ".75rem", color: "var(--text-dim)", letterSpacing: ".15em", marginBottom: 10 }}>ORDER SUMMARY</div>
+                  {recap.lines.map((l, idx) => (
+                    <div className="order-summary-item" key={idx}><span>{l.qty} × {l.name}</span><span>{money(l.lineTotal)}</span></div>
+                  ))}
+                  <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Subtotal</span><span>{money(recap.subtotal)}</span></div>
+                  <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Shipping</span><span>{recap.shipping === 0 ? "FREE" : money(recap.shipping)}</span></div>
+                  <div className="order-summary-item" style={{ fontWeight: 600, border: "none", paddingTop: 14 }}><span>Total paid</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(recap.total)}</span></div>
+                </div>
+              )}
+
+              <div className="d-flex gap-2 justify-content-center flex-wrap mt-4">
+                <Link href="/order" className="btn btn-gold">View order details →</Link>
                 <Link href="/" className="btn btn-outline-gold">Back to home</Link>
+                <Link href="/account" className="btn btn-ghost">My account</Link>
               </div>
             </div>
           )}
@@ -306,6 +347,7 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
               {items.map((i) => (
                 <div className="order-summary-item" key={i.key}><span style={{ color: "var(--text-muted)" }}>{i.name} ×{i.qty}</span><span>{money(i.price * i.qty)}</span></div>
               ))}
+              <hr style={{ borderColor: "var(--gold-bdr)" }} />
               <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Subtotal</span><span>{money(subtotal)}</span></div>
               <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Shipping</span><span>{shipping === 0 ? "FREE" : money(shipping)}</span></div>
               <div className="order-summary-item" style={{ fontWeight: 600, border: "none", paddingTop: 14 }}><span>Total</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(total)}</span></div>

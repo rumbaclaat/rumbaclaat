@@ -14,6 +14,7 @@ type Variant = {
 };
 type Colour = { name: string; hex: string | null; image: string | null };
 type Spec = { label: string; value: string };
+type Accordion = { t: string; b: string };
 
 export type ProductPurchaseData = {
   kind: "rum" | "apparel";
@@ -27,6 +28,7 @@ export type ProductPurchaseData = {
   basePrice: number;
   onSale: boolean;
   saleEnds: string | null;
+  saleEndsIso: string | null; // ISO yyyy-mm-dd for the semantic <time datetime>
   memberPrice: number | null; // null when no member discount applies
   points: number;
   reviewCount: number;
@@ -36,6 +38,7 @@ export type ProductPurchaseData = {
   sizes: string[];
   specs: Spec[];
   tastingNotes: string | null;
+  accordions: Accordion[];
 };
 
 import { useCart } from "@/components/cart/cart-provider";
@@ -51,6 +54,8 @@ export default function ProductPurchase(p: ProductPurchaseData) {
   const [mainImg, setMainImg] = useState<string | null>(
     p.colours[0]?.image ?? p.images[0] ?? null
   );
+  const [notifyEmail, setNotifyEmail] = useState("");
+  const [notified, setNotified] = useState(false);
 
   const selVariant =
     p.variants.find(
@@ -63,6 +68,22 @@ export default function ProductPurchase(p: ProductPurchaseData) {
   const inStock = p.stockQty > 0;
   const savePct =
     p.onSale && p.basePrice > 0 ? Math.round((1 - p.price / p.basePrice) * 100) : 0;
+
+  // Try to read structured NOSE / PALATE / FINISH tasting notes out of the
+  // free-text tastingNotes field (e.g. "Nose: …; Palate: …; Finish: …").
+  // When found we render them as three labelled spec cells matching the
+  // static-source rum design; otherwise we fall back to the live spec cells
+  // (ABV / AGE / ORIGIN) plus a labelled tasting paragraph.
+  function parseTasting(notes: string | null): { label: string; value: string }[] {
+    if (!notes) return [];
+    const out: { label: string; value: string }[] = [];
+    for (const label of ["Nose", "Palate", "Finish"] as const) {
+      const m = notes.match(new RegExp(`${label}\\s*[:\\-–—]\\s*([^;|\\n]+)`, "i"));
+      if (m) out.push({ label: label.toUpperCase(), value: m[1].trim().replace(/[.;]+$/, "") });
+    }
+    return out.length === 3 ? out : [];
+  }
+  const tasting = p.kind === "rum" ? parseTasting(p.tastingNotes) : [];
 
   function pickColour(c: Colour) {
     setColour(c.name);
@@ -165,15 +186,24 @@ export default function ProductPurchase(p: ProductPurchaseData) {
               </span>
             </div>
           )}
-          {p.onSale && p.saleEnds && <span className="sale-ends">Sale ends {p.saleEnds}</span>}
+          {p.onSale && p.saleEnds && (
+            <span className="sale-ends">
+              Sale ends{" "}
+              {p.saleEndsIso ? <time dateTime={p.saleEndsIso}>{p.saleEnds}</time> : p.saleEnds}
+            </span>
+          )}
         </div>
 
         {p.description && <p style={{ margin: "14px 0 20px" }}>{p.description}</p>}
 
-        {/* Rum tasting notes / specs */}
-        {p.kind === "rum" && p.specs.length > 0 && (
+        {/* Rum tasting notes / specs.
+            When structured NOSE / PALATE / FINISH notes are available we show the
+            three labelled tasting cells exactly as in the static-source design.
+            Otherwise we keep the live ABV / AGE / ORIGIN spec cells and, where a
+            free-text tasting note exists, also surface a labelled tasting block. */}
+        {p.kind === "rum" && tasting.length === 3 ? (
           <div className="row g-2 mb-4">
-            {p.specs.map((s) => (
+            {tasting.map((s) => (
               <div className="col-4" key={s.label}>
                 <div className="spec-cell">
                   <p
@@ -191,12 +221,36 @@ export default function ProductPurchase(p: ProductPurchaseData) {
               </div>
             ))}
           </div>
-        )}
-        {p.kind === "rum" && p.tastingNotes && (
-          <p style={{ margin: "0 0 20px", color: "var(--text-muted)" }}>
-            <strong style={{ color: "var(--text)" }}>Tasting notes — </strong>
-            {p.tastingNotes}
-          </p>
+        ) : (
+          <>
+            {p.kind === "rum" && p.specs.length > 0 && (
+              <div className="row g-2 mb-4">
+                {p.specs.map((s) => (
+                  <div className="col-4" key={s.label}>
+                    <div className="spec-cell">
+                      <p
+                        style={{
+                          fontSize: ".625rem",
+                          color: "var(--text-dim)",
+                          marginBottom: 4,
+                          letterSpacing: ".1em",
+                        }}
+                      >
+                        {s.label}
+                      </p>
+                      <p style={{ fontSize: ".8rem", color: "var(--text)", margin: 0 }}>{s.value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {p.kind === "rum" && p.tastingNotes && (
+              <p style={{ margin: "0 0 20px", color: "var(--text-muted)" }}>
+                <strong style={{ color: "var(--text)" }}>Tasting notes — </strong>
+                {p.tastingNotes}
+              </p>
+            )}
+          </>
         )}
 
         {/* Apparel: colour + size */}
@@ -246,6 +300,13 @@ export default function ProductPurchase(p: ProductPurchaseData) {
               ))}
             </div>
           </fieldset>
+        )}
+        {p.kind === "apparel" && p.sizes.length > 0 && (
+          <p style={{ fontSize: ".75rem" }}>
+            <a href="#size-guide" style={{ color: "var(--gold-hi)" }}>
+              View size guide
+            </a>
+          </p>
         )}
 
         {/* Quantity + add */}
@@ -309,6 +370,100 @@ export default function ProductPurchase(p: ProductPurchaseData) {
             ? "Free UK shipping over £50 · 18+ only, age verified on delivery."
             : "Free UK shipping over £50 · Free 30-day returns."}
         </p>
+
+        {/* Rum: stock-notify — "email me when back in stock".
+            Faithfully reproduced from static-source/product-rum.html (the widget
+            stands in for the out-of-stock state); shown only when genuinely out
+            of stock. Presentational anon email form. */}
+        {p.kind === "rum" && !inStock && (
+          <details
+            className="mt-3 stock-notify"
+            style={{
+              background: "var(--bg-card2)",
+              border: "1px solid var(--gold-bdr)",
+              borderRadius: "var(--radius)",
+              padding: 0,
+            }}
+          >
+            <summary
+              style={{
+                cursor: "pointer",
+                padding: "12px 14px",
+                fontSize: ".875rem",
+                color: "var(--text-muted)",
+                listStyle: "none",
+              }}
+            >
+              <span style={{ color: "var(--red)", fontWeight: 600 }}>●</span>{" "}
+              <span style={{ color: "var(--text)" }}>Out of stock —</span>{" "}
+              <span style={{ color: "var(--text-muted)" }}>email me when back in stock</span>
+            </summary>
+            <div style={{ padding: "0 14px 16px" }}>
+              {notified ? (
+                <div style={{ fontSize: ".875rem", color: "var(--green)", marginTop: 8 }}>
+                  ✓ You&apos;re on the list. We&apos;ll email you when {p.name} is back in stock.
+                </div>
+              ) : (
+                <form
+                  className="stock-notify-anon"
+                  noValidate
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setNotified(true);
+                  }}
+                >
+                  <div className="d-flex gap-2 mt-2">
+                    <label className="visually-hidden" htmlFor="notify-email">
+                      Your email
+                    </label>
+                    <input
+                      className="form-control form-control-sm"
+                      type="email"
+                      id="notify-email"
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      value={notifyEmail}
+                      onChange={(e) => setNotifyEmail(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="btn btn-gold btn-sm"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      Notify me
+                    </button>
+                  </div>
+                  <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "8px 0 0" }}>
+                    One-off email about this product. No marketing list.
+                  </p>
+                </form>
+              )}
+            </div>
+          </details>
+        )}
+
+        {/* Details accordion — sits inside the info column, directly under the
+            buy box (reproduced from static-source). Native <details> so it works
+            without Bootstrap's collapse JS. */}
+        <div className="accordion mt-4">
+          {p.accordions.map((a, i) => (
+            <details className="accordion-item" key={a.t} open={i === 0}>
+              <summary
+                className="accordion-button"
+                style={{
+                  cursor: "pointer",
+                  listStyle: "none",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {a.t}
+              </summary>
+              <div className="accordion-body">{a.b}</div>
+            </details>
+          ))}
+        </div>
       </div>
     </div>
   );
