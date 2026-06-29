@@ -200,7 +200,7 @@ export default function AccountDashboard(props: AccountDashboardProps) {
                 fontWeight: 600,
               }}
             >
-              RPM
+              Inner Circle
             </span>
             <h1
               style={{

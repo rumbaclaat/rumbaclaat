@@ -23,7 +23,7 @@ export type BlogCardData = {
 export default function BlogCategoryTabs({ posts }: { posts: BlogCardData[] }) {
   // Fixed source order; "Membership" is rendered as the RPM equivalent.
   const ORDER = ["Heritage", "Craft", "Cocktails", "Membership"];
-  const LABELS: Record<string, string> = { Membership: "RPM" };
+  const LABELS: Record<string, string> = {};
 
   const categories = useMemo(() => {
     const present = new Set(posts.map((p) => p.category).filter((c): c is string => !!c));

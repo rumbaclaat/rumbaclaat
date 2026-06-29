@@ -102,7 +102,7 @@ export default function AccountAuth({
                 fontWeight: 600,
               }}
             >
-              RPM Members
+              Inner Circle
             </span>
             <h1
               style={{

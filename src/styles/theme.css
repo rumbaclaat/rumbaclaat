@@ -1237,6 +1237,17 @@ a.admin-choice:hover { border-color: var(--gold-md); transform: translateY(-2px)
 /* Intro / lede paragraph (about, trade, blog, contact, cocktails, shop, …) */
 .lede { color: var(--text-muted); font-size: 1.0625rem; line-height: 1.7; }
 
+/* Chrome — header / ticker / footer (Storefront Redesign.dc.html) */
+@keyframes sfTicker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { [style*="sfTicker"] { animation: none !important; } }
+@media (max-width: 900px) {
+  .sf-nav { display: none !important; }
+  .sf-burger { display: inline-flex !important; }
+}
+@media (max-width: 540px) { .sf-join { display: none !important; } }
+@media (max-width: 760px) { .sf-footer-grid { grid-template-columns: 1fr 1fr !important; } }
+@media (max-width: 440px) { .sf-footer-grid { grid-template-columns: 1fr !important; } }
+
 /* Shop redesign (Storefront Redesign.dc.html) responsive grids */
 @media (max-width: 980px) {
   .shop-collection-grid { grid-template-columns: 1fr !important; }

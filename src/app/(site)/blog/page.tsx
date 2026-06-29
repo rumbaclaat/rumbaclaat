@@ -9,7 +9,7 @@ export const metadata = {
   description: "Stories, craft and cocktail culture from Rumbaclaat.",
 };
 
-const CAT_LABELS: Record<string, string> = { Membership: "RPM" };
+const CAT_LABELS: Record<string, string> = {};
 const catLabel = (c: string | null | undefined) => (c ? CAT_LABELS[c] ?? c : "");
 
 function formatDate(d: Date | null | undefined) {

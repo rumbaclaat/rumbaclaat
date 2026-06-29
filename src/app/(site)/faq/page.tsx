@@ -104,7 +104,7 @@ const GROUPS: Group[] = [
     items: [
       {
         q: "Is Bronze membership really free?",
-        a: "Yes. Bronze gives you 5% off every order, 1× RPM points, birthday bonus and early newsletter access at no cost.",
+        a: "Yes. Bronze gives you 5% off every order, 1× loyalty points, birthday bonus and early newsletter access at no cost.",
       },
       {
         q: "Can I cancel my paid membership?",
@@ -116,8 +116,8 @@ const GROUPS: Group[] = [
         ),
       },
       {
-        q: "How do RPM points work?",
-        a: "You earn RPM points on every purchase, multiplied by your tier (1× Bronze, 1.5× Silver, 2× Gold, 3× Black Reserve). Redeem points for credits, products and experiences from the Rewards tab.",
+        q: "How do loyalty points work?",
+        a: "You earn loyalty points on every purchase, multiplied by your tier (1× Bronze, 1.5× Silver, 2× Gold, 3× Black Reserve). Redeem points for credits, products and experiences from the Rewards tab.",
       },
       {
         q: "What happens when I upgrade tiers?",

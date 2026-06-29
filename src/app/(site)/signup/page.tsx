@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Join Membership — Rumbaclaat",
   description:
-    "Sign up for Rumbaclaat membership. Choose your tier, create your account, and join RPM. 18+ only.",
+    "Sign up for Rumbaclaat membership. Choose your tier, create your account, and join the Inner Circle. 18+ only.",
   robots: "noindex,nofollow",
 };
 

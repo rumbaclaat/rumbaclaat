@@ -209,7 +209,7 @@ export default async function BlockRenderer({ block }: { block: ContentBlock }) 
           <div className="container">
             {s(d, "heading") && (
               <div className="text-center mb-5">
-                <span className="eyebrow">RPM</span>
+                <span className="eyebrow">Loyalty Programme</span>
                 <h2>{s(d, "heading")}</h2>
               </div>
             )}

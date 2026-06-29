@@ -141,7 +141,7 @@ export default function HeroCarousel() {
                 textDecoration: "none",
               }}
             >
-              Join RPM
+              Join the Inner Circle
             </Link>
           </div>
         </div>

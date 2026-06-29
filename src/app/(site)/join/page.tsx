@@ -4,8 +4,8 @@ import MembershipTiers from "@/components/membership/membership-tiers";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "RPM",
-  description: "Join RPM. Four loyalty tiers from free Bronze to Black Reserve, with member pricing and exclusive drops.",
+  title: "Membership",
+  description: "Join the Inner Circle. Four loyalty tiers from free Bronze to Black Reserve, with member pricing and exclusive drops.",
 };
 
 export default async function JoinPage() {
@@ -14,7 +14,7 @@ export default async function JoinPage() {
       <section style={{ position: "relative", padding: "clamp(56px,8vw,104px) clamp(20px,5vw,40px) clamp(36px,5vw,52px)", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, background: "radial-gradient(90% 80% at 50% 0%, rgba(205,181,130,.13), transparent 60%)", pointerEvents: "none" }} />
         <div style={{ position: "relative", maxWidth: 740, margin: "0 auto", textAlign: "center" }}>
-          <span style={{ fontSize: ".74rem", letterSpacing: ".24em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600 }}>RPM Membership</span>
+          <span style={{ fontSize: ".74rem", letterSpacing: ".24em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600 }}>The Inner Circle</span>
           <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(2.3rem,5.4vw,3.8rem)", lineHeight: 1.04, margin: "14px 0 0" }}>
             Membership, the<br />
             <span style={{ fontStyle: "italic", color: "var(--gold)" }}>Rumbaclaat way</span>

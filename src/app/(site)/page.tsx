@@ -307,7 +307,7 @@ export default async function HomePage() {
         />
         <div style={{ position: "relative", maxWidth: 1160, margin: "0 auto" }}>
           <div style={{ textAlign: "center", maxWidth: 620, margin: "0 auto 48px" }}>
-            <span style={EYEBROW}>RPM Membership</span>
+            <span style={EYEBROW}>Loyalty Programme</span>
             <h2 style={H2}>Members get more</h2>
             <p
               style={{
@@ -332,26 +332,26 @@ export default async function HomePage() {
               name="Bronze"
               price="Free"
               perk1="5% member discount"
-              perk2="1× RPM points"
+              perk2="1× loyalty points"
             />
             <TierCard
               name="Silver"
               price="£9.99/mo"
               perk1="10% member discount"
-              perk2="1.5× RPM points"
+              perk2="1.5× loyalty points"
             />
             <TierCard
               name="Gold"
               price="£24.99/mo"
               perk1="15% member discount"
-              perk2="2× RPM points"
+              perk2="2× loyalty points"
               featured
             />
             <TierCard
               name="Black Reserve"
               price="£54.99/mo"
               perk1="20% member discount"
-              perk2="3× RPM points"
+              perk2="3× loyalty points"
             />
           </div>
           <div style={{ textAlign: "center", marginTop: 40 }}>

@@ -1,4 +1,5 @@
 import SiteHeader from "@/components/site-header";
+import AnnouncementTicker from "@/components/announcement-ticker";
 import SiteFooter from "@/components/site-footer";
 import AgeGate from "@/components/age-gate";
 import CookieBanner from "@/components/cookie-banner";
@@ -13,7 +14,8 @@ export default function SiteLayout({
         Skip to main content
       </a>
       <SiteHeader />
-      <main id="main" className="has-fixed-nav">
+      <AnnouncementTicker />
+      <main id="main">
         {children}
       </main>
       <SiteFooter />
