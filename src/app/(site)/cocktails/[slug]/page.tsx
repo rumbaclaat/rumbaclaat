@@ -73,7 +73,7 @@ export default async function CocktailDetail({ params }: { params: Promise<{ slu
         paddingBottom: 36,
       }}
     >
-      <div className="container" style={{ maxWidth: 1080 }}>
+      <div className="container reveal" style={{ maxWidth: 1080 }}>
         <nav aria-label="Breadcrumb">
           <ol className="breadcrumb" style={{ fontSize: ".75rem", marginBottom: 16 }}>
             <li className="breadcrumb-item"><Link href="/">Home</Link></li>

@@ -125,14 +125,6 @@ export default function AccountDashboard(props: AccountDashboardProps) {
     ? `https://rumbaclaat.com/ref/${customer.referralCode}`
     : null;
 
-  // Progress toward the next reward the member can't yet afford.
-  const nextReward = [...rewards]
-    .filter((r) => r.availability === "available" && r.pointsCost > customer.pointsBalance)
-    .sort((a, b) => a.pointsCost - b.pointsCost)[0];
-  const progressPct = nextReward
-    ? Math.min(100, Math.round((customer.pointsBalance / nextReward.pointsCost) * 100))
-    : 100;
-
   // Tiers ordered by points threshold so we can find the member's "next tier up".
   const orderedTiers = [...tiers].sort(
     (a, b) => TIER_THRESHOLD[tierKey(a)] - TIER_THRESHOLD[tierKey(b)],
@@ -144,6 +136,21 @@ export default function AccountDashboard(props: AccountDashboardProps) {
   const pointsToNext = nextTier
     ? Math.max(0, TIER_THRESHOLD[tierKey(nextTier)] - customer.pointsBalance)
     : 0;
+  // Progress bar fills from the current tier's threshold toward the next tier's.
+  const currentThreshold = currentIdx >= 0 ? TIER_THRESHOLD[tierKey(orderedTiers[currentIdx])] : 0;
+  const tierProgressPct = nextTier
+    ? Math.min(
+        100,
+        Math.max(
+          0,
+          Math.round(
+            ((customer.pointsBalance - currentThreshold) /
+              (TIER_THRESHOLD[tierKey(nextTier)] - currentThreshold || 1)) *
+              100,
+          ),
+        ),
+      )
+    : 100;
 
   function copyLink() {
     if (!refLink) return;
@@ -157,23 +164,23 @@ export default function AccountDashboard(props: AccountDashboardProps) {
     <section className="section">
       <div className="container">
         {/* Header */}
-        <header className="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+        <header className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
           <div>
-            <span className="eyebrow" style={{ marginBottom: 6 }}>My Account</span>
-            <h1 style={{ marginBottom: 10 }}>
-              Welcome back,{" "}
+            <span className="eyebrow">LOYALTY PORTAL</span>
+            <h1 style={{ fontSize: "2rem" }}>
+              Welcome,{" "}
               <span className="serif gold" style={{ fontStyle: "italic" }}>
                 {customer.firstName ?? "member"}
               </span>
             </h1>
-            <div className="d-flex gap-2 flex-wrap">
-              <span className="badge-brand badge-gold">✦ {tier?.name ?? "Bronze"}</span>
-              <span className="badge-brand">{customer.pointsBalance.toLocaleString()} pts</span>
-            </div>
           </div>
-          <form action={actions.signOut}>
-            <button type="submit" className="btn btn-ghost btn-sm">Sign out</button>
-          </form>
+          <div className="d-flex gap-2 align-items-center flex-wrap">
+            <span className="badge-brand">⚡ {customer.pointsBalance.toLocaleString()} pts</span>
+            <span className="badge-brand badge-gold">✦ {tier?.name ?? "Bronze"}</span>
+            <form action={actions.signOut}>
+              <button type="submit" className="btn btn-ghost btn-sm">Sign out</button>
+            </form>
+          </div>
         </header>
 
         {flash && (
@@ -195,41 +202,44 @@ export default function AccountDashboard(props: AccountDashboardProps) {
 
         {/* Stat cards */}
         <div className="row g-3 mb-4">
-          <Stat label="Loyalty points" value={customer.pointsBalance.toLocaleString()} sub="Ready to redeem" />
-          <Stat label="Tier discount" value={`${tier?.memberDiscountPct ?? 5}%`} sub="On every order" />
-          <Stat label="Lifetime spend" value={`£${customer.lifetimeSpend.toFixed(2)}`} sub="Thank you" />
+          <Stat
+            label="Total Points"
+            value={customer.pointsBalance.toLocaleString()}
+            sub={`${mult}× multiplier active`}
+          />
+          <Stat label="Tier Discount" value={`${tier?.memberDiscountPct ?? 5}% off`} sub="Applied at checkout" />
           <Stat
             label="Points to Next Tier"
             value={nextTier ? pointsToNext.toLocaleString() : "—"}
             sub={nextTier ? `Reach ${nextTier.name}` : "Top tier reached"}
           />
+          <Stat label="Lifetime Spend" value={`£${customer.lifetimeSpend.toFixed(2)}`} sub="Thank you" />
         </div>
 
-        {/* Progress to next reward */}
-        <div className="card-brand mb-4">
-          <div className="d-flex justify-content-between flex-wrap gap-2" style={{ fontSize: ".8125rem" }}>
-            <span style={{ color: "var(--text-muted)" }}>
-              {nextReward
-                ? `${(nextReward.pointsCost - customer.pointsBalance).toLocaleString()} pts to “${nextReward.name}”`
-                : "You can redeem any reward available."}
+        {/* Progress to next tier */}
+        <div className="mt-3 mb-2">
+          <div
+            className="d-flex justify-content-between"
+            style={{ fontSize: ".75rem", color: "var(--text-muted)", marginBottom: 6 }}
+          >
+            <span>{nextTier ? `Progress to ${nextTier.name}` : "Top tier reached"}</span>
+            <span style={{ color: "var(--gold-hi)" }}>
+              {nextTier ? `${pointsToNext.toLocaleString()} pts to go` : "All benefits unlocked"}
             </span>
-            <span style={{ color: "var(--gold-hi)" }}>{progressPct}%</span>
           </div>
           <div
-            style={{
-              marginTop: 8,
-              height: 8,
-              borderRadius: 999,
-              background: "var(--bg-card2)",
-              border: "1px solid var(--gold-bdr)",
-              overflow: "hidden",
-            }}
+            className="progress"
             role="progressbar"
-            aria-valuenow={progressPct}
+            aria-label={nextTier ? `Progress to ${nextTier.name}` : "Top tier reached"}
+            aria-valuenow={customer.pointsBalance}
             aria-valuemin={0}
-            aria-valuemax={100}
+            aria-valuemax={nextTier ? TIER_THRESHOLD[tierKey(nextTier)] : customer.pointsBalance}
+            style={{ height: 6, background: "#2A2520" }}
           >
-            <div style={{ width: `${progressPct}%`, height: "100%", background: "var(--gold)" }} />
+            <div
+              className="progress-bar"
+              style={{ width: `${tierProgressPct}%`, background: "linear-gradient(90deg,var(--gold),#D4B96B)" }}
+            />
           </div>
         </div>
 
@@ -328,7 +338,7 @@ export default function AccountDashboard(props: AccountDashboardProps) {
             <div className="row g-4 mt-1">
               <QuickAction title="Redeem rewards" body="Use points for credits, discounts and experiences." onClick={() => setTab("rewards")} />
               <QuickAction title="Refer a friend" body="Share your code — earn 500 points each." onClick={() => setTab("refer")} />
-              <QuickAction title="Shop & earn" body="Every purchase earns toward your next reward." href="/shop" />
+              <QuickAction title="Shop & earn" body="Every purchase earns toward your next tier." href="/shop" />
             </div>
           </>
         )}
@@ -807,14 +817,12 @@ export default function AccountDashboard(props: AccountDashboardProps) {
 function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="col-6 col-lg-3">
-      <div className="card-brand h-100" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-        <span style={{ fontSize: ".7rem", fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-dim)" }}>
-          {label}
-        </span>
-        <span className="serif gold" style={{ fontSize: "clamp(1.6rem,3vw,2rem)", lineHeight: 1.05, fontVariantNumeric: "tabular-nums" }}>
+      <div className="card-brand h-100">
+        <div style={{ fontSize: ".75rem", color: "var(--text-muted)", marginBottom: 8 }}>{label}</div>
+        <div style={{ fontFamily: "var(--serif)", fontSize: "1.75rem", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
           {value}
-        </span>
-        <span style={{ fontSize: ".7rem", color: "var(--green)" }}>{sub}</span>
+        </div>
+        <div style={{ fontSize: ".6875rem", color: "var(--green)", marginTop: 4 }}>{sub}</div>
       </div>
     </div>
   );

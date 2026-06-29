@@ -87,7 +87,7 @@ export default async function HomePage() {
           <div className="text-center reveal mb-5">
             <span className="eyebrow eyebrow-center">Signature Collection</span>
             <h2 className="serif" id="featured-title">From the cask to the wardrobe</h2>
-            <p style={{ maxWidth: 720, margin: "12px auto 0", color: "var(--text-muted)" }}>
+            <p style={{ maxWidth: 540, margin: "12px auto 0", color: "var(--text-muted)" }}>
               Two Caribbean expressions and the apparel we wear behind the bar. Pick a flagship from each side of the brand.
             </p>
           </div>
@@ -167,7 +167,7 @@ export default async function HomePage() {
           <div className="row g-4">
             <CocktailCard href="/cocktails/rumbaclaat-sour" img={U("photo-1748674755168-266c309d4712", 600)} badge="Easy · 5 mins" title="Rumbaclaat Sour" desc="Fresh lime, egg white, bitters. Elegant aperitif." />
             <CocktailCard href="/cocktails" img={U("photo-1767745455688-49391131f751", 600)} badge="Medium · 8 mins" title="Dark & Smoky" desc="Mezcal, dark honey, mole bitters. An evening classic." />
-            <CocktailCard href="/cocktails/spiced-mule" img={U("photo-1609189123897-42db027571c9", 600)} badge="Easy · 3 mins" title="Spiced Mule" desc="Spiced Gold, ginger beer, lime. Refreshing and easy." />
+            <CocktailCard href="/cocktails/old-fashioned" img={U("photo-1609189123897-42db027571c9", 600)} badge="Easy · 4 mins" title="Caribbean Old Fashioned" desc="Demerara sugar, bitters, orange peel. Timeless." />
           </div>
         </div>
       </section>

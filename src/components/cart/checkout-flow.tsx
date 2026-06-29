@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useCart } from "@/components/cart/cart-provider";
 import { createOrder, createPaypalOrder, capturePaypalOrder, type OrderInput } from "@/app/(site)/checkout/actions";
@@ -157,14 +157,15 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
         {STEP_LABELS.map((label, i) => {
           const n = i + 1;
           const state = n < step ? "done" : n === step ? "active" : "pending";
+          const labelState = n === step ? "gold" : n < step ? "text-green" : "text-dim";
           return (
-            <li className="step-node" key={label} style={{ display: "contents" }}>
+            <Fragment key={label}>
               {i > 0 && <li className="step-connector" aria-hidden="true" />}
-              <span className="step-node">
-                <span className={`step-circle ${state}`}>{n < step ? "✓" : n}</span>
-                <span className={`step-label ${n === step ? "gold" : "text-dim"}`}>{label}</span>
-              </span>
-            </li>
+              <li className="step-node">
+                <span className={`step-circle ${state}`} aria-current={n === step ? "step" : undefined}>{n < step ? "✓" : n}</span>
+                <span className={`step-label ${labelState}`}>{label}</span>
+              </li>
+            </Fragment>
           );
         })}
       </ol>
@@ -270,7 +271,7 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
               <div className="d-flex justify-content-between" style={{ fontWeight: 600, padding: "12px 0", borderTop: "1px solid var(--gold-bdr)" }}>
                 <span>Total charged</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(total)}</span>
               </div>
-              <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "8px 0 24px" }}>By placing this order you confirm you are 18 or over and agree to our <Link href="/terms">Terms</Link>. Age is verified on delivery.</p>
+              <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "8px 0 24px" }}>By placing this order you confirm you are 18 or over and agree to our <Link href="/terms">Terms &amp; Conditions</Link>. Age is verified on delivery. Standard 14-day returns apply.</p>
               {payment === "paypal" ? (
                 PP_CLIENT_ID ? (
                   <PayPalScriptProvider options={{ clientId: PP_CLIENT_ID, currency: "GBP", intent: "capture" }}>

@@ -50,7 +50,12 @@ export default function CartView({
         <div>
           {items.map((item) => (
             <div className="cart-item" key={item.key}>
-              <div style={{ width: 80, height: 80, borderRadius: 10, background: "var(--bg-card2)" }} />
+              {item.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={item.image} alt={item.name} loading="lazy" />
+              ) : (
+                <div style={{ width: 80, height: 80, borderRadius: 10, background: "var(--bg-card2)" }} />
+              )}
               <div>
                 <p style={{ fontWeight: 600, color: "var(--text)", marginBottom: 2 }}>{item.name}</p>
                 <p style={{ fontSize: ".8125rem", color: "var(--text-muted)", margin: 0 }}>{money(item.price)} each</p>

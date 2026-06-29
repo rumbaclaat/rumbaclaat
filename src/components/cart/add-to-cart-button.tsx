@@ -8,6 +8,7 @@ export default function AddToCartButton({
   variantId,
   name,
   price,
+  image,
   className = "btn btn-gold btn-lg",
   label = "Add to Cart",
   qty = 1,
@@ -16,6 +17,7 @@ export default function AddToCartButton({
   variantId?: string;
   name: string;
   price: number;
+  image?: string;
   className?: string;
   label?: string;
   qty?: number;
@@ -24,7 +26,7 @@ export default function AddToCartButton({
   const [added, setAdded] = useState(false);
 
   function onClick() {
-    add({ productId, variantId, name, price }, qty);
+    add({ productId, variantId, name, price, image }, qty);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   }

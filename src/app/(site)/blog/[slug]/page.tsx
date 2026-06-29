@@ -66,6 +66,11 @@ export default async function BlogPostPage({
   const dateISO = post.publishDate
     ? new Date(post.publishDate).toISOString().slice(0, 10)
     : undefined;
+  // Hero figcaption is a real caption, not the post title. The BlogPost model
+  // has no dedicated caption field, so fall back to a brand image credit that
+  // mirrors the static source ("American oak barrels at our partner
+  // distillery, Jamaica.") rather than echoing the headline.
+  const heroCaption = "Original Reserve, aged in American oak at our partner distillery.";
 
   return (
     <>
@@ -156,7 +161,7 @@ export default async function BlogPostPage({
               background: "var(--bg-card)",
             }}
           >
-            {post.title}
+            {heroCaption}
           </figcaption>
         </figure>
       )}
@@ -167,11 +172,7 @@ export default async function BlogPostPage({
           {post.body ? (
             <div
               className="blog-body"
-              style={{
-                fontSize: "1.0625rem",
-                lineHeight: 1.8,
-                color: "var(--text-muted)",
-              }}
+              style={{ fontSize: "1.0625rem" }}
               dangerouslySetInnerHTML={{ __html: post.body }}
             />
           ) : (

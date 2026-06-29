@@ -49,6 +49,7 @@ type CatTheme = {
   eyebrow: string;
   title: string;
   lede: string;
+  ledeMax: number;
   filters: boolean;
   pxMinHeight: number;
   pxImage: string;
@@ -64,6 +65,7 @@ const CAT_THEME: Record<string, CatTheme> = {
     eyebrow: "Rum Collection",
     title: "Caribbean Expressions",
     lede: "Hand-selected Caribbean rums aged in American oak. Complex, bold, and unmistakably Rumbaclaat.",
+    ledeMax: 520,
     filters: true,
     pxMinHeight: 440,
     pxImage: "https://images.unsplash.com/photo-1551738936-a10dceb71107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80",
@@ -78,6 +80,7 @@ const CAT_THEME: Record<string, CatTheme> = {
     eyebrow: "Men's Apparel",
     title: "Premium Menswear",
     lede: "Heavyweight construction. Gold embroidery. Designed to be noticed.",
+    ledeMax: 480,
     filters: false,
     pxMinHeight: 380,
     pxImage: "https://images.unsplash.com/photo-1761522001955-19ffe0294875?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80",
@@ -92,6 +95,7 @@ const CAT_THEME: Record<string, CatTheme> = {
     eyebrow: "Women's Apparel",
     title: "Luxury Womenswear",
     lede: "Effortless silhouettes. Soft gold details. Designed for the editorial wardrobe.",
+    ledeMax: 480,
     filters: false,
     pxMinHeight: 380,
     pxImage: "https://images.unsplash.com/photo-1725121225009-3d7e049fb8a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80",
@@ -107,6 +111,7 @@ const CAT_THEME_DEFAULT: CatTheme = {
   eyebrow: "The Collection",
   title: "The Collection",
   lede: "Crafted with intention, worn and savoured with pride.",
+  ledeMax: 480,
   filters: false,
   pxMinHeight: 380,
   pxImage: "https://images.unsplash.com/photo-1551738936-a10dceb71107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80",
@@ -166,7 +171,7 @@ export default async function ShopPage({
             </nav>
             <span className="eyebrow">{heroEyebrow}</span>
             <h1>{heroTitle}</h1>
-            <p style={{ maxWidth: 520, marginTop: 10 }}>{heroLede}</p>
+            <p style={{ maxWidth: theme.ledeMax, marginTop: 10 }}>{heroLede}</p>
           </div>
         </section>
 
@@ -214,12 +219,14 @@ export default async function ShopPage({
                           <Link href={`/product/${p.slug}`} aria-label={`View ${p.name} product page`}>
                             {p.imageUrl && <img src={p.imageUrl} alt={p.name} loading="lazy" />}
                           </Link>
-                          <div style={{ position: "absolute", top: 12, right: 12, display: "flex", gap: 6 }}>
-                            {p.ageStatement && <span className="badge-brand">{p.ageStatement}</span>}
-                            {inStock && (
-                              <span className="badge-brand" style={{ color: "var(--green)", borderColor: "rgba(74,222,128,.3)", background: "rgba(74,222,128,.1)" }}>In Stock</span>
-                            )}
-                          </div>
+                          {(p.ageStatement || inStock) && (
+                            <div style={{ position: "absolute", top: 12, ...(onSale ? { right: 12 } : { left: 12 }), display: "flex", gap: 6 }}>
+                              {p.ageStatement && <span className="badge-brand">{p.ageStatement}</span>}
+                              {inStock && (
+                                <span className="badge-brand" style={{ color: "var(--green)", borderColor: "rgba(74,222,128,.3)", background: "rgba(74,222,128,.1)" }}>In Stock</span>
+                              )}
+                            </div>
+                          )}
                         </div>
                         <div className="product-card-body">
                           <div className="d-flex justify-content-between align-items-start mb-2">
@@ -289,10 +296,6 @@ export default async function ShopPage({
                 </p>
               </div>
               <Link href="/join" className="btn btn-gold">Join Free →</Link>
-            </div>
-
-            <div className="text-center" style={{ marginTop: "clamp(40px, 5vw, 64px)" }}>
-              <Link href="/shop" className="btn btn-outline-gold btn-lg">Browse all collections →</Link>
             </div>
           </div>
         </section>

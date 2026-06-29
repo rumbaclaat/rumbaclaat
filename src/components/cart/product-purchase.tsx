@@ -94,7 +94,13 @@ export default function ProductPurchase(p: ProductPurchaseData) {
   }
   function addToCart() {
     add(
-      { productId: p.productId, variantId: selVariant?.id, name: p.name, price: unitPrice },
+      {
+        productId: p.productId,
+        variantId: selVariant?.id,
+        name: p.name,
+        price: unitPrice,
+        image: selVariant?.imageUrl ?? mainImg ?? p.images[0] ?? undefined,
+      },
       qty
     );
     setAdded(true);
@@ -310,7 +316,11 @@ export default function ProductPurchase(p: ProductPurchaseData) {
         )}
 
         {/* Quantity + add */}
-        <div className="d-flex align-items-end gap-3 flex-wrap my-3">
+        <div
+          className={`d-flex align-items-end gap-3 flex-wrap ${
+            p.kind === "rum" ? "mb-3" : "my-3"
+          }`}
+        >
           <div>
             <label className="form-label d-block" htmlFor="pdp-qty" style={{ fontSize: ".75rem" }}>
               Quantity
@@ -367,7 +377,9 @@ export default function ProductPurchase(p: ProductPurchaseData) {
         </div>
         <p style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>
           {p.kind === "rum"
-            ? "Free UK shipping over £50 · 18+ only, age verified on delivery."
+            ? `${
+                inStock ? `${p.stockQty} in stock · ` : ""
+              }Free UK shipping over £50 · 18+ only, age verified on delivery.`
             : "Free UK shipping over £50 · Free 30-day returns."}
         </p>
 

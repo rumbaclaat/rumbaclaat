@@ -14,10 +14,7 @@ export default async function CartPage() {
   return (
     <section className="section">
       <div className="container">
-        <div className="mb-4">
-          <span className="eyebrow">Your Cart</span>
-          <h1>Cart</h1>
-        </div>
+        <h1 className="mb-4">Shopping Cart</h1>
         <CartView
           freeShippingThreshold={Number(settings?.freeShippingThreshold ?? 50)}
           shippingStandardCost={Number(settings?.shippingStandardCost ?? 4.99)}

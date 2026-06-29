@@ -106,6 +106,23 @@ export default async function OrderPage({
     : [];
   const imageById = new Map(products.map((p) => [p.id, p.imageUrl]));
 
+  // Variant descriptor line ("Charcoal · Size L"), matching the source's
+  // middle item line. OrderItem stores no copy, so we rebuild it from the
+  // live variant when one is linked.
+  const variantIds = order.items.map((i) => i.variantId).filter((x): x is string => !!x);
+  const variants = variantIds.length
+    ? await prisma.productVariant.findMany({
+        where: { id: { in: variantIds } },
+        select: { id: true, name: true, colourName: true, size: true },
+      })
+    : [];
+  const variantSubtitle = new Map(
+    variants.map((v) => {
+      const parts = [v.name, v.colourName, v.size ? `Size ${v.size}` : null].filter(Boolean);
+      return [v.id, parts.join(" · ")] as const;
+    }),
+  );
+
   const placed = new Date(order.placedAt);
   const addr = (order.shippingAddress as Addr | null) ?? null;
   const recipient = order.customerName || addr?.name || [customer.firstName, customer.lastName].filter(Boolean).join(" ");
@@ -151,6 +168,7 @@ export default async function OrderPage({
                 <div>
                   {order.items.map((item, idx) => {
                     const img = item.productId ? imageById.get(item.productId) : null;
+                    const subtitle = item.variantId ? variantSubtitle.get(item.variantId) : null;
                     const isLast = idx === order.items.length - 1;
                     return (
                       <div
@@ -166,6 +184,9 @@ export default async function OrderPage({
                         />
                         <div className="flex-grow-1">
                           <p style={{ margin: 0, fontWeight: 600 }}>{item.name}</p>
+                          {subtitle && (
+                            <p style={{ fontSize: ".8125rem", color: "var(--text-muted)", margin: 0 }}>{subtitle}</p>
+                          )}
                           <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "2px 0 0" }}>
                             Qty: {item.qty}
                           </p>

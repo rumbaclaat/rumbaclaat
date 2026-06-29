@@ -41,12 +41,45 @@ const ERR_BOX: React.CSSProperties = {
   borderRadius: "var(--radius)",
 };
 
+// Page-specific overrides reproduced from static-source/signup.html <style> block
+// (lines 14–25). theme.css defines .step-bar/.step-circle/.step-label with
+// slightly different metrics, so we pin the signup values inline for an exact
+// visual match (we must not edit theme.css).
 const STEP_LINE: React.CSSProperties = {
   width: 40,
   height: 1,
   margin: "0 4px 16px",
   background: "var(--gold-bdr)",
 };
+
+const STEP_BAR: React.CSSProperties = { marginBottom: 32 };
+
+const STEP_LABEL: React.CSSProperties = {
+  fontSize: ".625rem",
+  color: "var(--text-dim)",
+  marginTop: 5,
+};
+
+// .step-circle base + per-state border/background per the source <style>.
+function stepCircleStyle(state: "done" | "active" | "pending"): React.CSSProperties {
+  const base: React.CSSProperties = {
+    width: 32,
+    height: 32,
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: "1.5px",
+    borderStyle: "solid",
+    fontSize: ".8125rem",
+    fontWeight: 700,
+  };
+  if (state === "done")
+    return { ...base, background: "rgba(74,222,128,.15)", borderColor: "rgba(74,222,128,.4)", color: "var(--green)" };
+  if (state === "active")
+    return { ...base, background: "var(--gold)", borderColor: "var(--gold)", color: "#0E0E0E" };
+  return { ...base, background: "var(--bg-card2)", borderColor: "var(--gold-bdr)", color: "var(--text-dim)" };
+}
 
 export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
   const params = useSearchParams();
@@ -55,6 +88,7 @@ export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
 
   const [step, setStep] = useState(1);
   const [tier, setTier] = useState<WizardTier | null>(presetTier ?? null);
+  const [hoverSlug, setHoverSlug] = useState<string | null>(null);
   const [billing, setBilling] = useState<Billing>("monthly");
 
   // Step 2 account fields
@@ -78,8 +112,8 @@ export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
 
   const isFree = !tier || tier.isFree;
 
-  const circleClass = (n: number) =>
-    `step-circle ${n < step ? "done" : n === step ? "active" : "pending"}`;
+  const circleState = (n: number): "done" | "active" | "pending" =>
+    n < step ? "done" : n === step ? "active" : "pending";
 
   function goTo(n: number) {
     setStep(n);
@@ -151,25 +185,25 @@ export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
     <div className="container section" style={{ maxWidth: 680 }}>
       <h1 className="visually-hidden">Join Rumbaclaat Membership</h1>
 
-      <ol className="step-bar list-unstyled" aria-label="Signup progress">
+      <ol className="step-bar list-unstyled" style={STEP_BAR} aria-label="Signup progress">
         <li className="d-flex flex-column align-items-center">
-          <span className={circleClass(1)} aria-current={step === 1 ? "step" : undefined}>1</span>
-          <span className="step-label">Choose Tier</span>
+          <span className="step-circle" style={stepCircleStyle(circleState(1))} aria-current={step === 1 ? "step" : undefined}>1</span>
+          <span className="step-label" style={STEP_LABEL}>Choose Tier</span>
         </li>
         <li style={STEP_LINE} aria-hidden="true" />
         <li className="d-flex flex-column align-items-center">
-          <span className={circleClass(2)} aria-current={step === 2 ? "step" : undefined}>2</span>
-          <span className="step-label">Create Account</span>
+          <span className="step-circle" style={stepCircleStyle(circleState(2))} aria-current={step === 2 ? "step" : undefined}>2</span>
+          <span className="step-label" style={STEP_LABEL}>Create Account</span>
         </li>
         <li style={STEP_LINE} aria-hidden="true" />
         <li className="d-flex flex-column align-items-center">
-          <span className={circleClass(3)} aria-current={step === 3 ? "step" : undefined}>3</span>
-          <span className="step-label">Payment</span>
+          <span className="step-circle" style={stepCircleStyle(circleState(3))} aria-current={step === 3 ? "step" : undefined}>3</span>
+          <span className="step-label" style={STEP_LABEL}>Payment</span>
         </li>
         <li style={STEP_LINE} aria-hidden="true" />
         <li className="d-flex flex-column align-items-center">
-          <span className={circleClass(4)} aria-current={step === 4 ? "step" : undefined}>✓</span>
-          <span className="step-label">Confirm</span>
+          <span className="step-circle" style={stepCircleStyle(circleState(4))} aria-current={step === 4 ? "step" : undefined}>✓</span>
+          <span className="step-label" style={STEP_LABEL}>Confirm</span>
         </li>
       </ol>
 
@@ -184,6 +218,8 @@ export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
               <div className="row g-3" role="radiogroup" aria-label="Membership tier">
                 {tiers.map((t) => {
                   const selected = tier?.slug === t.slug;
+                  // .tier-select + .tier-select.selected/:hover from the source <style> (lines 22–23).
+                  const lit = selected || hoverSlug === t.slug;
                   return (
                     <div className="col-12 col-sm-6" key={t.slug}>
                       <button
@@ -191,12 +227,15 @@ export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
                         role="radio"
                         aria-checked={selected}
                         onClick={() => setTier(t)}
-                        className="d-block w-100 text-start"
+                        onMouseEnter={() => setHoverSlug(t.slug)}
+                        onMouseLeave={() => setHoverSlug(null)}
+                        className="d-block text-start"
                         style={{
                           borderRadius: 16,
                           padding: 20,
-                          border: `1.5px solid ${selected ? "var(--gold)" : "var(--gold-bdr)"}`,
-                          background: selected ? "var(--gold-lt)" : "var(--bg-card)",
+                          border: `1.5px solid ${lit ? "var(--gold)" : "var(--gold-bdr)"}`,
+                          background: lit ? "var(--gold-lt)" : "var(--bg-card)",
+                          width: "100%",
                           height: "100%",
                           cursor: "pointer",
                         }}

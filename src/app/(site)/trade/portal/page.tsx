@@ -25,6 +25,7 @@ const thBase = {
 };
 const thNum = { ...thBase, textAlign: "right" as const };
 const tdNum = { textAlign: "right" as const, fontVariantNumeric: "tabular-nums" as const };
+const srOnly = "visually-hidden";
 const sectionHead = (eyebrow: string, title: string, lede?: string) => (
   <div className="mb-4">
     <span className="eyebrow">{eyebrow}</span>
@@ -102,13 +103,14 @@ export default async function TradePortalPage() {
                   <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: 0, padding: "20px 22px 16px", borderBottom: "1px solid var(--line)" }}>{productName(pid)} — Wholesale</h3>
                   <div className="table-responsive">
                     <table className="trade-table">
-                      <thead><tr><th style={thBase}>Volume</th><th style={thNum}>Price/Bottle</th><th style={thNum}>Price/Case</th></tr></thead>
+                      <caption className={srOnly}>Volume-based wholesale pricing for {productName(pid)}</caption>
+                      <thead><tr><th scope="col" style={thBase}>Volume</th><th scope="col" style={thNum}>Price/Bottle</th><th scope="col" style={thNum}>Price/Case</th></tr></thead>
                       <tbody>
                         {rows.map((r) => (
                           <tr key={r.id}>
                             <td>{r.volumeBand === "10+" ? "10+ cases" : `${r.volumeBand} cases`}</td>
-                            <td style={{ ...tdNum, color: "var(--gold-hi)", fontFamily: "var(--serif)" }}>{money(Number(r.pricePerBottle))}</td>
-                            <td style={tdNum}>{money(Number(r.pricePerCase))}</td>
+                            <td className="td-num" style={{ ...tdNum, color: "var(--gold-hi)", fontFamily: "var(--serif)" }}>{money(Number(r.pricePerBottle))}</td>
+                            <td className="td-num" style={tdNum}>{money(Number(r.pricePerCase))}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -131,15 +133,16 @@ export default async function TradePortalPage() {
           <div className="card-brand p-0" style={{ overflow: "hidden" }}>
             <div className="table-responsive">
               <table className="trade-table">
-                <thead><tr><th style={thBase}>Order ID</th><th style={thBase}>Date</th><th style={thBase}>Items</th><th style={thNum}>Total (inc VAT)</th><th style={thBase}>Status</th><th style={thBase}>Delivery</th></tr></thead>
+                <caption className={srOnly}>Your trade order history</caption>
+                <thead><tr><th scope="col" style={thBase}>Order ID</th><th scope="col" style={thBase}>Date</th><th scope="col" style={thBase}>Items</th><th scope="col" style={thNum}>Total (inc VAT)</th><th scope="col" style={thBase}>Status</th><th scope="col" style={thBase}>Delivery</th></tr></thead>
                 <tbody>
                   {orders.length === 0 && <tr><td colSpan={6} style={{ color: "var(--text-dim)" }}>No orders yet.</td></tr>}
                   {orders.map((o) => (
                     <tr key={o.id}>
-                      <td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{o.ref}</td>
+                      <th scope="row" style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{o.ref}</th>
                       <td>{new Date(o.placedAt).toLocaleDateString("en-GB")}</td>
                       <td style={{ color: "var(--text-muted)" }}>{orderItems(o.lines)}</td>
-                      <td style={{ ...tdNum, fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(o.grandTotal))}</td>
+                      <td className="td-num" style={{ ...tdNum, fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(o.grandTotal))}</td>
                       <td>
                         <span className="badge-brand" style={o.status === "delivered"
                           ? { color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)", textTransform: "capitalize" }
@@ -306,10 +309,10 @@ export default async function TradePortalPage() {
   ];
 
   const stats = [
-    { label: "YTD Orders", value: String(orders.length), sub: `+${ordersThisMonth} this month`, subColor: "var(--green)" },
-    { label: "YTD Spend", value: money(ytdSpend), sub: `Across ${orders.length} orders`, subColor: "var(--green)" },
-    { label: "Current Pricing", value: account.pricingTier, sub: minPpb ? `From ${money(minPpb)}/btl` : "Locked rate card", subColor: "var(--green)" },
-    { label: "Open Orders", value: String(openOrders), sub: "Processing", subColor: "var(--yellow)" },
+    { label: "YTD Orders", value: String(orders.length), sub: `+${ordersThisMonth} this month`, subColor: "var(--green)", primary: false },
+    { label: "YTD Spend", value: money(ytdSpend), sub: `Across ${orders.length} orders`, subColor: "var(--green)", primary: true },
+    { label: "Current Pricing", value: account.pricingTier, sub: minPpb ? `From ${money(minPpb)}/btl` : "Locked rate card", subColor: "var(--green)", primary: false },
+    { label: "Open Orders", value: String(openOrders), sub: "Processing", subColor: "var(--yellow)", primary: false },
   ];
 
   return (
@@ -329,9 +332,9 @@ export default async function TradePortalPage() {
         <div className="row g-3">
           {stats.map((s) => (
             <div className="col-6 col-lg-3" key={s.label}>
-              <div className="card-brand h-100" style={{ padding: 20 }}>
+              <div className="card-brand h-100" style={{ padding: 20, borderColor: s.primary ? "var(--gold-md)" : undefined }}>
                 <div style={{ fontSize: ".66rem", fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-dim)" }}>{s.label}</div>
-                <div className="serif" style={{ fontSize: "1.9rem", color: "var(--gold-hi)", fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{s.value}</div>
+                <div className="serif" style={{ fontSize: "1.9rem", color: s.primary ? "var(--gold-hi)" : "var(--text)", fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{s.value}</div>
                 <div style={{ fontSize: ".6875rem", color: s.subColor, marginTop: 4 }}>{s.sub}</div>
               </div>
             </div>
