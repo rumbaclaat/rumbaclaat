@@ -361,6 +361,10 @@ em { font-style: italic; }
  * ========================================================================== */
 
 /* product-rum / product-apparel / product-tee */
+/* PDP buy-box grid (Champagne handoff "Product detail", lines 342-384):
+ * two columns on desktop, stacked on mobile. */
+.pdp-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(28px,5vw,64px); align-items: start; }
+@media (max-width: 767.98px) { .pdp-grid { grid-template-columns: 1fr; } .pdp-grid > div:first-child { position: static !important; } }
 .accordion-button { background: var(--bg-card) !important; color: var(--text) !important; font-family: var(--serif); font-weight: 600; box-shadow: none !important; }
 .accordion-button:not(.collapsed) { background: transparent !important; color: var(--gold-hi) !important; }
 .accordion-button:focus { box-shadow: 0 0 0 3px var(--gold-md) !important; }
@@ -441,6 +445,9 @@ em { font-style: italic; }
 .ck-rel-img img { width: 100%; height: 100%; object-fit: cover; }
 .ck-rel-meta { padding: 12px 14px 4px; font-size: .6875rem; color: var(--text-muted); }
 .ck-rel-card h3 { padding: 4px 14px 14px; margin: 0; font-size: 1.0625rem; font-family: var(--serif); }
+/* cocktail detail: outline-gold pill add-to-cart, pairs with the gold Shop link */
+.ck-shop-add { display: inline-flex; align-items: center; gap: 9px; background: transparent; border: 1px solid var(--gold); color: var(--gold-hi); border-radius: 999px; padding: 13px 26px; font-size: .92rem; font-weight: 600; cursor: pointer; transition: background .15s, color .15s; }
+.ck-shop-add:hover { background: var(--gold-lt); }
 
 /* checkout / signup steps */
 .checkout-step { display: none; } .checkout-step.active { display: block; }
@@ -543,9 +550,9 @@ mark { background: var(--gold-lt); color: var(--gold-hi); padding: 0 2px; border
 .rte-content .ProseMirror ul, .rte-content .ProseMirror ol { padding-left: 1.4em; margin: 0 0 .6em; }
 
 /* Rendered blog-post article body (from blog-post.html #post-body) */
-.blog-body { color: var(--text); line-height: 1.8; }
+.blog-body { color: var(--muted); line-height: 1.8; font-size: 1.05rem; }
 .blog-body p { margin: 0 0 1.2em; }
-.blog-body h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.5rem, 3vw, 2rem); margin: 1.6em 0 .5em; }
+.blog-body h2 { font-family: var(--serif); font-weight: 600; font-size: 1.7rem; color: var(--text); margin: 1.6em 0 .5em; }
 .blog-body h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; margin: 1.4em 0 .4em; }
 .blog-body ul, .blog-body ol { padding-left: 1.4em; margin: 0 0 1.2em; }
 .blog-body li { margin-bottom: .5em; }
@@ -604,6 +611,23 @@ p a, li:not(.breadcrumb-item):not(.nav-item) a, .rte-content a { text-decoration
 }
 /* Filter pills: dot + label centred as a unit */
 .btn .diff-dot { position: static; top: 0; }
+
+/* ----------------------------------------------------------------------------
+ * Trade portal — responsive collapse for the prototype's fixed-column grids.
+ * The prototype (Storefront Redesign.dc.html, Trade portal screen) is a fixed
+ * desktop mock with no media queries; these production-only rules collapse its
+ * grids on narrow viewports so the live page never overflows. Visual layout on
+ * desktop is identical to the prototype.
+ * -------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .trade-portal-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 767.98px) {
+  .trade-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 420px) {
+  .trade-stat-grid { grid-template-columns: 1fr !important; }
+}
 
 /* ============================================================================
  * ADMIN PORTAL
@@ -1225,6 +1249,9 @@ a.admin-choice:hover { border-color: var(--gold-md); transform: translateY(-2px)
 @media (max-width: 540px) {
   .shop-product-grid { grid-template-columns: 1fr !important; }
 }
+/* Membership tier grid (Storefront Redesign.dc.html lines 482-495) */
+@media (max-width: 980px) { .mem-tier-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+@media (max-width: 540px) { .mem-tier-grid { grid-template-columns: 1fr !important; } }
 
 /* Larger price-pair variant (product buy box) */
 .price-pair.large .price-sale { font-size: 2rem; }
@@ -1251,3 +1278,11 @@ a.admin-choice:hover { border-color: var(--gold-md); transform: translateY(-2px)
 
 /* Gift-card advert — section wrapper + banner grid cells (banner grid itself is styled above) */
 .gift-card-banner-visual, .gift-card-banner-copy { min-width: 0; }
+
+/* Contact page (Storefront Redesign.dc.html, lines 562-583) — info column + form card.
+   Prototype is desktop-only; collapse the .85fr/1.15fr grid on narrow viewports. */
+.contact-trade-link { transition: gap .2s ease; }
+.contact-trade-link:hover { gap: 11px; }
+@media (max-width: 768px) {
+  .contact-grid { grid-template-columns: 1fr !important; }
+}

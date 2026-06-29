@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import CocktailAddButton from "./cocktail-add-button";
 
@@ -19,9 +19,29 @@ export type CocktailCard = {
   featured: { id: string; name: string; price: number } | null;
 };
 
-const diffClass: Record<string, string> = { Easy: "diff-easy", Medium: "diff-medium", Hard: "diff-hard" };
-const diffText: Record<string, string> = { Easy: "diff-text-easy", Medium: "diff-text-medium", Hard: "diff-text-medium" };
 const DIFFS = ["All", "Easy", "Medium", "Hard"] as const;
+
+const chipBase: CSSProperties = {
+  borderRadius: 999,
+  padding: "8px 16px",
+  fontSize: ".82rem",
+  fontWeight: 600,
+  cursor: "pointer",
+  border: "1px solid var(--line2)",
+  whiteSpace: "nowrap",
+  fontFamily: "var(--sans)",
+};
+const chipActive: CSSProperties = {
+  ...chipBase,
+  background: "var(--gold)",
+  color: "var(--onGold)",
+  borderColor: "var(--gold)",
+};
+const chipIdle: CSSProperties = {
+  ...chipBase,
+  background: "var(--surface)",
+  color: "var(--muted)",
+};
 
 export default function CocktailsBrowser({ cocktails }: { cocktails: CocktailCard[] }) {
   const [q, setQ] = useState("");
@@ -40,100 +60,123 @@ export default function CocktailsBrowser({ cocktails }: { cocktails: CocktailCar
   }, [cocktails, q, diff]);
 
   return (
-    <>
-      {/* Filter / search bar — static-source/cocktails.html */}
-      <div style={{ background: "var(--bg-card3)", borderBottom: "1px solid var(--gold-bdr)", padding: "16px 0" }}>
-        <div className="container d-flex align-items-center gap-3 flex-wrap">
-          <div className="ck-search">
-            <label className="visually-hidden" htmlFor="ck-search">Search cocktails or ingredients</label>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
+    <section style={{ padding: "clamp(32px,5vw,52px) clamp(20px,5vw,40px) clamp(56px,7vw,88px)" }}>
+      <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+        {/* Chips + search — Storefront Redesign.dc.html L401-409 */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 32 }}>
+          <div style={{ display: "flex", gap: 9, flexWrap: "wrap" }}>
+            {DIFFS.map((d) => (
+              <span
+                key={d}
+                role="button"
+                tabIndex={0}
+                aria-pressed={diff === d}
+                onClick={() => setDiff(d)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setDiff(d);
+                  }
+                }}
+                style={diff === d ? chipActive : chipIdle}
+              >
+                {d}
+              </span>
+            ))}
+          </div>
+          <div style={{ position: "relative", maxWidth: 280, width: "100%" }}>
+            <i className="bi bi-search" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--dim)", fontSize: ".84rem" }} />
+            <label className="visually-hidden" htmlFor="ck-search">Search cocktails</label>
             <input
-              type="search"
-              className="form-control"
               id="ck-search"
-              placeholder="Search cocktails or ingredients…"
+              type="search"
+              placeholder="Search cocktails…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
+              style={{
+                width: "100%",
+                background: "var(--surface)",
+                border: "1px solid var(--line2)",
+                color: "var(--text)",
+                borderRadius: 999,
+                padding: "10px 16px 10px 38px",
+                fontSize: ".86rem",
+                outline: "none",
+                fontFamily: "var(--sans)",
+              }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = "var(--gold)"; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = "var(--line2)"; }}
             />
           </div>
-          <div className="d-flex gap-2 flex-wrap" role="group" aria-label="Filter by difficulty">
-            {DIFFS.map((d) => {
-              const active = diff === d;
-              const cls =
-                d === "All"
-                  ? `btn btn-ghost btn-sm${active ? " active" : ""}`
-                  : `btn btn-sm ${active ? "btn-gold" : "btn-outline-gold"}`;
+        </div>
+
+        {/* Card grid — Storefront Redesign.dc.html L410-423 */}
+        {filtered.length === 0 ? (
+          <p style={{ color: "var(--dim)" }}>No cocktails match your search.</p>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 22 }}>
+            {filtered.map((c) => {
+              const cat = c.occasion ?? (c.tags.length ? c.tags[0] : "Cocktail");
+              const base = c.ingredients.length ? c.ingredients[0] : "Rum";
+              const tagLine = c.tags.length ? c.tags.slice(0, 3).join(", ") : c.ingredients.slice(1, 3).join(", ");
               return (
-                <button key={d} type="button" className={cls} aria-pressed={active} onClick={() => setDiff(d)}>
-                  {d !== "All" && <span className={`diff-dot ${diffClass[d]}`} />}
-                  {d}
-                </button>
+                <div
+                  key={c.id}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "170px 1fr",
+                    background: "var(--surface)",
+                    border: "1px solid var(--line2)",
+                    borderRadius: 16,
+                    overflow: "hidden",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--line)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--line2)"; }}
+                >
+                  <div style={{ overflow: "hidden", background: "var(--card)" }}>
+                    {c.image ? (
+                      <img src={c.image} alt={`${c.name} cocktail`} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", minHeight: 170, background: "linear-gradient(180deg,#191920,#0E0E12)" }} />
+                    )}
+                  </div>
+                  <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
+                      {c.difficulty && (
+                        <span style={{ background: "var(--goldLt)", border: "1px solid var(--line)", color: "var(--goldHi)", fontSize: ".68rem", fontWeight: 600, borderRadius: 999, padding: "3px 10px" }}>
+                          {c.difficulty}
+                        </span>
+                      )}
+                      <span style={{ color: "var(--dim)", fontSize: ".76rem" }}>{cat}</span>
+                    </div>
+                    <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.45rem", margin: 0 }}>{c.name}</h3>
+                    <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 8, color: "var(--muted)", fontSize: ".82rem" }}>
+                      {c.timeMins != null && (
+                        <span><i className="bi bi-clock" style={{ marginRight: 5, color: "var(--gold)" }} />{c.timeMins} mins</span>
+                      )}
+                      {c.ratingAvg != null && (
+                        <span><i className="bi bi-star-fill" style={{ marginRight: 5, color: "var(--gold)" }} />{c.ratingAvg.toFixed(1)}</span>
+                      )}
+                    </div>
+                    <div style={{ color: "var(--dim)", fontSize: ".82rem", marginTop: 12, flex: "1 1 auto" }}>
+                      {base}{tagLine ? ` · ${tagLine}` : ""}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 14 }}>
+                      <Link
+                        href={`/cocktails/${c.slug}`}
+                        style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "var(--goldHi)", fontWeight: 600, fontSize: ".86rem", cursor: "pointer", textDecoration: "none" }}
+                      >
+                        View recipe <i className="bi bi-arrow-right" />
+                      </Link>
+                      {c.featured && <CocktailAddButton productId={c.featured.id} name={c.featured.name} price={c.featured.price} />}
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>
-        </div>
+        )}
       </div>
-
-      <section className="section">
-        <div className="container">
-          <p id="ck-count" className="mb-4" style={{ fontSize: ".8125rem", color: "var(--text-dim)" }} aria-live="polite">
-            {filtered.length} cocktail{filtered.length !== 1 ? "s" : ""}
-          </p>
-
-          {filtered.length === 0 ? (
-            <p style={{ color: "var(--text-dim)" }}>No cocktails match your search.</p>
-          ) : (
-            <div className="row g-4">
-              {filtered.map((c) => {
-                const dc = c.difficulty ? diffClass[c.difficulty] ?? "diff-easy" : "diff-easy";
-                const dt = c.difficulty ? diffText[c.difficulty] ?? "diff-text-easy" : "diff-text-easy";
-                return (
-                  <div className="col-12 col-md-6 col-lg-4" key={c.id}>
-                    <article className="ck-card reveal">
-                      <Link href={`/cocktails/${c.slug}`} className="ck-card-img-link" aria-label={`View ${c.name} recipe`}>
-                        <div className="ck-card-img">
-                          {c.image ? (
-                            <img src={c.image} alt={`${c.name} cocktail`} loading="lazy" />
-                          ) : (
-                            <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#191920,#0E0E12)" }} />
-                          )}
-                          <div className="gradient" />
-                          <div style={{ position: "absolute", bottom: 12, left: 16, right: 16 }}>
-                            <div className="d-flex align-items-center gap-2 mb-1">
-                              {c.difficulty && (
-                                <span className={dt} style={{ fontSize: ".6875rem", fontWeight: 600 }}>
-                                  <span className={`diff-dot ${dc}`} />{c.difficulty}
-                                </span>
-                              )}
-                              {c.occasion && <span style={{ color: "var(--text-dim)", fontSize: ".6875rem" }}>· {c.occasion}</span>}
-                            </div>
-                            <h2 className="h3" style={{ fontSize: "1.375rem" }}>{c.name}</h2>
-                          </div>
-                        </div>
-                      </Link>
-                      <div className="ck-card-body">
-                        <div className="d-flex align-items-center gap-3 pb-2 mb-2" style={{ borderBottom: "1px solid var(--gold-bdr)" }}>
-                          {c.timeMins && <span style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>⏱ {c.timeMins} mins</span>}
-                          {c.ratingAvg != null && <span style={{ fontSize: ".75rem", color: "var(--gold-hi)" }}>★ {c.ratingAvg.toFixed(1)}</span>}
-                          {c.tags.length > 0 && <span style={{ fontSize: ".6875rem", color: "var(--text-dim)" }}>{c.tags.slice(0, 2).map((t) => `#${t}`).join(" ")}</span>}
-                        </div>
-                        <div className="flex-grow-1 mb-3">
-                          {c.ingredients.slice(0, 3).map((ing, i) => <p className="ck-ing" key={i}>{ing}</p>)}
-                          {c.ingredients.length > 3 && <p className="ck-ing" style={{ color: "var(--text-dim)" }}>+{c.ingredients.length - 3} more</p>}
-                        </div>
-                        <div className="d-flex gap-2">
-                          <Link href={`/cocktails/${c.slug}`} className="btn btn-gold btn-sm flex-grow-1" role="button">View Recipe ›</Link>
-                          {c.featured && <CocktailAddButton productId={c.featured.id} name={c.featured.name} price={c.featured.price} />}
-                        </div>
-                      </div>
-                    </article>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-    </>
+    </section>
   );
 }

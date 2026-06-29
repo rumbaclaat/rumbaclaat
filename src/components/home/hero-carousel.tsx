@@ -1,158 +1,203 @@
-"use client";
-
-import { useCallback, useEffect, useRef, useState } from "react";
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import BrandImage from "@/components/brand-image";
 
 /**
- * Homepage hero carousel — faithful reproduction of static-source/index.html
- * `.hero-carousel`. Two slides (Born in the Caribbean / Summer Sale), a fixed
- * crest, prev/next arrows, a tablist of dots, and a pause toggle. Auto-advances
- * every 6s unless paused or the user prefers reduced motion.
+ * Homepage hero — faithful reproduction of the Champagne prototype
+ * (Storefront Redesign.dc.html, lines 70-91). Editorial split: copy on the
+ * left, flagship bottle image with a "Flagship" tag on the right. Static —
+ * no carousel interactivity in the prototype.
  */
-const SLIDES = [
-  {
-    id: "hc-1",
-    label: "Slide 1 of 2: Born in the Caribbean",
-    dotLabel: "Slide 1: Born in the Caribbean",
-    bg: "https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80",
-  },
-  {
-    id: "hc-2",
-    label: "Slide 2 of 2: Summer Sale",
-    dotLabel: "Slide 2: Summer Sale",
-    bg: "https://images.unsplash.com/photo-1764699186296-9dac0ddb5edb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80",
-  },
-] as const;
+const HERO_IMG =
+  "https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=900";
 
-const AUTO_MS = 6000;
+/** Inline chevron — matches the prototype's `bi bi-arrow-right`. */
+function ArrowRight() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        fillRule="evenodd"
+        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+      />
+    </svg>
+  );
+}
 
 export default function HeroCarousel() {
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const go = useCallback((i: number) => {
-    setActive((i + SLIDES.length) % SLIDES.length);
-  }, []);
-  const next = useCallback(() => go(active + 1), [active, go]);
-  const prev = useCallback(() => go(active - 1), [active, go]);
-
-  useEffect(() => {
-    if (paused) return;
-    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-    timer.current = setInterval(() => {
-      setActive((a) => (a + 1) % SLIDES.length);
-    }, AUTO_MS);
-    return () => {
-      if (timer.current) clearInterval(timer.current);
-    };
-  }, [paused]);
-
   return (
     <section
-      className="hero-carousel"
-      aria-roledescription="carousel"
-      aria-label="Featured stories"
-      id="hero-carousel"
+      style={{
+        position: "relative",
+        padding:
+          "clamp(64px,11vw,128px) clamp(20px,5vw,40px) clamp(56px,8vw,96px)",
+        overflow: "hidden",
+      }}
     >
-      <div className="hc-crest-fixed" aria-hidden="true">
-        <BrandImage src="/brand/crest.webp" alt="" width={180} height={115} fallback={
-          <span className="brand-wordmark" style={{ fontSize: "1.5rem" }}>Rumbaclaat</span>
-        } />
-      </div>
-
-      <div className="hc-slides" aria-live="polite">
-        {/* SLIDE 1 — Brand / flagship rum */}
-        <article
-          className={`hc-slide${active === 0 ? " active" : ""}`}
-          id="hc-1"
-          role="group"
-          aria-roledescription="slide"
-          aria-label={SLIDES[0].label}
-        >
-          <div className="hc-bg" style={{ backgroundImage: `url('${SLIDES[0].bg}')` }} />
-          <div className="hc-overlay" />
-          <div className="hc-content">
-            <span className="hc-eyebrow">PREMIUM CARIBBEAN RUM</span>
-            <h1 className="hc-h">Born in the Caribbean.<br /><em>Bottled for the Bold.</em></h1>
-            <p className="hc-lede">Aged in American oak. Crafted with heritage. Rumbaclaat rum is a tribute to Caribbean culture, distilled into every drop.</p>
-            <div className="hc-ctas">
-              <Link href="/shop" className="btn btn-gold btn-lg">Shop Rum</Link>
-              <Link href="/join" className="btn btn-outline-gold btn-lg">Join RPM</Link>
-            </div>
-          </div>
-        </article>
-
-        {/* SLIDE 2 — Sale */}
-        <article
-          className={`hc-slide${active === 1 ? " active" : ""}`}
-          id="hc-2"
-          role="group"
-          aria-roledescription="slide"
-          aria-label={SLIDES[1].label}
-        >
-          <div className="hc-bg" style={{ backgroundImage: `url('${SLIDES[1].bg}')` }} />
-          <div className="hc-overlay" />
-          <div className="hc-content">
-            <span className="hc-eyebrow">SUMMER SALE — ENDS 4 JUNE</span>
-            <h2 className="hc-h">Up to <em>20% off</em><br />selected rum and apparel.</h2>
-            <p className="hc-lede">Spiced Gold from £31.19. Gold Label Hoodie from £80. Members keep their tier discount on top of every sale price.</p>
-            <div className="hc-ctas">
-              <Link href="/shop" className="btn btn-gold btn-lg">Shop the Sale</Link>
-              <Link href="/shop?category=mens-apparel" className="btn btn-outline-gold btn-lg">Men&apos;s Apparel</Link>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <button
-        type="button"
-        className="hc-arrow hc-prev"
-        aria-label="Previous slide"
-        aria-controls="hero-carousel"
-        onClick={prev}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "radial-gradient(120% 90% at 78% 18%, rgba(205,181,130,.16), transparent 56%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "relative",
+          maxWidth: 1240,
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: "1.05fr .95fr",
+          gap: "clamp(28px,5vw,72px)",
+          alignItems: "center",
+        }}
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6" /></svg>
-      </button>
-      <button
-        type="button"
-        className="hc-arrow hc-next"
-        aria-label="Next slide"
-        aria-controls="hero-carousel"
-        onClick={next}
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
-      </button>
-
-      <div className="hc-dots" role="tablist" aria-label="Choose a slide">
-        {SLIDES.map((s, i) => (
-          <button
-            key={s.id}
-            type="button"
-            className="hc-dot"
-            role="tab"
-            aria-current={active === i ? "true" : "false"}
-            aria-controls={s.id}
-            aria-label={s.dotLabel}
-            onClick={() => go(i)}
+        <div>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 9,
+              fontSize: ".74rem",
+              letterSpacing: ".24em",
+              textTransform: "uppercase",
+              color: "var(--gold)",
+              fontWeight: 600,
+            }}
+          >
+            — Premium Caribbean Rum
+          </span>
+          <h1
+            style={{
+              fontFamily: "var(--serif)",
+              fontWeight: 600,
+              fontSize: "clamp(2.7rem,6.2vw,4.6rem)",
+              lineHeight: 1.02,
+              letterSpacing: "-.01em",
+              margin: "20px 0 0",
+            }}
+          >
+            Born in the Caribbean.
+            <br />
+            <span style={{ color: "var(--gold)", fontStyle: "italic" }}>
+              Bottled for the Bold.
+            </span>
+          </h1>
+          <p
+            style={{
+              color: "var(--muted)",
+              fontSize: "clamp(1rem,1.5vw,1.18rem)",
+              lineHeight: 1.6,
+              maxWidth: 480,
+              margin: "22px 0 0",
+            }}
+          >
+            Aged in American oak. Crafted with heritage. A tribute to Caribbean
+            culture, distilled into every drop.
+          </p>
+          <div
+            style={{
+              display: "flex",
+              gap: 13,
+              flexWrap: "wrap",
+              marginTop: 34,
+            }}
+          >
+            <Link
+              href="/shop"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 9,
+                background: "var(--gold)",
+                color: "var(--onGold)",
+                borderRadius: 999,
+                padding: "14px 30px",
+                fontSize: ".95rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Shop Rum <ArrowRight />
+            </Link>
+            <Link
+              href="/join"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 9,
+                border: "1px solid var(--line)",
+                color: "var(--text)",
+                borderRadius: 999,
+                padding: "14px 28px",
+                fontSize: ".95rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Join RPM
+            </Link>
+          </div>
+        </div>
+        <div
+          style={{
+            position: "relative",
+            aspectRatio: "4/5",
+            borderRadius: 18,
+            overflow: "hidden",
+            border: "1px solid var(--line)",
+            background: "linear-gradient(160deg,#241d12,#0E0E12)",
+          }}
+        >
+          <img
+            src={HERO_IMG}
+            alt="Rumbaclaat Original Reserve"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: 0.96,
+            }}
           />
-        ))}
-        <button
-          type="button"
-          className="hc-toggle"
-          aria-label={paused ? "Resume auto-advance" : "Pause auto-advance"}
-          aria-pressed={paused}
-          onClick={() => setPaused((p) => !p)}
-        >
-          {paused ? (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4" /></svg>
-          ) : (
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
-          )}
-        </button>
+          <div
+            style={{
+              position: "absolute",
+              left: 20,
+              bottom: 20,
+              background: "color-mix(in srgb,var(--bg) 72%,transparent)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid var(--line)",
+              borderRadius: 12,
+              padding: "12px 16px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: ".66rem",
+                letterSpacing: ".16em",
+                textTransform: "uppercase",
+                color: "var(--gold)",
+              }}
+            >
+              Flagship
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--serif)",
+                fontSize: "1.2rem",
+                marginTop: 2,
+              }}
+            >
+              Original Reserve · 12 Yr
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

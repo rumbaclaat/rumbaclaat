@@ -97,29 +97,14 @@ const TIER_THRESHOLD: Record<string, number> = {
   black: 5000,
 };
 
-// .notif-item is defined only in the static source's page <style>, not theme.css,
-// so reproduce its look with an inline style object.
-const notifCard: React.CSSProperties = {
-  background: "var(--bg-card2)",
-  border: "1px solid var(--gold-bdr)",
-  borderRadius: "var(--radius)",
-  padding: "12px 16px",
-  marginBottom: 10,
-};
-const notifCardUnread: React.CSSProperties = {
-  ...notifCard,
-  borderColor: "rgba(205, 181, 130,.3)",
-};
-
 export default function AccountDashboard(props: AccountDashboardProps) {
-  const { customer, tier, tiers, orders, rewards, ledger, addresses, flash, actions } = props;
+  const { customer, tier, tiers, orders, rewards, addresses, flash, actions } = props;
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("overview");
   // Subscriptions default to monthly billing; the Manage Tier flow applies the chosen tier.
   const [cycle] = useState<"monthly" | "annual">("monthly");
   const [editAddr, setEditAddr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const name = [customer.firstName, customer.lastName].filter(Boolean).join(" ") || customer.email;
   const mult = tier ? tier.pointsMultiplier : 1;
   const refLink = customer.referralCode
     ? `https://rumbaclaat.com/ref/${customer.referralCode}`
@@ -152,6 +137,37 @@ export default function AccountDashboard(props: AccountDashboardProps) {
       )
     : 100;
 
+  // Prototype stat grid (lines 635-642) — 4 cards driven by live data + bi icons.
+  const acctStats = [
+    { label: "Points balance", value: customer.pointsBalance.toLocaleString(), icon: "stars" },
+    { label: "Tier discount", value: `${tier?.memberDiscountPct ?? 5}%`, icon: "tag" },
+    {
+      label: "Points to next",
+      value: nextTier ? pointsToNext.toLocaleString() : "—",
+      icon: "graph-up-arrow",
+    },
+    { label: "Lifetime spend", value: `£${customer.lifetimeSpend.toFixed(0)}`, icon: "wallet2" },
+  ];
+
+  // Prototype "Recent orders" status chip (line 653, {{ o.badge.style }}/{{ o.badge.label }}).
+  function orderBadge(status: string): { style: React.CSSProperties; label: string } {
+    const base: React.CSSProperties = {
+      borderRadius: 999,
+      padding: "4px 12px",
+      fontSize: ".74rem",
+      fontWeight: 600,
+      whiteSpace: "nowrap",
+    };
+    const s = status.toLowerCase();
+    if (s === "delivered" || s === "completed" || s === "fulfilled") {
+      return { style: { ...base, background: "rgba(74,222,128,.12)", color: "var(--green)" }, label: status };
+    }
+    if (s === "cancelled" || s === "refunded" || s === "failed") {
+      return { style: { ...base, background: "rgba(242,109,109,.12)", color: "var(--red)" }, label: status };
+    }
+    return { style: { ...base, background: "var(--goldLt)", color: "var(--goldHi)" }, label: status };
+  }
+
   function copyLink() {
     if (!refLink) return;
     navigator.clipboard?.writeText(refLink).then(() => {
@@ -161,27 +177,82 @@ export default function AccountDashboard(props: AccountDashboardProps) {
   }
 
   return (
-    <section className="section">
-      <div className="container">
-        {/* Header */}
-        <header className="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+    <section style={{ padding: "clamp(40px,5vw,64px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        {/* Header — prototype lines 626-633 */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            gap: 20,
+            flexWrap: "wrap",
+            marginBottom: 30,
+          }}
+        >
           <div>
-            <span className="eyebrow">LOYALTY PORTAL</span>
-            <h1 style={{ fontSize: "2rem" }}>
-              Welcome,{" "}
-              <span className="serif gold" style={{ fontStyle: "italic" }}>
-                {customer.firstName ?? "member"}
-              </span>
+            <span
+              style={{
+                fontSize: ".74rem",
+                letterSpacing: ".22em",
+                textTransform: "uppercase",
+                color: "var(--gold)",
+                fontWeight: 600,
+              }}
+            >
+              RPM
+            </span>
+            <h1
+              style={{
+                fontFamily: "var(--serif)",
+                fontWeight: 600,
+                fontSize: "clamp(2rem,4.4vw,3rem)",
+                lineHeight: 1.05,
+                margin: "10px 0 0",
+              }}
+            >
+              Welcome back, {customer.firstName ?? "member"}
             </h1>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                marginTop: 12,
+                background: "var(--goldLt)",
+                border: "1px solid var(--gold)",
+                color: "var(--goldHi)",
+                borderRadius: 999,
+                padding: "5px 14px",
+                fontSize: ".8rem",
+                fontWeight: 600,
+              }}
+            >
+              <i className="bi bi-award-fill" />
+              {tier?.name ?? "Bronze"} member
+            </div>
           </div>
-          <div className="d-flex gap-2 align-items-center flex-wrap">
-            <span className="badge-brand">⚡ {customer.pointsBalance.toLocaleString()} pts</span>
-            <span className="badge-brand badge-gold">✦ {tier?.name ?? "Bronze"}</span>
-            <form action={actions.signOut}>
-              <button type="submit" className="btn btn-ghost btn-sm">Sign out</button>
-            </form>
-          </div>
-        </header>
+          <form action={actions.signOut}>
+            <button
+              type="submit"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "transparent",
+                border: "1px solid var(--line)",
+                color: "var(--muted)",
+                borderRadius: 999,
+                padding: "10px 20px",
+                fontSize: ".86rem",
+                cursor: "pointer",
+              }}
+            >
+              <i className="bi bi-box-arrow-right" />
+              Sign out
+            </button>
+          </form>
+        </div>
 
         {flash && (
           <div
@@ -200,47 +271,36 @@ export default function AccountDashboard(props: AccountDashboardProps) {
           </div>
         )}
 
-        {/* Stat cards */}
-        <div className="row g-3 mb-4">
-          <Stat
-            label="Total Points"
-            value={customer.pointsBalance.toLocaleString()}
-            sub={`${mult}× multiplier active`}
-          />
-          <Stat label="Tier Discount" value={`${tier?.memberDiscountPct ?? 5}% off`} sub="Applied at checkout" />
-          <Stat
-            label="Points to Next Tier"
-            value={nextTier ? pointsToNext.toLocaleString() : "—"}
-            sub={nextTier ? `Reach ${nextTier.name}` : "Top tier reached"}
-          />
-          <Stat label="Lifetime Spend" value={`£${customer.lifetimeSpend.toFixed(2)}`} sub="Thank you" />
-        </div>
-
-        {/* Progress to next tier */}
-        <div className="mt-3 mb-2">
-          <div
-            className="d-flex justify-content-between"
-            style={{ fontSize: ".75rem", color: "var(--text-muted)", marginBottom: 6 }}
-          >
-            <span>{nextTier ? `Progress to ${nextTier.name}` : "Top tier reached"}</span>
-            <span style={{ color: "var(--gold-hi)" }}>
-              {nextTier ? `${pointsToNext.toLocaleString()} pts to go` : "All benefits unlocked"}
-            </span>
-          </div>
-          <div
-            className="progress"
-            role="progressbar"
-            aria-label={nextTier ? `Progress to ${nextTier.name}` : "Top tier reached"}
-            aria-valuenow={customer.pointsBalance}
-            aria-valuemin={0}
-            aria-valuemax={nextTier ? TIER_THRESHOLD[tierKey(nextTier)] : customer.pointsBalance}
-            style={{ height: 6, background: "#191920" }}
-          >
+        {/* Stat cards — prototype lines 635-642 */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4,1fr)",
+            gap: 16,
+            marginBottom: 30,
+          }}
+        >
+          {acctStats.map((s) => (
             <div
-              className="progress-bar"
-              style={{ width: `${tierProgressPct}%`, background: "linear-gradient(90deg,var(--gold),#E6D2A0)" }}
-            />
-          </div>
+              key={s.label}
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--line2)",
+                borderRadius: 14,
+                padding: "20px 22px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: ".7rem", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--dim)" }}>
+                  {s.label}
+                </span>
+                <i className={`bi bi-${s.icon}`} style={{ color: "var(--gold)", fontSize: "1rem" }} />
+              </div>
+              <div style={{ fontFamily: "var(--serif)", fontSize: "2.1rem", color: "var(--text)", lineHeight: 1, marginTop: 12 }}>
+                {s.value}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Tab nav */}
@@ -260,87 +320,160 @@ export default function AccountDashboard(props: AccountDashboardProps) {
           ))}
         </ul>
 
-        {/* ---------------- OVERVIEW ---------------- */}
+        {/* ---------------- OVERVIEW (prototype lines 644-679) ---------------- */}
         {tab === "overview" && (
-          <>
-            <div className="row g-4">
-              <div className="col-12 col-lg-8">
-                <div className="card-brand h-100">
-                  <h2 className="h4 mb-3">Membership status</h2>
-                  <div
-                    className="d-flex justify-content-between flex-wrap gap-3"
-                    style={{
-                      background: "linear-gradient(135deg,#1C1C24,#15151B)",
-                      border: "1px solid rgba(205, 181, 130,.2)",
-                      borderRadius: "var(--radius)",
-                      padding: 20,
-                      marginBottom: 16,
-                    }}
-                  >
-                    <div>
-                      <p style={{ fontSize: ".75rem", color: "var(--text-muted)", marginBottom: 4 }}>Welcome back,</p>
-                      <h3 style={{ fontSize: "1.5rem" }}>{name}</h3>
-                      <div className="d-flex align-items-end gap-2 mt-2">
-                        <span className="serif" style={{ fontSize: "2.5rem", fontWeight: 700, color: "var(--gold-hi)", lineHeight: 1 }}>
-                          {customer.pointsBalance.toLocaleString()}
-                        </span>
-                        <span style={{ color: "var(--text-muted)", fontSize: ".875rem" }}>points</span>
+          <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 20, alignItems: "start" }}>
+            {/* Recent orders */}
+            <div style={{ background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 16, overflow: "hidden" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 12,
+                  padding: "18px 22px",
+                  borderBottom: "1px solid var(--line2)",
+                }}
+              >
+                <h2 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.3rem", margin: 0 }}>Recent orders</h2>
+                <Link href="/shop" style={{ color: "var(--muted)", fontSize: ".82rem" }}>
+                  Shop again
+                </Link>
+              </div>
+              {orders.length === 0 ? (
+                <div style={{ padding: "22px", color: "var(--dim)", fontSize: ".88rem" }}>
+                  No orders yet. <Link href="/shop" className="gold">Start shopping →</Link>
+                </div>
+              ) : (
+                orders.slice(0, 3).map((o) => {
+                  const badge = orderBadge(o.status);
+                  return (
+                    <div
+                      key={o.id}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr auto auto",
+                        gap: 16,
+                        alignItems: "center",
+                        padding: "16px 22px",
+                        borderBottom: "1px solid var(--line2)",
+                      }}
+                    >
+                      <div>
+                        <div style={{ color: "var(--goldHi)", fontWeight: 600, fontSize: ".92rem" }}>{o.ref}</div>
+                        <div style={{ color: "var(--dim)", fontSize: ".78rem", marginTop: 2 }}>{o.date}</div>
+                      </div>
+                      <span style={badge.style}>{badge.label}</span>
+                      <div style={{ fontFamily: "var(--serif)", fontSize: "1.2rem", color: "var(--text)", minWidth: 80, textAlign: "right" }}>
+                        £{o.total.toFixed(2)}
                       </div>
                     </div>
-                    <div className="d-flex flex-column gap-2 align-items-end">
-                      <span className="badge-brand badge-gold">✦ {tier?.name ?? "Bronze"}</span>
-                      <span className="badge-brand">⚡ {mult}× multiplier</span>
-                    </div>
+                  );
+                })
+              )}
+              <div style={{ padding: "16px 22px" }}>
+                <button
+                  type="button"
+                  onClick={() => setTab("orders")}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 7,
+                    background: "transparent",
+                    border: 0,
+                    padding: 0,
+                    color: "var(--goldHi)",
+                    fontWeight: 600,
+                    fontSize: ".86rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  View all orders <i className="bi bi-arrow-right" />
+                </button>
+              </div>
+            </div>
+
+            {/* Membership + Account sidebar */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div
+                style={{
+                  background: "linear-gradient(165deg, rgba(205,181,130,.15), var(--card))",
+                  border: "1px solid var(--gold)",
+                  borderRadius: 16,
+                  padding: 24,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: 0 }}>
+                    {tier?.name ?? "Bronze"} membership
+                  </h3>
+                  <i className="bi bi-award-fill" style={{ color: "var(--gold)", fontSize: "1.3rem" }} />
+                </div>
+                <div style={{ margin: "16px 0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".8rem", color: "var(--muted)", marginBottom: 7 }}>
+                    <span>{nextTier ? `Progress to ${nextTier.name}` : "Top tier reached"}</span>
+                    <span>
+                      {nextTier
+                        ? `${customer.pointsBalance.toLocaleString()} / ${TIER_THRESHOLD[tierKey(nextTier)].toLocaleString()}`
+                        : "All benefits unlocked"}
+                    </span>
                   </div>
-                  <div className="row g-3">
-                    <OverviewMini label="Tier discount" value={`${tier?.memberDiscountPct ?? 5}%`} />
-                    <OverviewMini label="Points rate" value={`${mult}×`} />
-                    <OverviewMini label="Referral code" value={customer.referralCode ?? "—"} />
+                  <div style={{ height: 8, borderRadius: 999, background: "var(--surface2)", overflow: "hidden" }}>
+                    <div
+                      style={{
+                        height: "100%",
+                        width: `${tierProgressPct}%`,
+                        borderRadius: 999,
+                        background: "linear-gradient(90deg,var(--gold),var(--goldHi))",
+                      }}
+                    />
                   </div>
                 </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 18 }}>
+                  {(tier?.benefits ?? []).slice(0, 6).map((perk, i) => (
+                    <span
+                      key={i}
+                      style={{ display: "flex", alignItems: "flex-start", gap: 9, fontSize: ".85rem", color: "var(--muted)", lineHeight: 1.4 }}
+                    >
+                      <i className="bi bi-check-lg" style={{ color: "var(--gold)", marginTop: 1 }} />
+                      {perk}
+                    </span>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setTab("manage")}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    marginTop: 20,
+                    background: "var(--gold)",
+                    color: "var(--onGold)",
+                    border: 0,
+                    borderRadius: 999,
+                    padding: 11,
+                    fontSize: ".86rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Manage membership
+                </button>
               </div>
-              <div className="col-12 col-lg-4">
-                <div className="card-brand h-100">
-                  <div className="d-flex justify-content-between mb-3">
-                    <h2 className="h4 mb-0">Notifications</h2>
-                    {ledger.length > 0 && (
-                      <span className="badge-brand">{Math.min(ledger.length, 2)} new</span>
-                    )}
-                  </div>
-                  {ledger.length === 0 ? (
-                    <p style={{ color: "var(--text-dim)", margin: 0, fontSize: ".875rem" }}>No points activity yet.</p>
-                  ) : (
-                    ledger.slice(0, 4).map((l, i) => (
-                      <div key={l.id} style={i < 2 ? notifCardUnread : notifCard}>
-                        <p
-                          style={{
-                            fontSize: ".8125rem",
-                            fontWeight: i < 2 ? 600 : 400,
-                            color: i < 2 ? "var(--text)" : "var(--text-muted)",
-                            marginBottom: 2,
-                          }}
-                        >
-                          {l.label}
-                        </p>
-                        <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: 0 }}>
-                          {l.date} ·{" "}
-                          <span style={{ color: l.delta >= 0 ? "var(--green)" : "var(--red)" }}>
-                            {l.delta >= 0 ? "+" : ""}
-                            {l.delta} pts
-                          </span>
-                        </p>
-                      </div>
-                    ))
-                  )}
+
+              <div style={{ background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 16, padding: "22px 24px" }}>
+                <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.2rem", margin: "0 0 14px" }}>Account</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  <AccountLink icon="geo-alt" label="Addresses" onClick={() => setTab("prefs")} bordered />
+                  <AccountLink icon="credit-card" label="Payment methods" onClick={() => setTab("prefs")} bordered />
+                  <AccountLink icon="gift" label="Rewards & points" onClick={() => setTab("rewards")} bordered />
+                  <AccountLink icon="gear" label="Settings" onClick={() => setTab("prefs")} />
                 </div>
               </div>
             </div>
-            <div className="row g-4 mt-1">
-              <QuickAction title="Redeem rewards" body="Use points for credits, discounts and experiences." onClick={() => setTab("rewards")} />
-              <QuickAction title="Refer a friend" body="Share your code — earn 500 points each." onClick={() => setTab("refer")} />
-              <QuickAction title="Shop & earn" body="Every purchase earns toward your next tier." href="/shop" />
-            </div>
-          </>
+          </div>
         )}
 
         {/* ---------------- ORDERS ---------------- */}
@@ -814,41 +947,39 @@ export default function AccountDashboard(props: AccountDashboardProps) {
   );
 }
 
-function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
+// Prototype "Account" sidebar links (lines 671-676) — route to live tabs/sections.
+function AccountLink({
+  icon,
+  label,
+  onClick,
+  bordered,
+}: {
+  icon: string;
+  label: string;
+  onClick: () => void;
+  bordered?: boolean;
+}) {
   return (
-    <div className="col-6 col-lg-3">
-      <div className="card-brand h-100">
-        <div style={{ fontSize: ".75rem", color: "var(--text-muted)", marginBottom: 8 }}>{label}</div>
-        <div style={{ fontFamily: "var(--serif)", fontSize: "1.75rem", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>
-          {value}
-        </div>
-        <div style={{ fontSize: ".6875rem", color: "var(--green)", marginTop: 4 }}>{sub}</div>
-      </div>
-    </div>
-  );
-}
-
-function OverviewMini({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="col-4">
-      <p style={{ fontSize: ".75rem", color: "var(--text-muted)", margin: 0 }}>{label}</p>
-      <p className="serif" style={{ fontSize: "1rem", fontWeight: 700, color: "var(--gold-hi)", margin: "2px 0 0" }}>{value}</p>
-    </div>
-  );
-}
-
-function QuickAction({ title, body, href, onClick }: { title: string; body: string; href?: string; onClick?: () => void }) {
-  return (
-    <div className="col-12 col-md-4">
-      <div className="card-brand h-100">
-        <p className="serif" style={{ fontSize: "1.0625rem", fontWeight: 600, marginBottom: 4 }}>{title}</p>
-        <p style={{ fontSize: ".875rem", marginBottom: 14, color: "var(--text-muted)" }}>{body}</p>
-        {href ? (
-          <Link href={href} className="btn btn-ghost btn-sm">Shop now →</Link>
-        ) : (
-          <button type="button" className="btn btn-ghost btn-sm" onClick={onClick}>Go →</button>
-        )}
-      </div>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 11,
+        padding: "10px 0",
+        color: "var(--muted)",
+        fontSize: ".9rem",
+        cursor: "pointer",
+        background: "transparent",
+        border: 0,
+        textAlign: "left",
+        width: "100%",
+        borderBottom: bordered ? "1px solid var(--line2)" : "none",
+      }}
+    >
+      <i className={`bi bi-${icon}`} />
+      {label}
+    </button>
   );
 }

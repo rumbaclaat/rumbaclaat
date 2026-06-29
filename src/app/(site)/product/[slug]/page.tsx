@@ -183,19 +183,37 @@ export default async function ProductPage({
   });
 
   return (
-    <section className="section" style={{ paddingTop: 32 }}>
-      <div className="container">
-        <nav aria-label="Breadcrumb" className="mb-2">
-          <ol className="breadcrumb" style={{ fontSize: ".75rem", margin: 0 }}>
-            <li className="breadcrumb-item"><Link href="/">Home</Link></li>
-            <li className="breadcrumb-item"><Link href="/shop">Shop</Link></li>
-            {product.category && (
-              <li className="breadcrumb-item">
-                <Link href={`/shop?category=${product.category.slug}`}>{product.category.name}</Link>
-              </li>
-            )}
-            <li className="breadcrumb-item active" aria-current="page">{product.name}</li>
-          </ol>
+    <section
+      style={{
+        padding:
+          "clamp(28px,4vw,44px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)",
+      }}
+    >
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <nav
+          aria-label="Breadcrumb"
+          style={{ fontSize: ".78rem", color: "var(--dim)", marginBottom: 24 }}
+        >
+          <Link href="/" style={{ color: "var(--dim)" }}>
+            Home
+          </Link>{" "}
+          <span style={{ opacity: 0.5 }}>/</span>{" "}
+          <Link href="/shop" style={{ color: "var(--dim)" }}>
+            Shop
+          </Link>{" "}
+          {product.category && (
+            <>
+              <span style={{ opacity: 0.5 }}>/</span>{" "}
+              <Link
+                href={`/shop?category=${product.category.slug}`}
+                style={{ color: "var(--dim)" }}
+              >
+                {product.category.name}
+              </Link>{" "}
+            </>
+          )}
+          <span style={{ opacity: 0.5 }}>/</span>{" "}
+          <span style={{ color: "var(--muted)" }}>{product.name}</span>
         </nav>
 
         <ProductPurchase {...data} />

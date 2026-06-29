@@ -14,71 +14,60 @@ export default async function ContactPage({
   await searchParams;
 
   return (
-    <>
-      <section className="section-sm" style={{ background: "linear-gradient(135deg,#15151B,#0E0E12)", borderBottom: "1px solid var(--gold-bdr)" }}>
-        <div className="container reveal">
-          <span className="eyebrow">GET IN TOUCH</span>
-          <h1>Contact Us</h1>
-          <p style={{ maxWidth: 480, marginTop: 10 }}>General enquiries, trade questions, or press — we&apos;d love to hear from you.</p>
+    <section style={{ padding: "clamp(48px,7vw,84px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)" }}>
+      <div style={{ maxWidth: 1080, margin: "0 auto" }}>
+        <div style={{ marginBottom: 40 }}>
+          <span style={{ fontSize: ".74rem", letterSpacing: ".24em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600 }}>
+            Get in touch
+          </span>
+          <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(2.2rem,5vw,3.4rem)", lineHeight: 1.05, margin: "12px 0 0" }}>
+            Contact us
+          </h1>
+          <p style={{ color: "var(--muted)", fontSize: "1.05rem", lineHeight: 1.6, maxWidth: 520, margin: "14px 0 0" }}>
+            Questions about an order, a trade account, or just want to talk rum? We&apos;re here.
+          </p>
         </div>
-      </section>
 
-      <section className="section">
-        <div className="container">
-          <div className="row g-5">
-            <div className="col-12 col-lg-5">
-              <div className="card-brand reveal mb-4">
-                <h2 className="h4 mb-4">Contact Information</h2>
-                <div className="d-flex gap-3 mb-3">
-                  <span className="info-icon" aria-hidden="true">✉</span>
-                  <div>
-                    <p style={{ fontWeight: 600, color: "var(--text)", fontSize: ".875rem", marginBottom: 2 }}>Email</p>
-                    <p style={{ fontSize: ".875rem" }}><a href="mailto:hello@rumbaclaat.com">hello@rumbaclaat.com</a></p>
-                  </div>
-                </div>
-                <div className="d-flex gap-3 mb-3">
-                  <span className="info-icon" aria-hidden="true">📞</span>
-                  <div>
-                    <p style={{ fontWeight: 600, color: "var(--text)", fontSize: ".875rem", marginBottom: 2 }}>Phone</p>
-                    <p style={{ fontSize: ".875rem" }}><a href="tel:+442071234567">+44 (0)20 7123 4567</a></p>
-                  </div>
-                </div>
-                <div className="d-flex gap-3 mb-3">
-                  <span className="info-icon" aria-hidden="true">📍</span>
-                  <div>
-                    <p style={{ fontWeight: 600, color: "var(--text)", fontSize: ".875rem", marginBottom: 2 }}>Head Office</p>
-                    <p style={{ fontSize: ".875rem" }}>14 Rum Yard, London, EC1A 1AA</p>
-                  </div>
-                </div>
-                <div className="d-flex gap-3">
-                  <span className="info-icon" aria-hidden="true">🕐</span>
-                  <div>
-                    <p style={{ fontWeight: 600, color: "var(--text)", fontSize: ".875rem", marginBottom: 2 }}>Hours</p>
-                    <p style={{ fontSize: ".875rem" }}>Mon–Fri 9am–6pm GMT</p>
-                  </div>
-                </div>
+        <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: ".85fr 1.15fr", gap: "clamp(24px,4vw,48px)", alignItems: "start" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 14, padding: "20px 22px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--gold)", fontSize: ".72rem", letterSpacing: ".14em", textTransform: "uppercase", fontWeight: 600 }}>
+                <i className="bi bi-envelope"></i>Email
+              </div>
+              <div style={{ color: "var(--text)", fontSize: "1rem", marginTop: 8 }}>
+                <a href="mailto:hello@rumbaclaat.com" style={{ color: "inherit", textDecoration: "none" }}>hello@rumbaclaat.com</a>
               </div>
             </div>
 
-            <div className="col-12 col-lg-7">
-              <ContactForms action={submitContact} />
+            <div style={{ background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 14, padding: "20px 22px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--gold)", fontSize: ".72rem", letterSpacing: ".14em", textTransform: "uppercase", fontWeight: 600 }}>
+                <i className="bi bi-briefcase"></i>Trade
+              </div>
+              <div style={{ color: "var(--text)", fontSize: "1rem", marginTop: 8 }}>
+                <a href="mailto:trade@rumbaclaat.com" style={{ color: "inherit", textDecoration: "none" }}>trade@rumbaclaat.com</a>
+              </div>
+            </div>
+
+            <div style={{ background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 14, padding: "20px 22px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--gold)", fontSize: ".72rem", letterSpacing: ".14em", textTransform: "uppercase", fontWeight: 600 }}>
+                <i className="bi bi-geo-alt"></i>Address
+              </div>
+              <div style={{ color: "var(--text)", fontSize: "1rem", marginTop: 8, lineHeight: 1.5 }}>
+                14 Rum Yard,<br />London EC1A 1AA
+              </div>
+            </div>
+
+            <div style={{ background: "linear-gradient(160deg, rgba(205,181,130,.12), var(--surface))", border: "1px solid var(--line)", borderRadius: 14, padding: "20px 22px" }}>
+              <div style={{ color: "var(--muted)", fontSize: ".88rem", lineHeight: 1.55 }}>Looking to stock Rumbaclaat?</div>
+              <a href="/trade" className="contact-trade-link" style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "var(--goldHi)", fontWeight: 600, fontSize: ".88rem", marginTop: 8, textDecoration: "none" }}>
+                Visit the Trade Portal <i className="bi bi-arrow-right"></i>
+              </a>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section
-        className="parallax-section"
-        style={{ minHeight: 380, backgroundImage: "url('https://images.unsplash.com/photo-1585216144643-ffe746118349?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1800&q=80')" }}
-        aria-labelledby="listen-px"
-      >
-        <div className="parallax-overlay"></div>
-        <div className="parallax-content reveal">
-          <span className="eyebrow eyebrow-center">THE RUMBACLAAT FAMILY</span>
-          <h2 id="listen-px">We&apos;re Always<br />Listening</h2>
-          <p>Whether it&apos;s a trade partnership, a cocktail question, or just a story to share — we&apos;re here for every conversation.</p>
+          <ContactForms action={submitContact} />
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

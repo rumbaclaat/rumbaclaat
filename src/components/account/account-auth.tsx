@@ -5,6 +5,25 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { registerCustomer } from "@/app/(site)/account/actions";
 
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  background: "var(--surface2)",
+  border: "1px solid var(--line2)",
+  color: "var(--text)",
+  borderRadius: 10,
+  padding: "12px 14px",
+  fontSize: ".9rem",
+  outline: "none",
+  fontFamily: "var(--sans)",
+};
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  color: "var(--muted)",
+  fontSize: ".78rem",
+  marginBottom: 6,
+};
+
 export default function AccountAuth({
   registered,
   errorCode,
@@ -13,7 +32,6 @@ export default function AccountAuth({
   errorCode?: string;
 }) {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [notice, setNotice] = useState("");
@@ -54,60 +72,383 @@ export default function AccountAuth({
     setNotice("If that email has an account, we’ve sent a password reset link.");
   }
 
-  const isLogin = mode === "login";
-
   return (
-    <section className="section">
-      <div className="container" style={{ maxWidth: 460 }}>
-        <div className="text-center mb-4">
-          <span className="eyebrow eyebrow-center">{isLogin ? "Member Access" : "Join Free"}</span>
-          <h1 style={{ fontSize: "2.25rem" }}>{isLogin ? "Welcome back" : "Create your account"}</h1>
-          <p style={{ color: "var(--text-muted)", marginTop: 8, marginBottom: 0, fontSize: ".9375rem" }}>
-            {isLogin
-              ? "Sign in to access your account and RPM dashboard."
-              : "Free Bronze membership included — instant member pricing and RPM points from day one."}
-          </p>
-        </div>
+    <div data-screen-label="Sign in / Join">
+      <section
+        style={{
+          position: "relative",
+          padding:
+            "clamp(48px,7vw,84px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(80% 70% at 50% 0%, rgba(205,181,130,.1), transparent 60%)",
+            pointerEvents: "none",
+          }}
+        />
+        <div style={{ position: "relative", maxWidth: 940, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 36 }}>
+            <span
+              style={{
+                fontSize: ".74rem",
+                letterSpacing: ".24em",
+                textTransform: "uppercase",
+                color: "var(--gold)",
+                fontWeight: 600,
+              }}
+            >
+              RPM Members
+            </span>
+            <h1
+              style={{
+                fontFamily: "var(--serif)",
+                fontWeight: 600,
+                fontSize: "clamp(2rem,4.4vw,3rem)",
+                lineHeight: 1.05,
+                margin: "12px 0 0",
+              }}
+            >
+              My Account
+            </h1>
+            <p
+              style={{
+                color: "var(--muted)",
+                fontSize: "1.02rem",
+                margin: "12px auto 0",
+                maxWidth: 440,
+              }}
+            >
+              Sign in to your account, or create one free to start earning points
+              on every order.
+            </p>
+          </div>
 
-        {registered && isLogin && (
-          <div role="status" className="mb-3" style={{ background: "rgba(74,222,128,.12)", border: "1px solid rgba(74,222,128,.35)", color: "var(--green)", borderRadius: 8, padding: "8px 12px", fontSize: ".875rem" }}>✓ Account created. Sign in below.</div>
-        )}
-        {notice && (
-          <div role="status" className="mb-3" style={{ background: "rgba(74,222,128,.12)", border: "1px solid rgba(74,222,128,.35)", color: "var(--green)", borderRadius: 8, padding: "8px 12px", fontSize: ".875rem" }}>{notice}</div>
-        )}
-        {error && (
-          <div role="alert" className="mb-3" style={{ background: "rgba(242,109,109,.12)", border: "1px solid rgba(242,109,109,.35)", color: "var(--red)", borderRadius: 8, padding: "8px 12px", fontSize: ".875rem" }}>{error}</div>
-        )}
-
-        <div className="card-brand">
-          {isLogin ? (
-            <form onSubmit={onLogin}>
-              <div className="mb-3"><label className="form-label" htmlFor="l-email">Email address *</label><input id="l-email" type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required /></div>
-              <div className="mb-2"><label className="form-label" htmlFor="l-pass">Password *</label><input id="l-pass" type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required /></div>
-              <div className="d-flex justify-content-end mb-3">
-                <button type="button" className="btn-link-gold" onClick={onForgot} style={{ background: "none", border: 0, padding: 0, color: "var(--gold-hi)", fontSize: ".8125rem", cursor: "pointer" }}>Forgot password?</button>
-              </div>
-              <button type="submit" className="btn btn-gold w-100" disabled={loading}>{loading ? "Signing in…" : "Sign In"}</button>
-              <hr style={{ borderColor: "var(--gold-bdr)" }} />
-              <button type="button" className="btn btn-outline-gold w-100" onClick={() => setMode("register")}>Create Account</button>
-            </form>
-          ) : (
-            <form action={registerCustomer}>
-              <div className="row g-3">
-                <div className="col-sm-6"><label className="form-label" htmlFor="r-first">First name *</label><input id="r-first" name="firstName" className="form-control" autoComplete="given-name" required /></div>
-                <div className="col-sm-6"><label className="form-label" htmlFor="r-last">Last name *</label><input id="r-last" name="lastName" className="form-control" autoComplete="family-name" required /></div>
-                <div className="col-12"><label className="form-label" htmlFor="r-email">Email *</label><input id="r-email" name="email" type="email" className="form-control" autoComplete="email" required /></div>
-                <div className="col-12"><label className="form-label" htmlFor="r-pass">Password *</label><input id="r-pass" name="password" type="password" className="form-control" autoComplete="new-password" minLength={8} required /><span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>Minimum 8 characters.</span></div>
-                <div className="col-12"><label className="form-label" htmlFor="r-dob">Date of birth *</label><input id="r-dob" name="dateOfBirth" type="date" className="form-control" autoComplete="bday" required /><span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>You must be 18 or over.</span></div>
-                <div className="col-12"><div className="form-check"><input className="form-check-input" type="checkbox" id="r-terms" required /><label className="form-check-label" htmlFor="r-terms" style={{ fontSize: ".8125rem", color: "var(--text-muted)" }}>I am 18+ and agree to the <a href="/terms" className="gold">Terms &amp; Conditions</a> and <a href="/privacy" className="gold">Privacy Policy</a>.</label></div></div>
-              </div>
-              <button type="submit" className="btn btn-gold w-100 mt-4">Create Account — Join Free</button>
-              <hr style={{ borderColor: "var(--gold-bdr)" }} />
-              <button type="button" className="btn btn-outline-gold w-100" onClick={() => setMode("login")}>Already a member? Sign In</button>
-            </form>
+          {registered && (
+            <div
+              role="status"
+              style={{
+                maxWidth: 600,
+                margin: "0 auto 20px",
+                background: "rgba(74,222,128,.12)",
+                border: "1px solid rgba(74,222,128,.35)",
+                color: "var(--green)",
+                borderRadius: 10,
+                padding: "10px 14px",
+                fontSize: ".875rem",
+                textAlign: "center",
+              }}
+            >
+              ✓ Account created. Sign in below.
+            </div>
           )}
+          {notice && (
+            <div
+              role="status"
+              style={{
+                maxWidth: 600,
+                margin: "0 auto 20px",
+                background: "rgba(74,222,128,.12)",
+                border: "1px solid rgba(74,222,128,.35)",
+                color: "var(--green)",
+                borderRadius: 10,
+                padding: "10px 14px",
+                fontSize: ".875rem",
+                textAlign: "center",
+              }}
+            >
+              {notice}
+            </div>
+          )}
+          {error && (
+            <div
+              role="alert"
+              style={{
+                maxWidth: 600,
+                margin: "0 auto 20px",
+                background: "rgba(242,109,109,.12)",
+                border: "1px solid rgba(242,109,109,.35)",
+                color: "var(--red)",
+                borderRadius: 10,
+                padding: "10px 14px",
+                fontSize: ".875rem",
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 20,
+              alignItems: "start",
+            }}
+          >
+            {/* Sign in */}
+            <form
+              onSubmit={onLogin}
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--line2)",
+                borderRadius: 18,
+                padding: "30px 28px",
+              }}
+            >
+              <h2
+                style={{
+                  fontFamily: "var(--serif)",
+                  fontWeight: 600,
+                  fontSize: "1.5rem",
+                  margin: "0 0 4px",
+                }}
+              >
+                Sign in
+              </h2>
+              <p
+                style={{
+                  color: "var(--dim)",
+                  fontSize: ".86rem",
+                  margin: "0 0 22px",
+                }}
+              >
+                Welcome back.
+              </p>
+              <label style={labelStyle} htmlFor="l-email">
+                Email
+              </label>
+              <input
+                id="l-email"
+                type="email"
+                placeholder="you@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+                style={{ ...inputStyle, marginBottom: 16 }}
+              />
+              <label style={labelStyle} htmlFor="l-pass">
+                Password
+              </label>
+              <input
+                id="l-pass"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+                style={{ ...inputStyle, marginBottom: 10 }}
+              />
+              <button
+                type="button"
+                onClick={onForgot}
+                style={{
+                  display: "inline-block",
+                  color: "var(--dim)",
+                  fontSize: ".8rem",
+                  cursor: "pointer",
+                  marginBottom: 20,
+                  background: "none",
+                  border: 0,
+                  padding: 0,
+                  fontFamily: "var(--sans)",
+                }}
+              >
+                Forgot password?
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  width: "100%",
+                  background: "var(--gold)",
+                  color: "var(--onGold)",
+                  border: "none",
+                  borderRadius: 999,
+                  padding: 13,
+                  fontSize: ".92rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "var(--sans)",
+                  opacity: loading ? 0.7 : 1,
+                }}
+              >
+                {loading ? "Signing in…" : "Sign in"}
+              </button>
+            </form>
+
+            {/* Create account */}
+            <form
+              action={registerCustomer}
+              style={{
+                background:
+                  "linear-gradient(165deg, rgba(205,181,130,.14), var(--card))",
+                border: "1px solid var(--gold)",
+                borderRadius: 18,
+                padding: "30px 28px",
+              }}
+            >
+              <h2
+                style={{
+                  fontFamily: "var(--serif)",
+                  fontWeight: 600,
+                  fontSize: "1.5rem",
+                  margin: "0 0 4px",
+                }}
+              >
+                Create account
+              </h2>
+              <p
+                style={{
+                  color: "var(--muted)",
+                  fontSize: ".86rem",
+                  margin: "0 0 22px",
+                }}
+              >
+                Join free — instantly enrolled at Bronze. No card required.
+              </p>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 12,
+                  marginBottom: 16,
+                }}
+              >
+                <div>
+                  <label style={labelStyle} htmlFor="r-first">
+                    First name
+                  </label>
+                  <input
+                    id="r-first"
+                    name="firstName"
+                    autoComplete="given-name"
+                    required
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle} htmlFor="r-last">
+                    Last name
+                  </label>
+                  <input
+                    id="r-last"
+                    name="lastName"
+                    autoComplete="family-name"
+                    required
+                    style={inputStyle}
+                  />
+                </div>
+              </div>
+              <label style={labelStyle} htmlFor="r-email">
+                Email
+              </label>
+              <input
+                id="r-email"
+                name="email"
+                type="email"
+                placeholder="you@email.com"
+                autoComplete="email"
+                required
+                style={{ ...inputStyle, marginBottom: 16 }}
+              />
+              <label style={labelStyle} htmlFor="r-pass">
+                Password
+              </label>
+              <input
+                id="r-pass"
+                name="password"
+                type="password"
+                placeholder="Create a password"
+                autoComplete="new-password"
+                minLength={8}
+                required
+                style={{ ...inputStyle, marginBottom: 16 }}
+              />
+              <label style={labelStyle} htmlFor="r-dob">
+                Date of birth
+              </label>
+              <input
+                id="r-dob"
+                name="dateOfBirth"
+                type="date"
+                autoComplete="bday"
+                required
+                style={{ ...inputStyle, marginBottom: 16 }}
+              />
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 8,
+                  color: "var(--muted)",
+                  fontSize: ".8rem",
+                  marginBottom: 20,
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  required
+                  style={{ marginTop: 3, accentColor: "var(--gold)" }}
+                />
+                <span>
+                  I am 18+ and agree to the{" "}
+                  <a
+                    href="/terms"
+                    style={{ color: "var(--goldHi)" }}
+                  >
+                    Terms &amp; Conditions
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/privacy"
+                    style={{ color: "var(--goldHi)" }}
+                  >
+                    Privacy Policy
+                  </a>
+                  .
+                </span>
+              </label>
+              <button
+                type="submit"
+                style={{
+                  width: "100%",
+                  background: "transparent",
+                  color: "var(--goldHi)",
+                  border: "1px solid var(--gold)",
+                  borderRadius: 999,
+                  padding: 13,
+                  fontSize: ".92rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "var(--sans)",
+                }}
+              >
+                Create free account
+              </button>
+              <p
+                style={{
+                  color: "var(--dim)",
+                  fontSize: ".74rem",
+                  lineHeight: 1.5,
+                  margin: "14px 0 0",
+                }}
+              >
+                By joining you confirm you are 18 or over. See our privacy policy
+                for how we handle your data.
+              </p>
+            </form>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
+import FaqAccordion from "./FaqAccordion";
 
 export const metadata = {
   title: "FAQ",
@@ -8,13 +9,12 @@ export const metadata = {
 };
 
 type Item = { q: string; a: ReactNode };
-type Group = { id: string; nav: string; heading: string; items: Item[] };
+type Group = { id: string; cat: string; items: Item[] };
 
 const GROUPS: Group[] = [
   {
     id: "g1",
-    nav: "Orders & shipping",
-    heading: "Orders & shipping",
+    cat: "Orders & shipping",
     items: [
       {
         q: "How long does UK delivery take?",
@@ -55,8 +55,7 @@ const GROUPS: Group[] = [
   },
   {
     id: "g2",
-    nav: "Age verification",
-    heading: "Age verification",
+    cat: "Age verification",
     items: [
       {
         q: "Why do I have to verify my age?",
@@ -74,8 +73,7 @@ const GROUPS: Group[] = [
   },
   {
     id: "g3",
-    nav: "Returns & refunds",
-    heading: "Returns & refunds",
+    cat: "Returns & refunds",
     items: [
       {
         q: "What's your returns policy?",
@@ -102,8 +100,7 @@ const GROUPS: Group[] = [
   },
   {
     id: "g4",
-    nav: "Membership & points",
-    heading: "Membership & points",
+    cat: "Membership & points",
     items: [
       {
         q: "Is Bronze membership really free?",
@@ -130,8 +127,7 @@ const GROUPS: Group[] = [
   },
   {
     id: "g5",
-    nav: "The rum",
-    heading: "The rum",
+    cat: "The rum",
     items: [
       {
         q: "Where is Rumbaclaat made?",
@@ -153,8 +149,7 @@ const GROUPS: Group[] = [
   },
   {
     id: "g6",
-    nav: "Account & privacy",
-    heading: "Account & privacy",
+    cat: "Account & privacy",
     items: [
       {
         q: "How do I reset my password?",
@@ -189,114 +184,54 @@ const GROUPS: Group[] = [
 
 export default function FaqPage() {
   return (
-    <>
-      <section
-        className="section-sm"
-        style={{
-          background: "linear-gradient(135deg,#15151B,#0E0E12)",
-          borderBottom: "1px solid var(--gold-bdr)",
-        }}
-      >
-        <div className="container reveal" style={{ maxWidth: 820 }}>
-          <span className="eyebrow">HELP CENTRE</span>
-          <h1>Frequently asked questions</h1>
-          <p style={{ color: "var(--text-muted)", maxWidth: 560 }}>
-            Quick answers to the questions we hear most. If you can&apos;t find what you need,{" "}
-            <Link href="/contact" style={{ color: "var(--gold-hi)" }}>
-              drop us a line
+    <section
+      style={{
+        padding:
+          "clamp(48px,7vw,84px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)",
+      }}
+    >
+      <div style={{ maxWidth: 860, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 44 }}>
+          <span
+            style={{
+              fontSize: ".74rem",
+              letterSpacing: ".24em",
+              textTransform: "uppercase",
+              color: "var(--gold)",
+              fontWeight: 600,
+            }}
+          >
+            Help Centre
+          </span>
+          <h1
+            style={{
+              fontFamily: "var(--serif)",
+              fontWeight: 600,
+              fontSize: "clamp(2.2rem,5vw,3.4rem)",
+              lineHeight: 1.05,
+              margin: "12px 0 0",
+            }}
+          >
+            Frequently asked questions
+          </h1>
+          <p
+            style={{
+              color: "var(--muted)",
+              fontSize: "1.05rem",
+              lineHeight: 1.6,
+              margin: "14px auto 0",
+              maxWidth: 480,
+            }}
+          >
+            Everything about orders, delivery, membership and our rum. Can&apos;t find it?{" "}
+            <Link href="/contact" style={{ color: "var(--goldHi)" }}>
+              Contact us.
             </Link>
-            .
           </p>
         </div>
-      </section>
 
-      <section className="section">
-        <div className="container" style={{ maxWidth: 820 }}>
-          <nav aria-label="FAQ topics" className="mb-4">
-            <p className="eyebrow">JUMP TO</p>
-            <div className="d-flex flex-wrap gap-2">
-              {GROUPS.map((g) => (
-                <a key={g.id} href={`#${g.id}`} className="btn btn-ghost btn-sm">
-                  {g.nav}
-                </a>
-              ))}
-            </div>
-          </nav>
-
-          {GROUPS.map((g) => (
-            <section key={g.id} aria-labelledby={`${g.id}-h`} className="mb-5">
-              <h2
-                id={`${g.id}-h`}
-                className="h3 mb-3"
-                style={{ color: "var(--gold-hi)", scrollMarginTop: 120 }}
-                tabIndex={-1}
-              >
-                <a id={g.id} style={{ textDecoration: "none", color: "inherit" }}>
-                  {g.heading}
-                </a>
-              </h2>
-
-              <div className="d-flex flex-column gap-3">
-                {g.items.map((it) => (
-                  <details key={it.q} className="card-brand" style={{ padding: "18px 22px" }}>
-                    <summary
-                      className="serif"
-                      style={{
-                        cursor: "pointer",
-                        fontSize: "1.2rem",
-                        fontWeight: 600,
-                        color: "var(--text)",
-                        listStyle: "none",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 16,
-                      }}
-                    >
-                      <span>{it.q}</span>
-                      <span
-                        aria-hidden="true"
-                        className="gold"
-                        style={{ fontSize: "1.4rem", lineHeight: 1, flexShrink: 0 }}
-                      >
-                        +
-                      </span>
-                    </summary>
-                    <p
-                      style={{
-                        color: "var(--text-muted)",
-                        marginTop: 14,
-                        marginBottom: 0,
-                        fontSize: ".95rem",
-                        lineHeight: 1.7,
-                      }}
-                    >
-                      {it.a}
-                    </p>
-                  </details>
-                ))}
-              </div>
-            </section>
-          ))}
-
-          <div className="card-brand mt-5">
-            <p
-              style={{
-                margin: "0 0 6px",
-                fontFamily: "var(--serif)",
-                fontSize: "1.15rem",
-                color: "var(--gold-hi)",
-              }}
-            >
-              Still need help?
-            </p>
-            <p style={{ margin: "0 0 14px" }}>
-              Email <a href="mailto:hello@rumbaclaat.com">hello@rumbaclaat.com</a> or use our{" "}
-              <Link href="/contact">contact form</Link>. We reply within 1 business day.
-            </p>
-          </div>
-        </div>
-      </section>
-    </>
+        <FaqAccordion groups={GROUPS} />
+      </div>
+    </section>
   );
 }

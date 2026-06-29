@@ -5,6 +5,25 @@ import { submitTradeOrder } from "@/app/(site)/trade/portal/actions";
 
 type Band = { band: string; ppb: number };
 
+const fieldStyle: React.CSSProperties = {
+  width: "100%",
+  background: "var(--surface2)",
+  border: "1px solid var(--line2)",
+  color: "var(--text)",
+  borderRadius: 10,
+  padding: "11px 14px",
+  fontSize: ".88rem",
+  outline: "none",
+  fontFamily: "var(--sans)",
+  marginBottom: 14,
+};
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  color: "var(--muted)",
+  fontSize: ".78rem",
+  marginBottom: 6,
+};
+
 export default function TradeOrderCalculator({
   products,
   pricing,
@@ -28,35 +47,66 @@ export default function TradeOrderCalculator({
   const money = (x: number) => `£${x.toFixed(2)}`;
 
   return (
-    <form action={submitTradeOrder} className="card-brand">
-      <h2 className="h4 mb-3">Place a new order</h2>
-      <div className="row g-3 mb-3">
-        <div className="col-sm-6">
-          <label className="form-label" htmlFor="t-product">Product *</label>
-          <select id="t-product" name="productId" className="form-select" value={productId} onChange={(e) => setProductId(e.target.value)} required>
-            {products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-        </div>
-        <div className="col-sm-6">
-          <label className="form-label" htmlFor="t-cases">Number of cases *</label>
-          <input id="t-cases" name="cases" type="number" min={1} className="form-control" value={cases} onChange={(e) => setCases(e.target.value)} required />
-        </div>
-      </div>
+    <form
+      action={submitTradeOrder}
+      style={{
+        background: "linear-gradient(165deg, rgba(205,181,130,.13), var(--card))",
+        border: "1px solid var(--gold)",
+        borderRadius: 16,
+        padding: 24,
+      }}
+    >
+      <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 16px" }}>Place a new order</h3>
+
+      <label htmlFor="t-product" style={labelStyle}>Product *</label>
+      <select
+        id="t-product"
+        name="productId"
+        value={productId}
+        onChange={(e) => setProductId(e.target.value)}
+        required
+        style={{ ...fieldStyle, cursor: "pointer", color: "var(--muted)" }}
+      >
+        {products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+      </select>
+
+      <label htmlFor="t-cases" style={labelStyle}>Number of cases *</label>
+      <input
+        id="t-cases"
+        name="cases"
+        type="number"
+        min={1}
+        placeholder="6"
+        value={cases}
+        onChange={(e) => setCases(e.target.value)}
+        required
+        style={fieldStyle}
+      />
+
+      <label htmlFor="t-po" style={labelStyle}>PO reference</label>
+      <input id="t-po" name="poReference" style={{ ...fieldStyle, marginBottom: 18 }} />
+
+      <input type="hidden" name="deliveryNotes" value="" />
 
       {n > 0 && (
-        <div className="mb-3" style={{ background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 16 }} aria-live="polite">
-          <div className="d-flex justify-content-between mb-2" style={{ fontSize: ".875rem" }}><span style={{ color: "var(--text-muted)" }}>Cases × 6 = Bottles</span><span>{bottles}</span></div>
-          <div className="d-flex justify-content-between mb-2" style={{ fontSize: ".875rem" }}><span style={{ color: "var(--text-muted)" }}>Price per bottle</span><span>{money(ppb)}</span></div>
-          <div className="d-flex justify-content-between mb-2" style={{ fontSize: ".875rem" }}><span style={{ color: "var(--text-muted)" }}>Net total</span><span>{money(net)}</span></div>
-          <div className="d-flex justify-content-between mb-2" style={{ fontSize: ".875rem" }}><span style={{ color: "var(--text-muted)" }}>VAT (20%)</span><span>{money(vat)}</span></div>
-          <hr style={{ borderColor: "var(--gold-bdr)" }} />
-          <div className="d-flex justify-content-between" style={{ fontWeight: 600 }}><span>Grand total (inc VAT)</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(total)}</span></div>
+        <div
+          aria-live="polite"
+          style={{ background: "var(--surface2)", border: "1px solid var(--line2)", borderRadius: 11, padding: 16, marginBottom: 18 }}
+        >
+          <div className="d-flex justify-content-between" style={{ fontSize: ".84rem", marginBottom: 8 }}><span style={{ color: "var(--muted)" }}>Cases × 6 = Bottles</span><span style={{ fontVariantNumeric: "tabular-nums" }}>{bottles}</span></div>
+          <div className="d-flex justify-content-between" style={{ fontSize: ".84rem", marginBottom: 8 }}><span style={{ color: "var(--muted)" }}>Price per bottle</span><span style={{ fontVariantNumeric: "tabular-nums" }}>{money(ppb)}</span></div>
+          <div className="d-flex justify-content-between" style={{ fontSize: ".84rem", marginBottom: 8 }}><span style={{ color: "var(--muted)" }}>Net total</span><span style={{ fontVariantNumeric: "tabular-nums" }}>{money(net)}</span></div>
+          <div className="d-flex justify-content-between" style={{ fontSize: ".84rem", marginBottom: 10 }}><span style={{ color: "var(--muted)" }}>VAT (20%)</span><span style={{ fontVariantNumeric: "tabular-nums" }}>{money(vat)}</span></div>
+          <div className="d-flex justify-content-between align-items-center" style={{ borderTop: "1px solid var(--line2)", paddingTop: 10 }}><span style={{ fontWeight: 600, fontSize: ".88rem" }}>Grand total (inc VAT)</span><span style={{ fontFamily: "var(--serif)", color: "var(--goldHi)", fontSize: "1.35rem", fontVariantNumeric: "tabular-nums" }}>{money(total)}</span></div>
         </div>
       )}
 
-      <div className="mb-3"><label className="form-label" htmlFor="t-notes">Delivery notes</label><textarea id="t-notes" name="deliveryNotes" rows={2} className="form-control" /></div>
-      <div className="mb-3"><label className="form-label" htmlFor="t-po">Purchase order reference</label><input id="t-po" name="poReference" className="form-control" placeholder="Your internal PO number (optional)" /></div>
-      <button type="submit" className="btn btn-gold">Submit order request</button>
+      <button
+        type="submit"
+        style={{ width: "100%", background: "var(--gold)", color: "var(--onGold)", border: "none", borderRadius: 999, padding: 12, fontSize: ".9rem", fontWeight: 600, cursor: "pointer" }}
+      >
+        Submit order request
+      </button>
     </form>
   );
 }

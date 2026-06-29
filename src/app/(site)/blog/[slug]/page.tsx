@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import BlogShareRow from "./BlogShareRow";
 
 export const dynamic = "force-dynamic";
 
@@ -11,24 +10,6 @@ async function getPost(slug: string) {
     where: { slug, status: "published" },
     include: { author: true },
   });
-}
-
-async function getRelatedPosts(slug: string) {
-  return prisma.blogPost.findMany({
-    where: { status: "published", slug: { not: slug } },
-    orderBy: { publishDate: "desc" },
-    take: 3,
-    select: { slug: true, title: true, category: true, excerpt: true },
-  });
-}
-
-function initials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
 }
 
 export async function generateMetadata({
@@ -54,7 +35,6 @@ export default async function BlogPostPage({
   const post = await getPost(slug);
   if (!post) notFound();
 
-  const related = await getRelatedPosts(slug);
   const authorName = post.author?.name ?? "Rumbaclaat";
   const dateLabel = post.publishDate
     ? new Date(post.publishDate).toLocaleDateString("en-GB", {
@@ -63,220 +43,177 @@ export default async function BlogPostPage({
         year: "numeric",
       })
     : null;
-  const dateISO = post.publishDate
-    ? new Date(post.publishDate).toISOString().slice(0, 10)
-    : undefined;
-  // Hero figcaption is a real caption, not the post title. The BlogPost model
-  // has no dedicated caption field, so fall back to a brand image credit that
-  // mirrors the static source ("American oak barrels at our partner
-  // distillery, Jamaica.") rather than echoing the headline.
-  const heroCaption = "Original Reserve, aged in American oak at our partner distillery.";
+  // meta line mirrors the prototype: "Rumbaclaat · 20 January 2025 · 6 min read"
+  const meta = [authorName, dateLabel, post.readTime]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <>
-      {/* Hero band — left-aligned gradient with bottom gold border */}
-      <section
-        className="section-sm"
-        style={{
-          background: "linear-gradient(135deg,#15151B,#0E0E12)",
-          borderBottom: "1px solid var(--gold-bdr)",
-        }}
-      >
-        <div className="container" style={{ maxWidth: 780 }}>
-          <nav aria-label="Breadcrumb">
-            <ol
-              className="breadcrumb"
-              style={{ fontSize: ".75rem", marginBottom: 16 }}
-            >
-              <li className="breadcrumb-item">
-                <Link href="/">Home</Link>
-              </li>
-              <li className="breadcrumb-item">
-                <Link href="/blog">Journal</Link>
-              </li>
-              <li className="breadcrumb-item active" aria-current="page">
-                Article
-              </li>
-            </ol>
-          </nav>
-          {post.category && <span className="eyebrow">{post.category}</span>}
-          <h1 style={{ fontSize: "clamp(2rem,4vw,3rem)" }}>{post.title}</h1>
-          {post.excerpt && (
-            <p
-              className="lede"
-              style={{
-                fontSize: "1.1rem",
-                color: "var(--text-muted)",
-                maxWidth: 580,
-                marginTop: 14,
-              }}
-            >
-              {post.excerpt}
-            </p>
-          )}
-          <div
-            className="d-flex align-items-center gap-3 mt-3 flex-wrap"
-            style={{ fontSize: ".8125rem", color: "var(--text-dim)" }}
-          >
-            <span>
-              <strong style={{ color: "var(--text)" }}>{authorName}</strong>
-            </span>
-            {dateLabel && (
-              <>
-                <span aria-hidden="true">·</span>
-                <time dateTime={dateISO}>{dateLabel}</time>
-              </>
-            )}
-            {post.readTime && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{post.readTime}</span>
-              </>
-            )}
-          </div>
+    <article
+      style={{
+        padding:
+          "clamp(28px,4vw,44px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)",
+      }}
+    >
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        <div
+          style={{
+            fontSize: ".78rem",
+            color: "var(--dim)",
+            marginBottom: 22,
+          }}
+        >
+          <Link href="/" style={{ color: "var(--dim)" }}>
+            Home
+          </Link>{" "}
+          <span style={{ opacity: 0.5 }}>/</span>{" "}
+          <Link href="/blog" style={{ color: "var(--dim)" }}>
+            Blog
+          </Link>{" "}
+          <span style={{ opacity: 0.5 }}>/</span>{" "}
+          <span style={{ color: "var(--muted)" }}>{post.title}</span>
         </div>
-      </section>
+        {post.category && (
+          <span
+            style={{
+              fontSize: ".72rem",
+              letterSpacing: ".16em",
+              textTransform: "uppercase",
+              color: "var(--gold)",
+              fontWeight: 600,
+            }}
+          >
+            {post.category}
+          </span>
+        )}
+        <h1
+          style={{
+            fontFamily: "var(--serif)",
+            fontWeight: 600,
+            fontSize: "clamp(2.3rem,5vw,3.5rem)",
+            lineHeight: 1.05,
+            margin: "12px 0 0",
+          }}
+        >
+          {post.title}
+        </h1>
+        {meta && (
+          <div
+            style={{
+              color: "var(--dim)",
+              fontSize: ".86rem",
+              marginTop: 14,
+            }}
+          >
+            {meta}
+          </div>
+        )}
+        {post.excerpt && (
+          <p
+            style={{
+              color: "var(--text)",
+              fontSize: "1.18rem",
+              lineHeight: 1.6,
+              fontStyle: "italic",
+              margin: "22px 0 0",
+              fontFamily: "var(--serif)",
+            }}
+          >
+            {post.excerpt}
+          </p>
+        )}
+      </div>
 
-      {/* Hero image as figure with caption on card background */}
       {post.heroImage && (
-        <figure className="my-0">
+        <div
+          style={{
+            maxWidth: 960,
+            margin: "32px auto 0",
+            aspectRatio: "16 / 8",
+            borderRadius: 18,
+            overflow: "hidden",
+            border: "1px solid var(--line)",
+          }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.heroImage}
             alt={post.title}
+            loading="lazy"
             style={{
               width: "100%",
-              height: "auto",
-              display: "block",
-              maxHeight: 520,
+              height: "100%",
               objectFit: "cover",
+              display: "block",
             }}
           />
-          <figcaption
+        </div>
+      )}
+
+      <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        {post.body ? (
+          <div
+            className="blog-body"
+            style={{ marginTop: 32 }}
+            dangerouslySetInnerHTML={{ __html: post.body }}
+          />
+        ) : (
+          <p
             style={{
-              textAlign: "center",
-              fontSize: ".75rem",
-              color: "var(--text-dim)",
-              padding: "10px 16px",
-              background: "var(--bg-card)",
+              color: "var(--muted)",
+              fontSize: "1.05rem",
+              lineHeight: 1.8,
+              marginTop: 32,
             }}
           >
-            {heroCaption}
-          </figcaption>
-        </figure>
-      )}
+            This article has no content yet.
+          </p>
+        )}
 
-      {/* Article body — 740px reading column */}
-      <article className="section" style={{ paddingTop: 48 }}>
-        <div className="container" style={{ maxWidth: 740 }}>
-          {post.body ? (
-            <div
-              className="blog-body"
-              style={{ fontSize: "1.0625rem" }}
-              dangerouslySetInnerHTML={{ __html: post.body }}
-            />
-          ) : (
-            <p style={{ color: "var(--text-muted)" }}>
-              This article has no content yet.
-            </p>
-          )}
-
-          {/* Share row */}
-          <BlogShareRow title={post.seoTitle ?? post.title} />
-
-          {/* Author bio */}
-          <div
-            className="card-brand d-flex gap-3 align-items-center mt-4"
-            style={{ padding: 18 }}
-          >
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: "50%",
-                background: "var(--gold-lt)",
-                border: "1px solid var(--gold-md)",
-                flexShrink: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "var(--serif)",
-                color: "var(--gold-hi)",
-                fontSize: "1.4rem",
-              }}
-              aria-hidden="true"
-            >
-              {initials(authorName)}
-            </div>
-            <div>
-              <p
-                style={{
-                  fontFamily: "var(--serif)",
-                  fontSize: "1.05rem",
-                  marginBottom: 2,
-                  color: "var(--text)",
-                }}
-              >
-                {authorName}
-              </p>
-              <p
-                style={{
-                  fontSize: ".8125rem",
-                  color: "var(--text-muted)",
-                  margin: 0,
-                }}
-              >
-                {post.author?.bio ??
-                  "Founder & storyteller. Writes about the work behind the bottle."}
-              </p>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      {/* More from the journal */}
-      {related.length > 0 && (
-        <section
-          className="section"
+        <div
           style={{
-            background: "#0E0E12",
-            borderTop: "1px solid var(--gold-bdr)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            flexWrap: "wrap",
+            marginTop: 44,
+            paddingTop: 24,
+            borderTop: "1px solid var(--line2)",
           }}
         >
-          <div className="container">
-            <h2 className="h3 mb-4">More from the journal</h2>
-            <div className="row g-4">
-              {related.map((r) => (
-                <div className="col-12 col-md-4" key={r.slug}>
-                  <Link
-                    className="card-brand h-100 d-block"
-                    href={`/blog/${r.slug}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    {r.category && <span className="eyebrow">{r.category}</span>}
-                    <h3
-                      className="h5 mt-2"
-                      style={{ fontFamily: "var(--serif)" }}
-                    >
-                      {r.title}
-                    </h3>
-                    {r.excerpt && (
-                      <p
-                        style={{
-                          fontSize: ".875rem",
-                          color: "var(--text-muted)",
-                        }}
-                      >
-                        {r.excerpt}
-                      </p>
-                    )}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-    </>
+          <Link
+            href="/blog"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              color: "var(--muted)",
+              fontSize: ".9rem",
+              textDecoration: "none",
+            }}
+          >
+            <i className="bi bi-arrow-left"></i>All posts
+          </Link>
+          <Link
+            href="/shop"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 9,
+              background: "var(--gold)",
+              color: "var(--onGold)",
+              borderRadius: 999,
+              padding: "11px 24px",
+              fontSize: ".9rem",
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            Shop the rum <i className="bi bi-arrow-right"></i>
+          </Link>
+        </div>
+      </div>
+    </article>
   );
 }

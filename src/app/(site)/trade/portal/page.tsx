@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import TradeTabs from "@/components/trade/trade-tabs";
+import TradePortalTabs from "@/components/trade/trade-portal-tabs";
 import TradeOrderCalculator from "@/components/trade/trade-order-calculator";
 import { sendTradeMessage } from "./actions";
 
@@ -14,44 +14,45 @@ const EXPORT: Record<string, { code: string; origin: string; net: string; gross:
 
 const money = (n: number) => `£${n.toFixed(2)}`;
 
-// Champagne table header: uppercase .66rem --text-dim on --surface-sunken
-const thBase = {
-  fontSize: ".66rem",
+// Status badge styles, matching the prototype's inline pill treatment.
+const badgeBase: React.CSSProperties = {
+  display: "inline-block",
+  fontSize: ".7rem",
   fontWeight: 600,
-  letterSpacing: ".08em",
-  textTransform: "uppercase" as const,
-  color: "var(--text-dim)",
-  background: "var(--surface-sunken)",
+  borderRadius: 999,
+  padding: "3px 10px",
+  textTransform: "capitalize",
+  border: "1px solid",
 };
-const thNum = { ...thBase, textAlign: "right" as const };
-const tdNum = { textAlign: "right" as const, fontVariantNumeric: "tabular-nums" as const };
-const srOnly = "visually-hidden";
-const sectionHead = (eyebrow: string, title: string, lede?: string) => (
-  <div className="mb-4">
-    <span className="eyebrow">{eyebrow}</span>
-    <h2 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(1.5rem, 3vw, 2rem)", margin: 0 }}>{title}</h2>
-    {lede ? <p style={{ color: "var(--text-muted)", lineHeight: 1.7, margin: "8px 0 0" }}>{lede}</p> : null}
-  </div>
-);
+const greenBadge: React.CSSProperties = { ...badgeBase, color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)" };
+const yellowBadge: React.CSSProperties = { ...badgeBase, color: "var(--yellow)", background: "rgba(232,182,90,.12)", borderColor: "rgba(232,182,90,.3)" };
+const goldBadge: React.CSSProperties = { ...badgeBase, color: "var(--goldHi)", background: "var(--goldLt)", borderColor: "var(--gold-bdr)", textTransform: "none" };
+
+const cardStyle: React.CSSProperties = { background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 16, overflow: "hidden" };
+const cardPad: React.CSSProperties = { background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 16, padding: "22px 24px" };
+const cardTitle: React.CSSProperties = { fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.3rem", margin: 0 };
+const fieldStyle: React.CSSProperties = { width: "100%", background: "var(--surface2)", border: "1px solid var(--line2)", color: "var(--text)", borderRadius: 10, padding: "11px 14px", fontSize: ".88rem", outline: "none", fontFamily: "var(--sans)" };
+const fieldLabel: React.CSSProperties = { display: "block", color: "var(--muted)", fontSize: ".78rem", marginBottom: 6 };
 
 export default async function TradePortalPage() {
   const account = await prisma.tradeAccount.findFirst({ orderBy: { createdAt: "asc" } });
   if (!account) {
     return (
-      <section className="section">
-        <div className="container text-center">
-          <span className="eyebrow eyebrow-center">Trade Portal</span>
-          <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(2rem, 4.4vw, 3rem)", margin: 0 }}>Trade Portal</h1>
-          <p style={{ color: "var(--text-muted)", marginTop: 14 }}>No trade account found. <Link href="/trade-apply">Apply for trade access →</Link></p>
+      <section style={{ padding: "clamp(36px,5vw,56px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
+          <span style={{ fontSize: ".74rem", letterSpacing: ".22em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600 }}>Trade Portal</span>
+          <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(1.9rem, 4vw, 2.7rem)", margin: "10px 0 0" }}>Trade Portal</h1>
+          <p style={{ color: "var(--muted)", marginTop: 14 }}>No trade account found. <Link href="/trade-apply">Apply for trade access →</Link></p>
         </div>
       </section>
     );
   }
 
-  const [orders, messages, pricingRows] = await Promise.all([
+  const [orders, messages, pricingRows, invoices] = await Promise.all([
     prisma.tradeOrder.findMany({ where: { tradeAccountId: account.id }, orderBy: { placedAt: "desc" } }),
     prisma.tradeMessage.findMany({ where: { tradeAccountId: account.id }, orderBy: { createdAt: "desc" } }),
     prisma.tradeProductPricing.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.invoice.findMany({ where: { tradeAccountId: account.id }, orderBy: { issuedAt: "desc" } }),
   ]);
 
   const productIds = [...new Set(pricingRows.map((p) => p.productId))];
@@ -76,272 +77,233 @@ export default async function TradePortalPage() {
   }).length;
   const minPpb = pricingRows.length ? Math.min(...pricingRows.map((r) => Number(r.pricePerBottle))) : 0;
 
-  // Build a concise "Items" summary from each order's line JSON
-  const orderItems = (lines: unknown): string => {
-    if (!Array.isArray(lines)) return "—";
-    const parts = (lines as { name?: string; cases?: number }[])
-      .map((l) => (l?.name ? `${l.name} × ${l.cases ?? 0} cases` : null))
-      .filter(Boolean) as string[];
-    return parts.length ? parts.join(" + ") : "—";
-  };
+  const fmtDate = (d: Date | string) => new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
-  const tabs = [
-    {
-      id: "pricing",
-      label: "Pricing",
-      content: (
-        <div>
-          {sectionHead("Your rate card", "Wholesale pricing", `All prices include UK VAT at 20%. Payment terms: ${account.paymentTerms}. Minimum order: 6 bottles (1 case).`)}
-          <div className="card-brand card-brand--feature mb-4" style={{ padding: 22 }}>
-            <p style={{ fontFamily: "var(--serif)", fontSize: "1.2rem", fontWeight: 600, color: "var(--gold-hi)", margin: "0 0 4px" }}>Your pricing tier: {account.pricingTier}</p>
-            <p style={{ color: "var(--text-muted)", margin: 0 }}>Tiered rates below are locked to your account and refresh automatically with each volume band.</p>
-          </div>
-          <div className="row g-4">
-            {Object.entries(pricingByProduct).map(([pid, rows]) => (
-              <div className="col-12 col-lg-6" key={pid}>
-                <div className="card-brand h-100 p-0" style={{ overflow: "hidden" }}>
-                  <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: 0, padding: "20px 22px 16px", borderBottom: "1px solid var(--line)" }}>{productName(pid)} — Wholesale</h3>
-                  <div className="table-responsive">
-                    <table className="trade-table">
-                      <caption className={srOnly}>Volume-based wholesale pricing for {productName(pid)}</caption>
-                      <thead><tr><th scope="col" style={thBase}>Volume</th><th scope="col" style={thNum}>Price/Bottle</th><th scope="col" style={thNum}>Price/Case</th></tr></thead>
-                      <tbody>
-                        {rows.map((r) => (
-                          <tr key={r.id}>
-                            <td>{r.volumeBand === "10+" ? "10+ cases" : `${r.volumeBand} cases`}</td>
-                            <td className="td-num" style={{ ...tdNum, color: "var(--gold-hi)", fontFamily: "var(--serif)" }}>{money(Number(r.pricePerBottle))}</td>
-                            <td className="td-num" style={tdNum}>{money(Number(r.pricePerCase))}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <p style={{ fontSize: ".8125rem", color: "var(--text-muted)", margin: "12px 22px 18px" }}>VAT 20% incl. · Min. 1 case (6 btl) · 60-day terms</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "orders",
-      label: "Orders",
-      content: (
-        <div>
-          {sectionHead("History", "Your orders")}
-          <div className="card-brand p-0" style={{ overflow: "hidden" }}>
-            <div className="table-responsive">
-              <table className="trade-table">
-                <caption className={srOnly}>Your trade order history</caption>
-                <thead><tr><th scope="col" style={thBase}>Order ID</th><th scope="col" style={thBase}>Date</th><th scope="col" style={thBase}>Items</th><th scope="col" style={thNum}>Total (inc VAT)</th><th scope="col" style={thBase}>Status</th><th scope="col" style={thBase}>Delivery</th></tr></thead>
-                <tbody>
-                  {orders.length === 0 && <tr><td colSpan={6} style={{ color: "var(--text-dim)" }}>No orders yet.</td></tr>}
-                  {orders.map((o) => (
-                    <tr key={o.id}>
-                      <th scope="row" style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{o.ref}</th>
-                      <td>{new Date(o.placedAt).toLocaleDateString("en-GB")}</td>
-                      <td style={{ color: "var(--text-muted)" }}>{orderItems(o.lines)}</td>
-                      <td className="td-num" style={{ ...tdNum, fontFamily: "var(--serif)", color: "var(--gold-hi)" }}>{money(Number(o.grandTotal))}</td>
-                      <td>
-                        <span className="badge-brand" style={o.status === "delivered"
-                          ? { color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)", textTransform: "capitalize" }
-                          : { color: "var(--yellow)", background: "rgba(232,182,90,.12)", borderColor: "rgba(232,182,90,.3)", textTransform: "capitalize" }}>{o.status}</span>
-                      </td>
-                      <td style={{ color: "var(--text-muted)" }}>{o.status === "delivered" ? new Date(o.placedAt).toLocaleDateString("en-GB") : "TBC"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "order",
-      label: "Place order",
-      content: (
-        <div>
-          {sectionHead("New order", "Place an order", "Build your order against your locked rate card — totals update live as you change quantities.")}
-          <TradeOrderCalculator products={calcProducts} pricing={calcPricing} />
-        </div>
-      ),
-    },
-    {
-      id: "messages",
-      label: "Messages",
-      badge: unread || undefined,
-      content: (
-        <div>
-          {sectionHead("Account manager", "Messages")}
-          <div className="row g-4">
-            <div className="col-12 col-lg-6">
-              {messages.length === 0 && <p style={{ color: "var(--text-dim)" }}>No messages yet.</p>}
-              {messages.map((m) => (
-                <div className={`msg-item${m.read ? "" : " unread"}`} key={m.id}>
-                  <div className="d-flex justify-content-between mb-1">
-                    <span style={{ fontSize: ".875rem", fontWeight: 600, color: "var(--text)" }}>{m.subject ?? "Message"}</span>
-                    {!m.read ? (
-                      <span aria-label="Unread" style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: "var(--gold)", flex: "0 0 auto", marginTop: 4 }} />
-                    ) : null}
-                  </div>
-                  <span className="d-block" style={{ fontSize: ".875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>{m.body}</span>
-                  <span className="d-block" style={{ fontSize: ".6875rem", color: "var(--text-dim)", marginTop: 6 }}>{m.direction === "inbound" ? "You" : "Rumbaclaat Trade Team"} · {new Date(m.createdAt).toLocaleDateString("en-GB")}</span>
-                </div>
-              ))}
-            </div>
-            <div className="col-12 col-lg-6">
-              <form action={sendTradeMessage} className="card-brand" style={{ padding: 24 }}>
-                <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Send a message</h3>
-                <div className="mb-3">
-                  <label className="form-label" htmlFor="m-subject" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Subject</label>
-                  <input id="m-subject" name="subject" className="form-control" />
-                </div>
-                <div className="mb-4">
-                  <label className="form-label" htmlFor="m-body" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Message *</label>
-                  <textarea id="m-body" name="body" rows={4} className="form-control" required />
-                </div>
-                <button type="submit" className="btn btn-gold w-100">Send message</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "export",
-      label: "Export compliance",
-      content: (
-        <div>
-          {sectionHead("Documentation", "Export compliance", "Commodity codes, weights and Incoterms for your international shipments.")}
-          <div className="row g-4">
-            {Object.entries(pricingByProduct).map(([pid]) => {
-              const e = EXPORT[productName(pid)];
-              if (!e) return null;
-              return (
-                <div className="col-12 col-lg-6" key={pid}>
-                  <div className="card-brand h-100 p-0" style={{ overflow: "hidden" }}>
-                    <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: 0, padding: "20px 22px 16px", borderBottom: "1px solid var(--line)" }}>Export compliance — {productName(pid)}</h3>
-                    <div className="table-responsive">
-                      <table className="trade-table">
-                        <tbody>
-                          <tr><td style={{ color: "var(--text-muted)" }}>Commodity Code</td><td style={{ color: "var(--gold-hi)", fontWeight: 600 }}>{e.code}</td></tr>
-                          <tr><td style={{ color: "var(--text-muted)" }}>Country of Origin</td><td>{e.origin}</td></tr>
-                          <tr><td style={{ color: "var(--text-muted)" }}>Net Weight</td><td>{e.net}/bottle</td></tr>
-                          <tr><td style={{ color: "var(--text-muted)" }}>Gross Weight</td><td>{e.gross}/bottle</td></tr>
-                          <tr><td style={{ color: "var(--text-muted)" }}>ABV</td><td>{e.abv}</td></tr>
-                          <tr><td style={{ color: "var(--text-muted)" }}>Volume</td><td>{e.vol}</td></tr>
-                          <tr><td style={{ color: "var(--text-muted)" }}>Incoterms</td><td>EXW, FOB, CIF</td></tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "account",
-      label: "Account",
-      content: (
-        <div>
-          {sectionHead("Your account", "Account summary")}
-          <div className="row g-4">
-            <div className="col-12 col-lg-6">
-              <div className="card-brand h-100" style={{ padding: 24 }}>
-                <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Company details</h3>
-                <form>
-                  <div className="mb-3">
-                    <label className="form-label" htmlFor="ta-company" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Company name</label>
-                    <input id="ta-company" name="companyName" className="form-control" defaultValue={account.companyName} autoComplete="organization" />
-                  </div>
-                  <div className="row g-3">
-                    <div className="col-sm-6">
-                      <label className="form-label" htmlFor="ta-contact" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Contact name</label>
-                      <input id="ta-contact" name="contactName" className="form-control" defaultValue={account.contactName} autoComplete="name" />
-                    </div>
-                    <div className="col-sm-6">
-                      <label className="form-label" htmlFor="ta-email" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Email</label>
-                      <input id="ta-email" name="contactEmail" type="email" className="form-control" defaultValue={account.contactEmail} autoComplete="email" />
-                    </div>
-                  </div>
-                  <div className="mb-3 mt-3">
-                    <label className="form-label" htmlFor="ta-btype" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Business type</label>
-                    <select id="ta-btype" name="businessType" className="form-select" defaultValue={account.businessType ?? "Off-licence / Retailer"}>
-                      <option>Restaurant / Bar</option>
-                      <option>Off-licence / Retailer</option>
-                      <option>Wholesale Distributor</option>
-                      <option>Export / International</option>
-                    </select>
-                  </div>
-                  <div className="row g-3">
-                    <div className="col-sm-6">
-                      <label className="form-label" htmlFor="ta-vat" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>VAT number</label>
-                      <input id="ta-vat" name="vatNumber" className="form-control" defaultValue={account.vatNumber ?? ""} />
-                    </div>
-                    <div className="col-sm-6">
-                      <label className="form-label" htmlFor="ta-terms" style={{ fontSize: ".78rem", color: "var(--text-muted)", marginBottom: 6 }}>Payment terms</label>
-                      <input id="ta-terms" name="paymentTerms" className="form-control" defaultValue={account.paymentTerms} readOnly style={{ opacity: 0.6 }} />
-                    </div>
-                  </div>
-                  <button type="submit" className="btn btn-gold mt-3">Save changes</button>
-                </form>
-              </div>
-            </div>
-            <div className="col-12 col-lg-6">
-              <div className="card-brand h-100" style={{ padding: 24 }}>
-                <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Account summary</h3>
-                <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Account status</span><span className="badge-brand" style={{ color: "var(--green)", background: "rgba(111,207,151,.12)", borderColor: "rgba(111,207,151,.3)", textTransform: "capitalize" }}>{account.status}</span></div>
-                <div className="d-flex justify-content-between align-items-center py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Pricing tier</span><span className="badge-brand badge-gold">{account.pricingTier}</span></div>
-                <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Credit limit</span><span style={{ fontFamily: "var(--serif)", color: "var(--gold-hi)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.creditLimit))}</span></div>
-                <div className="d-flex justify-content-between py-2" style={{ borderBottom: "1px solid var(--line-2)" }}><span style={{ color: "var(--text-muted)" }}>Outstanding balance</span><span style={{ fontFamily: "var(--serif)", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.outstandingBalance))}</span></div>
-                <div className="d-flex justify-content-between py-2"><span style={{ color: "var(--text-muted)" }}>Account manager</span><span style={{ fontSize: ".875rem" }}><a href={`mailto:${account.accountManager ?? "trade@rumbaclaat.com"}`}>{account.accountManager ?? "trade@rumbaclaat.com"}</a></span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-  ];
-
+  // ---- Stat cards (prototype: tradeStats — label / value / icon) ----
   const stats = [
-    { label: "YTD Orders", value: String(orders.length), sub: `+${ordersThisMonth} this month`, subColor: "var(--green)", primary: false },
-    { label: "YTD Spend", value: money(ytdSpend), sub: `Across ${orders.length} orders`, subColor: "var(--green)", primary: true },
-    { label: "Current Pricing", value: account.pricingTier, sub: minPpb ? `From ${money(minPpb)}/btl` : "Locked rate card", subColor: "var(--green)", primary: false },
-    { label: "Open Orders", value: String(openOrders), sub: "Processing", subColor: "var(--yellow)", primary: false },
+    { label: "YTD Orders", value: String(orders.length), icon: "bag-check" },
+    { label: "YTD Spend", value: money(ytdSpend), icon: "graph-up" },
+    { label: "Pricing tier", value: account.pricingTier, icon: "tags" },
+    { label: "Open orders", value: String(openOrders), icon: "hourglass-split" },
   ];
 
-  return (
-    <section className="section">
-      <div className="container">
-        <div className="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-4">
-          <div>
-            <span className="eyebrow">Trade Portal</span>
-            <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(2rem, 4.4vw, 3.4rem)", lineHeight: 1.05, margin: 0 }}>Wholesale &amp; Export</h1>
+  // ---- Dashboard panel: exact prototype 1.5fr / 1fr layout ----
+  const dashboard = (
+    <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.5fr) minmax(0,1fr)", gap: 20, alignItems: "start" }} className="trade-portal-grid">
+      {/* LEFT COLUMN */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        {/* Your pricing */}
+        <div style={cardPad}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 6 }}>
+            <h2 style={cardTitle}>Your pricing</h2>
+            <span style={{ fontSize: ".72rem", color: "var(--goldHi)", background: "var(--goldLt)", border: "1px solid var(--gold-bdr)", borderRadius: 999, padding: "3px 10px" }}>{account.pricingTier} tier</span>
           </div>
-          <div className="d-flex gap-2 align-items-center">
-            <span className="badge-brand badge-gold">Signed in · {account.companyName}</span>
-            <Link href="/trade" className="btn btn-ghost btn-sm">Sign out</Link>
-          </div>
-        </div>
-
-        <div className="row g-3">
-          {stats.map((s) => (
-            <div className="col-6 col-lg-3" key={s.label}>
-              <div className="card-brand h-100" style={{ padding: 20, borderColor: s.primary ? "var(--gold-md)" : undefined }}>
-                <div style={{ fontSize: ".66rem", fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--text-dim)" }}>{s.label}</div>
-                <div className="serif" style={{ fontSize: "1.9rem", color: s.primary ? "var(--gold-hi)" : "var(--text)", fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{s.value}</div>
-                <div style={{ fontSize: ".6875rem", color: s.subColor, marginTop: 4 }}>{s.sub}</div>
+          <p style={{ color: "var(--dim)", fontSize: ".8rem", margin: "0 0 18px" }}>Incl. UK VAT at 20% · {account.paymentTerms} · Min order 6 bottles (1 case).</p>
+          {Object.entries(pricingByProduct).map(([pid, rows]) => (
+            <div style={{ marginBottom: 18 }} key={pid}>
+              <div style={{ fontWeight: 600, fontSize: ".92rem", color: "var(--text)", marginBottom: 10 }}>{productName(pid)}</div>
+              <div style={{ border: "1px solid var(--line2)", borderRadius: 11, overflow: "hidden" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", background: "var(--surface2)", fontSize: ".68rem", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--dim)", fontWeight: 600 }}>
+                  <span style={{ padding: "9px 14px" }}>Volume</span>
+                  <span style={{ padding: "9px 14px", textAlign: "right" }}>Per bottle</span>
+                  <span style={{ padding: "9px 14px", textAlign: "right" }}>Per case</span>
+                </div>
+                {rows.map((r) => (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderTop: "1px solid var(--line2)", fontSize: ".86rem" }} key={r.id}>
+                    <span style={{ padding: "11px 14px", color: "var(--muted)" }}>{r.volumeBand === "10+" ? "10+ cases" : `${r.volumeBand} cases`}</span>
+                    <span style={{ padding: "11px 14px", textAlign: "right", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(r.pricePerBottle))}</span>
+                    <span style={{ padding: "11px 14px", textAlign: "right", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(r.pricePerCase))}</span>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
 
-        <TradeTabs tabs={tabs} />
+        {/* Recent orders */}
+        <div style={cardStyle}>
+          <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--line2)" }}><h2 style={cardTitle}>Recent orders</h2></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr auto auto", gap: 12, padding: "11px 24px", background: "var(--surface2)", fontSize: ".66rem", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--dim)", fontWeight: 600 }}>
+            <span>Order</span><span>Date</span><span style={{ textAlign: "right" }}>Total</span><span style={{ textAlign: "right" }}>Status</span>
+          </div>
+          {orders.length === 0 && <div style={{ padding: "14px 24px", color: "var(--dim)", fontSize: ".88rem" }}>No orders yet.</div>}
+          {orders.map((o) => (
+            <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr auto auto", gap: 12, alignItems: "center", padding: "14px 24px", borderTop: "1px solid var(--line2)", fontSize: ".88rem" }} key={o.id}>
+              <span style={{ color: "var(--goldHi)", fontWeight: 600 }}>{o.ref}</span>
+              <span style={{ color: "var(--muted)" }}>{fmtDate(o.placedAt)}</span>
+              <span style={{ textAlign: "right", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(o.grandTotal))}</span>
+              <span style={{ textAlign: "right" }}><span style={o.status === "delivered" ? greenBadge : yellowBadge}>{o.status}</span></span>
+            </div>
+          ))}
+        </div>
+
+        {/* Invoices */}
+        <div style={cardStyle}>
+          <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--line2)" }}><h2 style={cardTitle}>Invoices</h2></div>
+          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr auto auto auto", gap: 12, padding: "11px 24px", background: "var(--surface2)", fontSize: ".66rem", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--dim)", fontWeight: 600 }}>
+            <span>Invoice</span><span>Issued</span><span style={{ textAlign: "right" }}>Amount</span><span style={{ textAlign: "right" }}>Terms</span><span style={{ textAlign: "right" }}>Status</span>
+          </div>
+          {invoices.length === 0 && <div style={{ padding: "14px 24px", color: "var(--dim)", fontSize: ".88rem" }}>No invoices yet.</div>}
+          {invoices.map((iv) => (
+            <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr auto auto auto", gap: 12, alignItems: "center", padding: "14px 24px", borderTop: "1px solid var(--line2)", fontSize: ".88rem" }} key={iv.id}>
+              <span style={{ color: "var(--goldHi)", fontWeight: 600 }}>{iv.ref}</span>
+              <span style={{ color: "var(--muted)" }}>{fmtDate(iv.issuedAt)}</span>
+              <span style={{ textAlign: "right", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(iv.amount))}</span>
+              <span style={{ textAlign: "right", color: "var(--muted)" }}>{iv.terms}</span>
+              <span style={{ textAlign: "right" }}><span style={iv.status === "paid" ? greenBadge : iv.status === "overdue" ? yellowBadge : goldBadge}>{iv.status}</span></span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT COLUMN */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <TradeOrderCalculator products={calcProducts} pricing={calcPricing} />
+
+        {/* Messages */}
+        <div style={cardPad}>
+          <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.2rem", margin: "0 0 16px" }}>Messages</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {messages.length === 0 && <div style={{ color: "var(--dim)", fontSize: ".8rem" }}>No messages yet.</div>}
+            {messages.map((m) => (
+              <div style={{ borderLeft: "2px solid var(--gold)", padding: "2px 0 2px 13px" }} key={m.id}>
+                <div style={{ fontWeight: 600, fontSize: ".86rem", color: "var(--text)" }}>{m.subject ?? "Message"}</div>
+                <div style={{ color: "var(--muted)", fontSize: ".8rem", lineHeight: 1.5, marginTop: 3 }}>{m.body}</div>
+                <div style={{ color: "var(--dim)", fontSize: ".72rem", marginTop: 5 }}>{m.direction === "inbound" ? "You" : "Rumbaclaat Trade Team"} · {fmtDate(m.createdAt)}</div>
+              </div>
+            ))}
+          </div>
+          <form action={sendTradeMessage} style={{ marginTop: 18, borderTop: "1px solid var(--line2)", paddingTop: 18 }}>
+            <label htmlFor="m-subject" style={fieldLabel}>Subject</label>
+            <input id="m-subject" name="subject" style={{ ...fieldStyle, marginBottom: 12 }} />
+            <label htmlFor="m-body" style={fieldLabel}>Message *</label>
+            <textarea id="m-body" name="body" rows={3} required style={{ ...fieldStyle, marginBottom: 14, resize: "vertical" }} />
+            <button type="submit" style={{ width: "100%", background: "var(--gold)", color: "var(--onGold)", border: "none", borderRadius: 999, padding: 12, fontSize: ".9rem", fontWeight: 600, cursor: "pointer" }}>Send message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ---- Export compliance panel ----
+  const exportPanel = (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 20 }} className="trade-portal-grid">
+      {Object.entries(pricingByProduct).map(([pid]) => {
+        const e = EXPORT[productName(pid)];
+        if (!e) return null;
+        const rows: [string, string][] = [
+          ["Commodity Code", e.code],
+          ["Country of Origin", e.origin],
+          ["Net Weight", `${e.net}/bottle`],
+          ["Gross Weight", `${e.gross}/bottle`],
+          ["ABV", e.abv],
+          ["Volume", e.vol],
+          ["Incoterms", "EXW, FOB, CIF"],
+        ];
+        return (
+          <div style={cardStyle} key={pid}>
+            <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--line2)" }}><h2 style={cardTitle}>Export — {productName(pid)}</h2></div>
+            {rows.map(([k, v], i) => (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, padding: "12px 24px", borderTop: i === 0 ? "none" : "1px solid var(--line2)", fontSize: ".88rem" }} key={k}>
+                <span style={{ color: "var(--muted)" }}>{k}</span>
+                <span style={{ textAlign: "right", color: k === "Commodity Code" ? "var(--goldHi)" : "var(--text)", fontWeight: k === "Commodity Code" ? 600 : 400 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  // ---- Account panel ----
+  const accountPanel = (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 20 }} className="trade-portal-grid">
+      <div style={cardPad}>
+        <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Company details</h3>
+        <form>
+          <label htmlFor="ta-company" style={fieldLabel}>Company name</label>
+          <input id="ta-company" name="companyName" defaultValue={account.companyName} autoComplete="organization" style={{ ...fieldStyle, marginBottom: 14 }} />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div>
+              <label htmlFor="ta-contact" style={fieldLabel}>Contact name</label>
+              <input id="ta-contact" name="contactName" defaultValue={account.contactName} autoComplete="name" style={{ ...fieldStyle, marginBottom: 14 }} />
+            </div>
+            <div>
+              <label htmlFor="ta-email" style={fieldLabel}>Email</label>
+              <input id="ta-email" name="contactEmail" type="email" defaultValue={account.contactEmail} autoComplete="email" style={{ ...fieldStyle, marginBottom: 14 }} />
+            </div>
+          </div>
+          <label htmlFor="ta-btype" style={fieldLabel}>Business type</label>
+          <select id="ta-btype" name="businessType" defaultValue={account.businessType ?? "Off-licence / Retailer"} style={{ ...fieldStyle, marginBottom: 14, cursor: "pointer" }}>
+            <option>Restaurant / Bar</option>
+            <option>Off-licence / Retailer</option>
+            <option>Wholesale Distributor</option>
+            <option>Export / International</option>
+          </select>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div>
+              <label htmlFor="ta-vat" style={fieldLabel}>VAT number</label>
+              <input id="ta-vat" name="vatNumber" defaultValue={account.vatNumber ?? ""} style={{ ...fieldStyle, marginBottom: 14 }} />
+            </div>
+            <div>
+              <label htmlFor="ta-terms" style={fieldLabel}>Payment terms</label>
+              <input id="ta-terms" name="paymentTerms" defaultValue={account.paymentTerms} readOnly style={{ ...fieldStyle, marginBottom: 14, opacity: 0.6 }} />
+            </div>
+          </div>
+          <button type="submit" style={{ background: "var(--gold)", color: "var(--onGold)", border: "none", borderRadius: 999, padding: "12px 26px", fontSize: ".9rem", fontWeight: 600, cursor: "pointer" }}>Save changes</button>
+        </form>
+      </div>
+      <div style={cardPad}>
+        <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.25rem", margin: "0 0 18px" }}>Account summary</h3>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid var(--line2)" }}><span style={{ color: "var(--muted)" }}>Account status</span><span style={greenBadge}>{account.status}</span></div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid var(--line2)" }}><span style={{ color: "var(--muted)" }}>Pricing tier</span><span style={goldBadge}>{account.pricingTier}</span></div>
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid var(--line2)" }}><span style={{ color: "var(--muted)" }}>Credit limit</span><span style={{ fontFamily: "var(--serif)", color: "var(--goldHi)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.creditLimit))}</span></div>
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid var(--line2)" }}><span style={{ color: "var(--muted)" }}>Outstanding balance</span><span style={{ fontFamily: "var(--serif)", color: "var(--text)", fontVariantNumeric: "tabular-nums" }}>{money(Number(account.outstandingBalance))}</span></div>
+        <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0" }}><span style={{ color: "var(--muted)" }}>Account manager</span><span style={{ fontSize: ".875rem" }}><a href={`mailto:${account.accountManager ?? "trade@rumbaclaat.com"}`}>{account.accountManager ?? "trade@rumbaclaat.com"}</a></span></div>
+      </div>
+    </div>
+  );
+
+  const tabs = [
+    { id: "dashboard", label: "Dashboard", content: dashboard },
+    { id: "export", label: "Export compliance", content: exportPanel },
+    { id: "account", label: "Account", content: accountPanel },
+    { id: "messages", label: "Messages", badge: unread || undefined, content: dashboard },
+  ];
+
+  return (
+    <section style={{ padding: "clamp(36px,5vw,56px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, flexWrap: "wrap", marginBottom: 26 }}>
+          <div>
+            <span style={{ fontSize: ".74rem", letterSpacing: ".22em", textTransform: "uppercase", color: "var(--gold)", fontWeight: 600 }}>Trade Portal · Wholesale &amp; Export</span>
+            <h1 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(1.9rem,4vw,2.7rem)", lineHeight: 1.05, margin: "10px 0 0" }}>{account.companyName}</h1>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 10, color: "var(--green)", fontSize: ".82rem" }}><i className="bi bi-check-circle-fill" />Signed in · {account.pricingTier} tier · {account.paymentTerms} terms</div>
+          </div>
+          <Link href="/trade" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: "1px solid var(--line)", color: "var(--muted)", borderRadius: 999, padding: "10px 20px", fontSize: ".86rem", textDecoration: "none" }}>
+            <i className="bi bi-box-arrow-right" />Sign out
+          </Link>
+        </div>
+
+        {/* Stat cards */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0,1fr))", gap: 16, marginBottom: 24 }} className="trade-stat-grid">
+          {stats.map((s) => (
+            <div style={{ background: "var(--surface)", border: "1px solid var(--line2)", borderRadius: 14, padding: "18px 20px" }} key={s.label}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: ".7rem", letterSpacing: ".08em", textTransform: "uppercase", color: "var(--dim)" }}>{s.label}</span>
+                <i className={`bi bi-${s.icon}`} style={{ color: "var(--gold)", fontSize: ".95rem" }} />
+              </div>
+              <div style={{ fontFamily: "var(--serif)", fontSize: "1.85rem", color: "var(--text)", lineHeight: 1, marginTop: 10 }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tab pills + panels */}
+        <TradePortalTabs tabs={tabs} />
+
+        {/* Helper note — minPpb surfaced for the rate card */}
+        {minPpb ? <p style={{ color: "var(--dim)", fontSize: ".74rem", marginTop: 18 }}>Wholesale rate card from {money(minPpb)} per bottle · {ordersThisMonth} order(s) placed this month.</p> : null}
       </div>
     </section>
   );

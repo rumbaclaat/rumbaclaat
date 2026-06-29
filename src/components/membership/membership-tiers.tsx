@@ -1,69 +1,74 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 type Tier = {
   name: string;
-  blurb: string;
-  monthly: string;
-  annual: string;
-  free?: boolean;
-  multiplier: string;
+  price: string;
+  sub: string;
   perks: string[];
-  cta: string;
-  popular?: boolean;
-  primary?: boolean;
-  border: string;
+  featured: boolean;
 };
 
 const TIERS: Tier[] = [
-  { name: "Bronze", blurb: "Start your journey — always free", monthly: "Free", annual: "Free", free: true, multiplier: "1× points", perks: ["5% member discount", "Birthday bonus points", "Early email access", "Members newsletter"], cta: "Join Free →", border: "rgba(205,127,50,.25)" },
-  { name: "Silver", blurb: "For the committed rum enthusiast", monthly: "£9.99", annual: "£89.99", multiplier: "1.5× points", perks: ["10% member discount", "Early drop access (24hrs)", "Free UK standard shipping", "Exclusive cocktail recipes"], cta: "Get Silver →", border: "rgba(192,192,192,.25)" },
-  { name: "Gold", blurb: "The premium Rumbaclaat experience", monthly: "£24.99", annual: "£224.99", multiplier: "2× points", perks: ["15% member discount", "Early drop access (48hrs)", "Free UK express shipping", "Annual gift bottle", "Tasting event invitations"], cta: "Get Gold →", popular: true, primary: true, border: "rgba(205, 181, 130,.45)" },
-  { name: "Black Reserve", blurb: "Unrivalled access. The inner circle.", monthly: "£54.99", annual: "£499.99", multiplier: "3× points", perks: ["20% member discount", "Priority drop access (72hrs)", "Free worldwide shipping", "Private distillery visits", "Concierge service", "Bespoke bottle engraving"], cta: "Get Black Reserve →", border: "rgba(205, 181, 130,.35)" },
+  { name: "Bronze", price: "Free", sub: "Always free", perks: ["5% member discount", "1× points on every order", "Birthday treat", "Member newsletter"], featured: false },
+  { name: "Silver", price: "£9.99", sub: "per month", perks: ["10% member discount", "1.5× points", "Early access to drops", "Free standard shipping"], featured: false },
+  { name: "Gold", price: "£24.99", sub: "per month", perks: ["15% member discount", "2× points", "Exclusive bottlings", "Tasting event invites", "Free express shipping"], featured: true },
+  { name: "Black Reserve", price: "£54.99", sub: "per month", perks: ["20% member discount", "3× points", "Concierge service", "Private cask access", "All Gold perks included"], featured: false },
 ];
 
+function cardStyle(featured: boolean): React.CSSProperties {
+  return {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    background: featured ? "linear-gradient(165deg, rgba(205,181,130,.16), var(--card))" : "var(--card)",
+    border: `1px solid ${featured ? "var(--gold)" : "var(--line2)"}`,
+    borderRadius: "18px",
+    padding: "28px 24px",
+  };
+}
+
+function btnStyle(featured: boolean): React.CSSProperties {
+  return featured
+    ? { background: "var(--gold)", color: "var(--onGold)", border: "1px solid var(--gold)" }
+    : { background: "transparent", color: "var(--text)", border: "1px solid var(--line)" };
+}
+
 export default function MembershipTiers() {
-  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
-  const period = billing === "monthly" ? "per month" : "per year — 2 months free";
-
   return (
-    <div className="container" id="plans">
-      <div className="text-center reveal mb-4">
-        <span className="eyebrow">Membership Plans</span>
-        <h2>Choose your tier</h2>
-        <div className="d-flex justify-content-center mt-3">
-          <div className="billing-toggle" role="group" aria-label="Billing period">
-            <button type="button" className={`btn btn-sm ${billing === "monthly" ? "btn-gold" : "btn-outline-gold"}`} aria-pressed={billing === "monthly"} onClick={() => setBilling("monthly")}>Monthly</button>
-            <button type="button" className={`btn btn-sm ${billing === "annual" ? "btn-gold" : "btn-outline-gold"}`} aria-pressed={billing === "annual"} onClick={() => setBilling("annual")}>Annual (save 2 months)</button>
-          </div>
-        </div>
-      </div>
-
-      <div className="row g-4">
+    <section id="plans" style={{ padding: "clamp(20px,3vw,32px) clamp(20px,5vw,40px) clamp(56px,7vw,80px)" }}>
+      <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18, alignItems: "start" }} className="mem-tier-grid">
         {TIERS.map((t) => (
-          <div className="col-12 col-md-6 col-lg-3" key={t.name}>
-            <div className="tier-card reveal" style={{ background: "linear-gradient(135deg,#1C1C24,#15151B)", border: `${t.primary ? "2px" : "1px"} solid ${t.border}` }}>
-              {t.popular && <div style={{ textAlign: "center", padding: "6px 0", background: "var(--gold)", fontSize: ".6875rem", fontWeight: 700, color: "#0E0E12", letterSpacing: ".1em" }}>MOST POPULAR</div>}
-              <div className="tier-body">
-                <h2 className="h3" style={{ color: "var(--gold-hi)", fontSize: "1.5rem", marginBottom: 4 }}>{t.name}</h2>
-                <p style={{ fontSize: ".8125rem", marginBottom: 20 }}>{t.blurb}</p>
-                <div className="price" style={{ fontSize: "2.5rem", marginBottom: 4 }}>{t.free ? "Free" : billing === "monthly" ? t.monthly : t.annual}</div>
-                <p style={{ fontSize: ".75rem" }}>{t.free ? "Always free" : period}</p>
-                <div className="badge-brand my-3">⚡ {t.multiplier}</div>
-                <ul className="tier-list list-unstyled mt-1">
-                  {t.perks.map((p) => <li key={p}>{p}</li>)}
-                </ul>
-              </div>
-              <div className="tier-foot">
-                <Link href={`/signup?tier=${encodeURIComponent(t.name)}`} className={`btn ${t.primary ? "btn-gold" : "btn-outline-gold"} w-100`}>{t.cta}</Link>
-              </div>
+          <div key={t.name} style={cardStyle(t.featured)}>
+            {t.featured && (
+              <span style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: "var(--gold)", color: "var(--onGold)", fontSize: ".64rem", fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", borderRadius: 999, padding: "4px 13px", whiteSpace: "nowrap" }}>
+                Most popular
+              </span>
+            )}
+            <div style={{ fontSize: ".74rem", letterSpacing: ".14em", textTransform: "uppercase", color: "var(--dim)" }}>{t.name}</div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 10 }}>
+              <span style={{ fontFamily: "var(--serif)", fontSize: "2rem", color: "var(--text)", lineHeight: 1 }}>{t.price}</span>
+              <span style={{ color: "var(--dim)", fontSize: ".78rem" }}>{t.sub}</span>
+            </div>
+            <Link
+              href={`/account?tier=${encodeURIComponent(t.name)}`}
+              style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", marginTop: 18, borderRadius: 999, padding: 11, fontSize: ".86rem", fontWeight: 600, cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap", ...btnStyle(t.featured) }}
+            >
+              Choose plan
+            </Link>
+            <div style={{ height: 1, background: "var(--line2)", margin: "20px 0" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+              {t.perks.map((perk) => (
+                <span key={perk} style={{ display: "flex", alignItems: "flex-start", gap: 9, fontSize: ".85rem", color: "var(--muted)", lineHeight: 1.4 }}>
+                  <i className="bi bi-check-lg" style={{ color: "var(--gold)", marginTop: 1 }} />
+                  {perk}
+                </span>
+              ))}
             </div>
           </div>
         ))}
       </div>
-      <p className="text-center" style={{ marginTop: 24, fontSize: ".8125rem", color: "var(--text-dim)" }}>All paid tiers include a 14-day money-back guarantee · Cancel anytime · GBP incl. VAT</p>
-    </div>
+    </section>
   );
 }
