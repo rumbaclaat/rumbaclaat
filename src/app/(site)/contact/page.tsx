@@ -15,7 +15,7 @@ export default async function ContactPage({
 
   return (
     <>
-      <section className="section-sm" style={{ background: "linear-gradient(135deg,#161208,#0E0E0E)", borderBottom: "1px solid var(--gold-bdr)" }}>
+      <section className="section-sm" style={{ background: "linear-gradient(135deg,#15151B,#0E0E12)", borderBottom: "1px solid var(--gold-bdr)" }}>
         <div className="container reveal">
           <span className="eyebrow">GET IN TOUCH</span>
           <h1>Contact Us</h1>

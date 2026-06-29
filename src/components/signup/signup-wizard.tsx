@@ -77,7 +77,7 @@ function stepCircleStyle(state: "done" | "active" | "pending"): React.CSSPropert
   if (state === "done")
     return { ...base, background: "rgba(74,222,128,.15)", borderColor: "rgba(74,222,128,.4)", color: "var(--green)" };
   if (state === "active")
-    return { ...base, background: "var(--gold)", borderColor: "var(--gold)", color: "#0E0E0E" };
+    return { ...base, background: "var(--gold)", borderColor: "var(--gold)", color: "#0E0E12" };
   return { ...base, background: "var(--bg-card2)", borderColor: "var(--gold-bdr)", color: "var(--text-dim)" };
 }
 

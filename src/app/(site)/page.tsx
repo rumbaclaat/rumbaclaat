@@ -133,7 +133,7 @@ export default async function HomePage() {
       {/* Membership tiers */}
       <section
         className="section"
-        style={{ background: "linear-gradient(135deg,#1C1A14,#161310)", borderTop: "1px solid var(--gold-bdr)", borderBottom: "1px solid var(--gold-bdr)" }}
+        style={{ background: "linear-gradient(135deg,#1C1C24,#15151B)", borderTop: "1px solid var(--gold-bdr)", borderBottom: "1px solid var(--gold-bdr)" }}
         aria-labelledby="tiers-title"
       >
         <div className="container">

@@ -20,7 +20,7 @@ export default async function BlockRenderer({ block }: { block: ContentBlock }) 
             style={{
               backgroundImage: s(d, "backgroundImage")
                 ? `url('${s(d, "backgroundImage")}')`
-                : "linear-gradient(135deg,#1C1A14,#161310 60%,#0E0E0E)",
+                : "linear-gradient(135deg,#1C1C24,#15151B 60%,#0E0E12)",
             }}
           />
           <div className="hero-overlay" />
@@ -55,7 +55,7 @@ export default async function BlockRenderer({ block }: { block: ContentBlock }) 
             style={{
               backgroundImage: s(d, "backgroundImage")
                 ? `url('${s(d, "backgroundImage")}')`
-                : "linear-gradient(135deg,#161310,#0E0E0E)",
+                : "linear-gradient(135deg,#15151B,#0E0E12)",
             }}
           />
           <div className="hero-overlay" />
@@ -173,7 +173,7 @@ export default async function BlockRenderer({ block }: { block: ContentBlock }) 
 
     case "cta_band":
       return (
-        <section className="section" style={{ background: "linear-gradient(135deg,#161208,#1C1A14,#0E0E0E)", textAlign: "center" }}>
+        <section className="section" style={{ background: "linear-gradient(135deg,#15151B,#1C1C24,#0E0E12)", textAlign: "center" }}>
           <div className="container" style={{ maxWidth: 760 }}>
             {s(d, "eyebrow") && <span className="eyebrow">{s(d, "eyebrow")}</span>}
             <h2 className="mb-3">{s(d, "heading")}</h2>
@@ -205,7 +205,7 @@ export default async function BlockRenderer({ block }: { block: ContentBlock }) 
     case "membership_tiers": {
       const tiers = await prisma.membershipTier.findMany({ orderBy: { sortOrder: "asc" } });
       return (
-        <section className="section" style={{ background: "linear-gradient(135deg,#1C1A14,#161310)", borderTop: "1px solid var(--gold-bdr)", borderBottom: "1px solid var(--gold-bdr)" }}>
+        <section className="section" style={{ background: "linear-gradient(135deg,#1C1C24,#15151B)", borderTop: "1px solid var(--gold-bdr)", borderBottom: "1px solid var(--gold-bdr)" }}>
           <div className="container">
             {s(d, "heading") && (
               <div className="text-center mb-5">

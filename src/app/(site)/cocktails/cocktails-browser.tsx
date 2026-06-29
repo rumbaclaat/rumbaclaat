@@ -95,7 +95,7 @@ export default function CocktailsBrowser({ cocktails }: { cocktails: CocktailCar
                           {c.image ? (
                             <img src={c.image} alt={`${c.name} cocktail`} loading="lazy" />
                           ) : (
-                            <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#1a1a1a,#0f0f0f)" }} />
+                            <div style={{ width: "100%", height: "100%", background: "linear-gradient(180deg,#191920,#0E0E12)" }} />
                           )}
                           <div className="gradient" />
                           <div style={{ position: "absolute", bottom: 12, left: 16, right: 16 }}>

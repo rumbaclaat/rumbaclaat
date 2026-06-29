@@ -20,8 +20,8 @@ type Tier = {
 const TIERS: Tier[] = [
   { name: "Bronze", blurb: "Start your journey — always free", monthly: "Free", annual: "Free", free: true, multiplier: "1× points", perks: ["5% member discount", "Birthday bonus points", "Early email access", "Members newsletter"], cta: "Join Free →", border: "rgba(205,127,50,.25)" },
   { name: "Silver", blurb: "For the committed rum enthusiast", monthly: "£9.99", annual: "£89.99", multiplier: "1.5× points", perks: ["10% member discount", "Early drop access (24hrs)", "Free UK standard shipping", "Exclusive cocktail recipes"], cta: "Get Silver →", border: "rgba(192,192,192,.25)" },
-  { name: "Gold", blurb: "The premium Rumbaclaat experience", monthly: "£24.99", annual: "£224.99", multiplier: "2× points", perks: ["15% member discount", "Early drop access (48hrs)", "Free UK express shipping", "Annual gift bottle", "Tasting event invitations"], cta: "Get Gold →", popular: true, primary: true, border: "rgba(198,167,94,.45)" },
-  { name: "Black Reserve", blurb: "Unrivalled access. The inner circle.", monthly: "£54.99", annual: "£499.99", multiplier: "3× points", perks: ["20% member discount", "Priority drop access (72hrs)", "Free worldwide shipping", "Private distillery visits", "Concierge service", "Bespoke bottle engraving"], cta: "Get Black Reserve →", border: "rgba(198,167,94,.35)" },
+  { name: "Gold", blurb: "The premium Rumbaclaat experience", monthly: "£24.99", annual: "£224.99", multiplier: "2× points", perks: ["15% member discount", "Early drop access (48hrs)", "Free UK express shipping", "Annual gift bottle", "Tasting event invitations"], cta: "Get Gold →", popular: true, primary: true, border: "rgba(205, 181, 130,.45)" },
+  { name: "Black Reserve", blurb: "Unrivalled access. The inner circle.", monthly: "£54.99", annual: "£499.99", multiplier: "3× points", perks: ["20% member discount", "Priority drop access (72hrs)", "Free worldwide shipping", "Private distillery visits", "Concierge service", "Bespoke bottle engraving"], cta: "Get Black Reserve →", border: "rgba(205, 181, 130,.35)" },
 ];
 
 export default function MembershipTiers() {
@@ -44,8 +44,8 @@ export default function MembershipTiers() {
       <div className="row g-4">
         {TIERS.map((t) => (
           <div className="col-12 col-md-6 col-lg-3" key={t.name}>
-            <div className="tier-card reveal" style={{ background: "linear-gradient(135deg,#1C1A14,#161310)", border: `${t.primary ? "2px" : "1px"} solid ${t.border}` }}>
-              {t.popular && <div style={{ textAlign: "center", padding: "6px 0", background: "var(--gold)", fontSize: ".6875rem", fontWeight: 700, color: "#0E0E0E", letterSpacing: ".1em" }}>MOST POPULAR</div>}
+            <div className="tier-card reveal" style={{ background: "linear-gradient(135deg,#1C1C24,#15151B)", border: `${t.primary ? "2px" : "1px"} solid ${t.border}` }}>
+              {t.popular && <div style={{ textAlign: "center", padding: "6px 0", background: "var(--gold)", fontSize: ".6875rem", fontWeight: 700, color: "#0E0E12", letterSpacing: ".1em" }}>MOST POPULAR</div>}
               <div className="tier-body">
                 <h2 className="h3" style={{ color: "var(--gold-hi)", fontSize: "1.5rem", marginBottom: 4 }}>{t.name}</h2>
                 <p style={{ fontSize: ".8125rem", marginBottom: 20 }}>{t.blurb}</p>

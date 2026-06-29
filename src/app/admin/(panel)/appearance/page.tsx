@@ -46,9 +46,9 @@ export default async function AppearancePage({ searchParams }: { searchParams: P
                 <div>
                   <SectionLabel>Palette</SectionLabel>
                   <FormSection title="Brand colours" description="Leave blank to keep the default dark + gold theme.">
-                    <div className="col-md-4"><label className="form-label" htmlFor="gold">Gold</label><input id="gold" name="gold" type="color" className="form-control form-control-color" defaultValue={v("gold") || "#C6A75E"} /></div>
-                    <div className="col-md-4"><label className="form-label" htmlFor="goldHi">Gold (bright)</label><input id="goldHi" name="goldHi" type="color" className="form-control form-control-color" defaultValue={v("goldHi") || "#E4C77B"} /></div>
-                    <div className="col-md-4"><label className="form-label" htmlFor="bg">Background</label><input id="bg" name="bg" type="color" className="form-control form-control-color" defaultValue={v("bg") || "#0E0E0E"} /></div>
+                    <div className="col-md-4"><label className="form-label" htmlFor="gold">Gold</label><input id="gold" name="gold" type="color" className="form-control form-control-color" defaultValue={v("gold") || "#CDB582"} /></div>
+                    <div className="col-md-4"><label className="form-label" htmlFor="goldHi">Gold (bright)</label><input id="goldHi" name="goldHi" type="color" className="form-control form-control-color" defaultValue={v("goldHi") || "#E6D2A0"} /></div>
+                    <div className="col-md-4"><label className="form-label" htmlFor="bg">Background</label><input id="bg" name="bg" type="color" className="form-control form-control-color" defaultValue={v("bg") || "#0E0E12"} /></div>
                   </FormSection>
                 </div>
               ),

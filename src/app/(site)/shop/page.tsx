@@ -158,7 +158,7 @@ export default async function ShopPage({
         <section
           className="section-sm"
           style={{
-            background: "linear-gradient(135deg,#161208,#0E0E0E)",
+            background: "linear-gradient(135deg,#15151B,#0E0E12)",
             borderBottom: "1px solid var(--gold-bdr)",
           }}
         >
@@ -321,7 +321,7 @@ export default async function ShopPage({
   const imgs = await getSectionImageMap();
   return (
     <>
-      <section className="section-sm" style={{ background: "linear-gradient(135deg,#161208,#0E0E0E)", borderBottom: "1px solid var(--gold-bdr)" }}>
+      <section className="section-sm" style={{ background: "linear-gradient(135deg,#15151B,#0E0E12)", borderBottom: "1px solid var(--gold-bdr)" }}>
         <div className="container reveal">
           <span className="eyebrow">THE COLLECTION</span>
           <h1>Shop</h1>

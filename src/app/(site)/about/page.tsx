@@ -105,7 +105,7 @@ export default async function AboutPage() {
         <div className="parallax-content reveal"><span className="eyebrow eyebrow-center">CARIBBEAN HERITAGE</span><h2 id="heritage-px">Where the Sun<br />Meets the Sea</h2><p>Our roots run deep in the islands. Every expression carries the warmth, the colour, and the defiance of the Caribbean.</p></div>
       </section>
 
-      <section style={{ padding: "80px 0", textAlign: "center", background: "linear-gradient(135deg,#161208,#0E0E0E)" }} aria-labelledby="join-cta">
+      <section style={{ padding: "80px 0", textAlign: "center", background: "linear-gradient(135deg,#15151B,#0E0E12)" }} aria-labelledby="join-cta">
         <div className="container reveal" style={{ maxWidth: 860 }}>
           <span className="eyebrow">JOIN US</span>
           <h2 id="join-cta" className="mb-3">Become Part of the Story</h2>

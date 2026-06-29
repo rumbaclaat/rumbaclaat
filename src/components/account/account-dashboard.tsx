@@ -86,7 +86,7 @@ const TIER_STYLE: Record<string, { color: string; grad?: string; border: string 
   bronze: { color: "#CD7F32", grad: "linear-gradient(135deg,#2A1800,#1A1200)", border: "rgba(205,127,50,.25)" },
   silver: { color: "#C0C0C0", border: "rgba(192,192,192,.2)" },
   gold: { color: "var(--gold-hi)", border: "var(--gold)" },
-  black: { color: "var(--gold-hi)", grad: "linear-gradient(135deg,#0A0A0A,#161208)", border: "rgba(198,167,94,.35)" },
+  black: { color: "var(--gold-hi)", grad: "linear-gradient(135deg,#0E0E12,#15151B)", border: "rgba(205, 181, 130,.35)" },
 };
 // Points thresholds keyed to each tier's RPM identity (presentation label only —
 // the tier model carries no threshold field; live tier data still drives everything else).
@@ -108,7 +108,7 @@ const notifCard: React.CSSProperties = {
 };
 const notifCardUnread: React.CSSProperties = {
   ...notifCard,
-  borderColor: "rgba(198,167,94,.3)",
+  borderColor: "rgba(205, 181, 130,.3)",
 };
 
 export default function AccountDashboard(props: AccountDashboardProps) {
@@ -234,11 +234,11 @@ export default function AccountDashboard(props: AccountDashboardProps) {
             aria-valuenow={customer.pointsBalance}
             aria-valuemin={0}
             aria-valuemax={nextTier ? TIER_THRESHOLD[tierKey(nextTier)] : customer.pointsBalance}
-            style={{ height: 6, background: "#2A2520" }}
+            style={{ height: 6, background: "#191920" }}
           >
             <div
               className="progress-bar"
-              style={{ width: `${tierProgressPct}%`, background: "linear-gradient(90deg,var(--gold),#D4B96B)" }}
+              style={{ width: `${tierProgressPct}%`, background: "linear-gradient(90deg,var(--gold),#E6D2A0)" }}
             />
           </div>
         </div>
@@ -270,8 +270,8 @@ export default function AccountDashboard(props: AccountDashboardProps) {
                   <div
                     className="d-flex justify-content-between flex-wrap gap-3"
                     style={{
-                      background: "linear-gradient(135deg,#1C1A14,#161310)",
-                      border: "1px solid rgba(198,167,94,.2)",
+                      background: "linear-gradient(135deg,#1C1C24,#15151B)",
+                      border: "1px solid rgba(205, 181, 130,.2)",
                       borderRadius: "var(--radius)",
                       padding: 20,
                       marginBottom: 16,
@@ -420,7 +420,7 @@ export default function AccountDashboard(props: AccountDashboardProps) {
                             left: "50%",
                             transform: "translateX(-50%)",
                             background: "var(--gold)",
-                            color: "#0E0E0E",
+                            color: "#0E0E12",
                             fontSize: ".625rem",
                             fontWeight: 700,
                             padding: "4px 12px",
@@ -513,7 +513,7 @@ export default function AccountDashboard(props: AccountDashboardProps) {
                           left: "50%",
                           transform: "translateX(-50%)",
                           background: "var(--gold)",
-                          color: "#0E0E0E",
+                          color: "#0E0E12",
                           fontSize: ".5875rem",
                           fontWeight: 700,
                           padding: "3px 10px",

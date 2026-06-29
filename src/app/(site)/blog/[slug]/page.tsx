@@ -78,7 +78,7 @@ export default async function BlogPostPage({
       <section
         className="section-sm"
         style={{
-          background: "linear-gradient(135deg,#161208,#0E0E0E)",
+          background: "linear-gradient(135deg,#15151B,#0E0E12)",
           borderBottom: "1px solid var(--gold-bdr)",
         }}
       >
@@ -239,7 +239,7 @@ export default async function BlogPostPage({
         <section
           className="section"
           style={{
-            background: "#0A0A0A",
+            background: "#0E0E12",
             borderTop: "1px solid var(--gold-bdr)",
           }}
         >

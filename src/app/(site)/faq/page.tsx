@@ -193,7 +193,7 @@ export default function FaqPage() {
       <section
         className="section-sm"
         style={{
-          background: "linear-gradient(135deg,#161208,#0E0E0E)",
+          background: "linear-gradient(135deg,#15151B,#0E0E12)",
           borderBottom: "1px solid var(--gold-bdr)",
         }}
       >

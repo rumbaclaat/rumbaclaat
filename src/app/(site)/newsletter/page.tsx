@@ -17,7 +17,7 @@ export default async function NewsletterPage({
     <>
       <section
         className="section-sm"
-        style={{ background: "linear-gradient(135deg,#161208,#0E0E0E)", borderBottom: "1px solid var(--gold-bdr)" }}
+        style={{ background: "linear-gradient(135deg,#15151B,#0E0E12)", borderBottom: "1px solid var(--gold-bdr)" }}
       >
         <div className="container reveal" style={{ maxWidth: 680 }}>
           <span className="eyebrow">JOIN THE LIST</span>

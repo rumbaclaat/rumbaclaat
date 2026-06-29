@@ -84,7 +84,7 @@ export default function CartView({
 
       <div className="col-12 col-lg-4">
         {showPointsPanel && (
-          <div style={{ background: "linear-gradient(135deg,#1C1A14,#161310)", border: "1px solid var(--gold-md)", borderRadius: "var(--radius-lg)", padding: 20, marginBottom: 16 }}>
+          <div style={{ background: "linear-gradient(135deg,#1C1C24,#15151B)", border: "1px solid var(--gold-md)", borderRadius: "var(--radius-lg)", padding: 20, marginBottom: 16 }}>
             <div className="d-flex align-items-center justify-content-between mb-2">
               <p style={{ fontFamily: "var(--serif)", fontSize: "1rem", fontWeight: 600, color: "var(--gold-hi)", margin: 0 }}>RPM points</p>
               <span className="badge-brand">{pointsBalance.toLocaleString("en-GB")} pts</span>
