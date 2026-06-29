@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import BlockRenderer from "@/components/blocks/block-renderer";
@@ -39,20 +40,55 @@ export default async function CmsPage({
   if (!page) notFound();
 
   return (
-    <section className="section">
-      <div className="container">
-        <header style={{ maxWidth: 820, marginInline: "auto", textAlign: "center", marginBottom: "clamp(36px, 5vw, 56px)" }}>
-          <span className="eyebrow eyebrow-center">Rumbaclaat</span>
-          <h1 className="serif" style={{ fontSize: "clamp(2rem, 4.4vw, 3.4rem)", margin: 0 }}>
-            {page.title}
-          </h1>
-        </header>
-        <div style={{ maxWidth: 820, marginInline: "auto" }}>
-          {page.blocks.map((block) => (
-            <BlockRenderer key={block.id} block={block} />
-          ))}
+    <div data-screen-label="Policy">
+      <section style={{ padding: "clamp(40px,5vw,64px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ fontSize: ".78rem", color: "var(--dim)", marginBottom: 22 }}>
+            <Link href="/" style={{ color: "var(--dim)" }}>
+              Home
+            </Link>{" "}
+            <span style={{ opacity: 0.5 }}>/</span>{" "}
+            <span style={{ color: "var(--muted)" }}>{page.title}</span>
+          </div>
+          <div style={{ marginBottom: 36 }}>
+            <span
+              style={{
+                fontSize: ".74rem",
+                letterSpacing: ".24em",
+                textTransform: "uppercase",
+                color: "var(--gold)",
+                fontWeight: 600,
+              }}
+            >
+              Legal
+            </span>
+            <h1
+              style={{
+                fontFamily: "var(--serif)",
+                fontWeight: 600,
+                fontSize: "clamp(2rem,4.4vw,3rem)",
+                lineHeight: 1.05,
+                margin: "12px 0 0",
+              }}
+            >
+              {page.title}
+            </h1>
+          </div>
+          <div
+            style={{
+              maxWidth: 680,
+              background: "var(--surface)",
+              border: "1px solid var(--line2)",
+              borderRadius: 12,
+              padding: "clamp(24px,4vw,40px)",
+            }}
+          >
+            {page.blocks.map((block) => (
+              <BlockRenderer key={block.id} block={block} />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

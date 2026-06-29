@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -44,6 +45,29 @@ function fmtDate(d: Date) {
 
 type Addr = { name?: string; line1?: string; line2?: string; city?: string; postcode?: string; country?: string };
 
+const eyebrowStyle: React.CSSProperties = {
+  fontSize: ".74rem",
+  letterSpacing: ".24em",
+  textTransform: "uppercase",
+  color: "var(--gold)",
+  fontWeight: 600,
+};
+
+const cardStyle: React.CSSProperties = {
+  background: "var(--surface)",
+  border: "1px solid var(--line2)",
+  borderRadius: 16,
+  padding: "26px 28px",
+};
+
+const cardTitleStyle: React.CSSProperties = {
+  fontFamily: "var(--serif)",
+  fontWeight: 600,
+  fontSize: "1.2rem",
+  margin: "0 0 18px",
+  color: "var(--text)",
+};
+
 export default async function OrderPage({
   searchParams,
 }: {
@@ -65,24 +89,64 @@ export default async function OrderPage({
   // Empty state — signed in but no matching order.
   if (!order) {
     return (
-      <main id="main" className="has-fixed-nav">
-        <section className="section">
-          <div className="container" style={{ maxWidth: 920 }}>
-            <nav aria-label="Breadcrumb">
-              <ol className="breadcrumb" style={{ fontSize: ".75rem", marginBottom: 16 }}>
-                <li className="breadcrumb-item"><Link href="/account">My account</Link></li>
-                <li className="breadcrumb-item active" aria-current="page">Orders</li>
-              </ol>
-            </nav>
-            <span className="eyebrow">ORDER</span>
-            <h1 style={{ fontSize: "clamp(1.75rem,4vw,2.5rem)" }}>No orders yet</h1>
-            <p style={{ color: "var(--text-muted)", margin: "8px 0 20px" }}>
+      <div data-screen-label="Order — empty">
+        <section
+          style={{
+            position: "relative",
+            padding: "clamp(48px,7vw,84px) clamp(20px,5vw,40px) clamp(40px,6vw,56px)",
+            overflow: "hidden",
+            borderBottom: "1px solid var(--line2)",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "radial-gradient(80% 70% at 50% 0%, rgba(205,181,130,.1), transparent 60%)",
+              pointerEvents: "none",
+            }}
+          />
+          <div style={{ position: "relative", maxWidth: 1100, margin: "0 auto" }}>
+            <div style={{ fontSize: ".78rem", color: "var(--dim)", marginBottom: 14 }}>
+              <Link href="/account" style={{ color: "var(--dim)" }}>My account</Link>{" "}
+              <span style={{ opacity: 0.5 }}>/</span>{" "}
+              <span style={{ color: "var(--muted)" }}>Orders</span>
+            </div>
+            <span style={eyebrowStyle}>Order</span>
+            <h1
+              style={{
+                fontFamily: "var(--serif)",
+                fontWeight: 600,
+                fontSize: "clamp(2rem,4.4vw,3rem)",
+                lineHeight: 1.05,
+                margin: "12px 0 0",
+                color: "var(--text)",
+              }}
+            >
+              No orders yet
+            </h1>
+            <p style={{ color: "var(--muted)", fontSize: "1.02rem", lineHeight: 1.6, margin: "14px 0 22px", maxWidth: 520 }}>
               When you place your first order it will appear here with live delivery tracking.
             </p>
-            <Link href="/shop" className="btn btn-gold">Shop the collection</Link>
+            <Link
+              href="/shop"
+              style={{
+                display: "inline-block",
+                background: "var(--gold)",
+                color: "var(--onGold)",
+                border: "none",
+                borderRadius: 999,
+                padding: "13px 30px",
+                fontSize: ".92rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Shop the collection
+            </Link>
           </div>
         </section>
-      </main>
+      </div>
     );
   }
 
@@ -136,166 +200,318 @@ export default async function OrderPage({
     : "card";
 
   return (
-    <main id="main" className="has-fixed-nav">
-      <section className="section">
-        <div className="container" style={{ maxWidth: 920 }}>
-          <nav aria-label="Breadcrumb">
-            <ol className="breadcrumb" style={{ fontSize: ".75rem", marginBottom: 16 }}>
-              <li className="breadcrumb-item"><Link href="/account">My account</Link></li>
-              <li className="breadcrumb-item"><Link href="/account#orders">Orders</Link></li>
-              <li className="breadcrumb-item active" aria-current="page">Order {order.ref}</li>
-            </ol>
-          </nav>
-
-          <div className="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+    <div data-screen-label="Order">
+      {/* ---- Header band ---- */}
+      <section
+        style={{
+          position: "relative",
+          padding: "clamp(40px,6vw,72px) clamp(20px,5vw,40px) clamp(28px,4vw,40px)",
+          overflow: "hidden",
+          borderBottom: "1px solid var(--line2)",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "radial-gradient(80% 70% at 50% 0%, rgba(205,181,130,.1), transparent 60%)",
+            pointerEvents: "none",
+          }}
+        />
+        <div style={{ position: "relative", maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ fontSize: ".78rem", color: "var(--dim)", marginBottom: 14 }}>
+            <Link href="/account" style={{ color: "var(--dim)" }}>My account</Link>{" "}
+            <span style={{ opacity: 0.5 }}>/</span>{" "}
+            <Link href="/account#orders" style={{ color: "var(--dim)" }}>Orders</Link>{" "}
+            <span style={{ opacity: 0.5 }}>/</span>{" "}
+            <span style={{ color: "var(--muted)" }}>Order {order.ref}</span>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              flexWrap: "wrap",
+              gap: 16,
+            }}
+          >
             <div>
-              <span className="eyebrow">ORDER</span>
-              <h1 style={{ fontSize: "clamp(1.75rem,4vw,2.5rem)" }}>{order.ref}</h1>
-              <p style={{ color: "var(--text-muted)", margin: "4px 0 0" }}>
+              <span style={eyebrowStyle}>Order</span>
+              <h1
+                style={{
+                  fontFamily: "var(--serif)",
+                  fontWeight: 600,
+                  fontSize: "clamp(2rem,4.4vw,3rem)",
+                  lineHeight: 1.05,
+                  margin: "12px 0 0",
+                  color: "var(--text)",
+                }}
+              >
+                {order.ref}
+              </h1>
+              <p style={{ color: "var(--muted)", fontSize: ".95rem", margin: "8px 0 0" }}>
                 Placed <time dateTime={placed.toISOString()}>{fmtDate(placed)}</time>
               </p>
             </div>
-            <span className="badge-brand badge-gold" style={{ fontSize: ".75rem", padding: "8px 14px" }}>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                background: "var(--goldLt)",
+                border: "1px solid var(--gold)",
+                color: "var(--goldHi)",
+                borderRadius: 999,
+                padding: "8px 16px",
+                fontSize: ".8rem",
+                fontWeight: 600,
+                letterSpacing: ".04em",
+              }}
+            >
+              <i className="bi bi-truck" />
               {statusLabel}
             </span>
           </div>
+        </div>
+      </section>
 
-          <div className="row g-4">
+      {/* ---- Body ---- */}
+      <section style={{ padding: "clamp(32px,5vw,52px) clamp(20px,5vw,40px) clamp(56px,8vw,96px)" }}>
+        <div
+          style={{
+            maxWidth: 1100,
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)",
+            gap: 20,
+            alignItems: "start",
+          }}
+        >
+          {/* Main column */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {/* Items */}
-            <div className="col-12 col-lg-8">
-              <div className="card-brand mb-3">
-                <h2 className="h5 mb-3" style={{ fontFamily: "var(--serif)" }}>Items in this order</h2>
-                <div>
-                  {order.items.map((item, idx) => {
-                    const img = item.productId ? imageById.get(item.productId) : null;
-                    const subtitle = item.variantId ? variantSubtitle.get(item.variantId) : null;
-                    const isLast = idx === order.items.length - 1;
-                    return (
-                      <div
-                        key={item.id}
-                        className="d-flex align-items-center gap-3 py-3"
-                        style={isLast ? undefined : { borderBottom: "1px solid var(--gold-bdr)" }}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={img ?? "https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"}
-                          alt=""
-                          style={{ width: 64, height: 64, borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
-                        />
-                        <div className="flex-grow-1">
-                          <p style={{ margin: 0, fontWeight: 600 }}>{item.name}</p>
-                          {subtitle && (
-                            <p style={{ fontSize: ".8125rem", color: "var(--text-muted)", margin: 0 }}>{subtitle}</p>
-                          )}
-                          <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "2px 0 0" }}>
-                            Qty: {item.qty}
-                          </p>
-                        </div>
-                        <span className="price" style={{ fontSize: "1.1rem" }}>
-                          {formatMoney(Number(item.lineTotal), currency)}
-                        </span>
+            <div style={cardStyle}>
+              <h2 style={cardTitleStyle}>Items in this order</h2>
+              <div>
+                {order.items.map((item, idx) => {
+                  const img = item.productId ? imageById.get(item.productId) : null;
+                  const subtitle = item.variantId ? variantSubtitle.get(item.variantId) : null;
+                  const isLast = idx === order.items.length - 1;
+                  return (
+                    <div
+                      key={item.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 16,
+                        padding: "16px 0",
+                        borderBottom: isLast ? "none" : "1px solid var(--line2)",
+                      }}
+                    >
+                      <img
+                        src={img ?? "https://images.unsplash.com/photo-1758871993077-e084cc7eca86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=200"}
+                        alt=""
+                        style={{
+                          width: 64,
+                          height: 64,
+                          borderRadius: 10,
+                          objectFit: "cover",
+                          flexShrink: 0,
+                          border: "1px solid var(--line2)",
+                        }}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: 0, fontWeight: 600, color: "var(--text)", fontSize: ".96rem" }}>{item.name}</p>
+                        {subtitle && (
+                          <p style={{ fontSize: ".84rem", color: "var(--muted)", margin: "2px 0 0" }}>{subtitle}</p>
+                        )}
+                        <p style={{ fontSize: ".78rem", color: "var(--dim)", margin: "2px 0 0" }}>Qty: {item.qty}</p>
                       </div>
-                    );
-                  })}
-                </div>
+                      <span style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.1rem", color: "var(--text)" }}>
+                        {formatMoney(Number(item.lineTotal), currency)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
+            </div>
 
-              {/* Tracking */}
-              <div className="card-brand">
-                <h2 className="h5 mb-3" style={{ fontFamily: "var(--serif)" }}>Delivery progress</h2>
-                {order.status === "cancelled" ? (
-                  <p style={{ color: "var(--text-muted)", margin: 0 }}>This order was cancelled.</p>
-                ) : (
-                  <div className="order-timeline">
-                    {STEPS.map((step, i) => {
-                      const state = i < activeIndex ? "done" : i === activeIndex ? "active" : "future";
-                      const dim = state === "future";
-                      return (
-                        <div key={step.key} className={`order-step ${state}`}>
+            {/* Tracking */}
+            <div style={cardStyle}>
+              <h2 style={cardTitleStyle}>Delivery progress</h2>
+              {order.status === "cancelled" ? (
+                <p style={{ color: "var(--muted)", margin: 0, lineHeight: 1.6 }}>This order was cancelled.</p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {STEPS.map((step, i) => {
+                    const state = i < activeIndex ? "done" : i === activeIndex ? "active" : "future";
+                    const isLast = i === STEPS.length - 1;
+                    const dotBg = state === "future" ? "transparent" : "var(--gold)";
+                    const dotBorder = state === "future" ? "var(--line2)" : "var(--gold)";
+                    const lineFilled = i < activeIndex;
+                    return (
+                      <div key={step.key} style={{ display: "flex", gap: 16 }}>
+                        {/* Marker + connector */}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            flex: "0 0 24px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: 24,
+                              height: 24,
+                              borderRadius: 999,
+                              background: dotBg,
+                              border: `1px solid ${dotBorder}`,
+                              color: "var(--onGold)",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: ".7rem",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {state === "done" && <i className="bi bi-check-lg" />}
+                            {state === "active" && (
+                              <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--onGold)" }} />
+                            )}
+                          </span>
+                          {!isLast && (
+                            <span
+                              style={{
+                                width: 2,
+                                flex: 1,
+                                minHeight: 22,
+                                background: lineFilled ? "var(--gold)" : "var(--line2)",
+                              }}
+                            />
+                          )}
+                        </div>
+                        {/* Copy */}
+                        <div style={{ paddingBottom: isLast ? 0 : 18 }}>
                           <h3
                             style={{
                               fontFamily: "var(--sans)",
                               fontSize: ".95rem",
                               fontWeight: 600,
-                              marginBottom: 2,
-                              color: dim ? "var(--text-dim)" : "var(--text)",
+                              margin: 0,
+                              color: state === "future" ? "var(--dim)" : "var(--text)",
                             }}
                           >
                             {step.title}
                           </h3>
-                          <p style={{ fontSize: ".8125rem", margin: 0, color: dim ? "var(--text-dim)" : "var(--text-muted)" }}>
+                          <p
+                            style={{
+                              fontSize: ".82rem",
+                              margin: "2px 0 0",
+                              color: state === "active" ? "var(--goldHi)" : "var(--dim)",
+                            }}
+                          >
                             {state === "done" ? "Completed" : state === "active" ? "In progress" : "Pending"}
                           </p>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* Order summary */}
+            <div style={cardStyle}>
+              <h2 style={cardTitleStyle}>Order summary</h2>
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: ".88rem" }}>
+                <span style={{ color: "var(--muted)" }}>Subtotal</span>
+                <span style={{ color: "var(--text)" }}>{formatMoney(subtotal, currency)}</span>
               </div>
+              {memberDiscount > 0 && (
+                <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: ".88rem" }}>
+                  <span style={{ color: "var(--muted)" }}>
+                    Member discount{discountPct ? ` (${discountPct}%)` : ""}
+                  </span>
+                  <span style={{ color: "var(--green)" }}>−{formatMoney(memberDiscount, currency)}</span>
+                </div>
+              )}
+              <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", fontSize: ".88rem" }}>
+                <span style={{ color: "var(--muted)" }}>Shipping</span>
+                <span style={{ color: "var(--text)" }}>{shipping > 0 ? formatMoney(shipping, currency) : "Free"}</span>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  borderTop: "1px solid var(--line2)",
+                  paddingTop: 14,
+                  marginTop: 10,
+                  fontWeight: 600,
+                }}
+              >
+                <span style={{ color: "var(--text)" }}>Total paid</span>
+                <span style={{ fontFamily: "var(--serif)", fontSize: "1.4rem", color: "var(--goldHi)" }}>
+                  {formatMoney(total, currency)}
+                </span>
+              </div>
+              <p style={{ fontSize: ".72rem", color: "var(--dim)", margin: "16px 0 0" }}>
+                Paid by {payLabel} · Earned {order.pointsEarned} points
+              </p>
             </div>
 
-            {/* Summary sidebar */}
-            <div className="col-12 col-lg-4">
-              <div className="card-brand mb-3">
-                <h2 className="h5 mb-3" style={{ fontFamily: "var(--serif)" }}>Order summary</h2>
-                <div className="d-flex justify-content-between py-1" style={{ fontSize: ".875rem" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Subtotal</span>
-                  <span>{formatMoney(subtotal, currency)}</span>
-                </div>
-                {memberDiscount > 0 && (
-                  <div className="d-flex justify-content-between py-1" style={{ fontSize: ".875rem" }}>
-                    <span style={{ color: "var(--text-muted)" }}>
-                      Member discount{discountPct ? ` (${discountPct}%)` : ""}
-                    </span>
-                    <span style={{ color: "var(--green)" }}>−{formatMoney(memberDiscount, currency)}</span>
-                  </div>
-                )}
-                <div className="d-flex justify-content-between py-1" style={{ fontSize: ".875rem" }}>
-                  <span style={{ color: "var(--text-muted)" }}>Shipping</span>
-                  <span>{shipping > 0 ? formatMoney(shipping, currency) : "Free"}</span>
-                </div>
-                <div
-                  className="d-flex justify-content-between pt-2 mt-2"
-                  style={{ borderTop: "1px solid var(--gold-bdr)", fontWeight: 600 }}
-                >
-                  <span>Total paid</span>
-                  <span style={{ fontFamily: "var(--serif)", fontSize: "1.3rem", color: "var(--gold-hi)" }}>
-                    {formatMoney(total, currency)}
-                  </span>
-                </div>
-                <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "14px 0 0" }}>
-                  Paid by {payLabel} · Earned {order.pointsEarned} points
+            {/* Delivery to */}
+            <div style={cardStyle}>
+              <h2 style={{ ...cardTitleStyle, marginBottom: 14 }}>Delivery to</h2>
+              <address style={{ fontStyle: "normal", fontSize: ".88rem", margin: 0, color: "var(--muted)", lineHeight: 1.65 }}>
+                {recipient && (<>{recipient}<br /></>)}
+                {addr?.line1 && (<>{addr.line1}<br /></>)}
+                {addr?.line2 && (<>{addr.line2}<br /></>)}
+                {[addr?.city, addr?.postcode].filter(Boolean).join(" ")}
+                {(addr?.city || addr?.postcode) && <br />}
+                {addr?.country || "United Kingdom"}
+              </address>
+              {order.deliveryMethod && (
+                <p style={{ fontSize: ".76rem", color: "var(--dim)", margin: "12px 0 0", lineHeight: 1.5 }}>
+                  {order.deliveryMethod === "express" ? "Express delivery" : "Standard delivery"} · Signature required (18+)
                 </p>
-              </div>
+              )}
+            </div>
 
-              <div className="card-brand mb-3">
-                <h2 className="h5 mb-2" style={{ fontFamily: "var(--serif)" }}>Delivery to</h2>
-                <address style={{ fontStyle: "normal", fontSize: ".875rem", margin: 0, color: "var(--text-muted)" }}>
-                  {recipient && (<>{recipient}<br /></>)}
-                  {addr?.line1 && (<>{addr.line1}<br /></>)}
-                  {addr?.line2 && (<>{addr.line2}<br /></>)}
-                  {[addr?.city, addr?.postcode].filter(Boolean).join(" ")}
-                  {(addr?.city || addr?.postcode) && <br />}
-                  {addr?.country || "United Kingdom"}
-                </address>
-                {order.deliveryMethod && (
-                  <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "10px 0 0" }}>
-                    {order.deliveryMethod === "express" ? "Express delivery" : "Standard delivery"} · Signature required (18+)
-                  </p>
-                )}
-              </div>
-
-              <div className="card-brand">
-                <h2 className="h5 mb-2" style={{ fontFamily: "var(--serif)" }}>Need help?</h2>
-                <p style={{ fontSize: ".875rem", marginBottom: 10 }}>
-                  Something not right? Contact us within 1 hour of placing the order to make changes.
-                </p>
-                <Link href="/contact" className="btn btn-ghost btn-sm w-100">Contact support</Link>
-              </div>
+            {/* Need help */}
+            <div style={cardStyle}>
+              <h2 style={{ ...cardTitleStyle, marginBottom: 12 }}>Need help?</h2>
+              <p style={{ fontSize: ".88rem", color: "var(--muted)", lineHeight: 1.6, margin: "0 0 16px" }}>
+                Something not right? Contact us within 1 hour of placing the order to make changes.
+              </p>
+              <Link
+                href="/contact"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 9,
+                  width: "100%",
+                  background: "transparent",
+                  border: "1px solid var(--gold)",
+                  color: "var(--goldHi)",
+                  borderRadius: 999,
+                  padding: "12px 24px",
+                  fontSize: ".9rem",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                Contact support <i className="bi bi-arrow-right" />
+              </Link>
             </div>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

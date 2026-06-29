@@ -16,11 +16,11 @@ export type WizardTier = {
 
 type Billing = "monthly" | "annual";
 
-// Per-tier name colour, reproduced from static-source/signup.html (lines 116–119).
+// Per-tier name colour, mapped onto the champagne palette.
 function tierColor(name: string): string {
   if (name === "Bronze") return "var(--bronze)";
   if (name === "Silver") return "#C0C0C0";
-  return "var(--gold-hi)";
+  return "var(--goldHi)";
 }
 
 function fmtMultiplier(m: number): string {
@@ -34,52 +34,140 @@ function priceLabel(t: WizardTier, billing: Billing): string {
   return `£${p.toFixed(2)}`;
 }
 
+// ---- Champagne design-language tokens (inline-style objects) ----
+
 const ERR_BOX: React.CSSProperties = {
   background: "rgba(242,109,109,.12)",
   border: "1px solid rgba(242,109,109,.35)",
   color: "var(--red)",
-  borderRadius: "var(--radius)",
+  borderRadius: 10,
+  padding: "12px 14px",
+  fontSize: ".85rem",
 };
 
-// Page-specific overrides reproduced from static-source/signup.html <style> block
-// (lines 14–25). theme.css defines .step-bar/.step-circle/.step-label with
-// slightly different metrics, so we pin the signup values inline for an exact
-// visual match (we must not edit theme.css).
+const PANEL: React.CSSProperties = {
+  background: "var(--surface)",
+  border: "1px solid var(--line2)",
+  borderRadius: 18,
+  padding: "30px 30px 32px",
+};
+
+const EYEBROW: React.CSSProperties = {
+  fontSize: ".74rem",
+  letterSpacing: ".24em",
+  textTransform: "uppercase",
+  color: "var(--gold)",
+  fontWeight: 600,
+};
+
+const HEADING: React.CSSProperties = {
+  fontFamily: "var(--serif)",
+  fontWeight: 600,
+  fontSize: "clamp(1.6rem,3.4vw,2.1rem)",
+  lineHeight: 1.1,
+  color: "var(--text)",
+  margin: "10px 0 0",
+};
+
+const INTRO: React.CSSProperties = {
+  color: "var(--muted)",
+  fontSize: ".96rem",
+  lineHeight: 1.6,
+  margin: "12px 0 0",
+};
+
+const LABEL: React.CSSProperties = {
+  display: "block",
+  color: "var(--muted)",
+  fontSize: ".78rem",
+  marginBottom: 6,
+};
+
+const FIELD: React.CSSProperties = {
+  width: "100%",
+  background: "var(--surface2)",
+  border: "1px solid var(--line2)",
+  color: "var(--text)",
+  borderRadius: 10,
+  padding: "12px 14px",
+  fontSize: ".9rem",
+  outline: "none",
+  fontFamily: "var(--sans)",
+};
+
+const HINT: React.CSSProperties = {
+  display: "block",
+  fontSize: ".74rem",
+  color: "var(--dim)",
+  marginTop: 6,
+};
+
+const BTN_GOLD: React.CSSProperties = {
+  background: "var(--gold)",
+  color: "var(--onGold)",
+  border: "none",
+  borderRadius: 999,
+  padding: "13px 30px",
+  fontSize: ".92rem",
+  fontWeight: 600,
+  cursor: "pointer",
+  textDecoration: "none",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+};
+
+const BTN_OUTLINE: React.CSSProperties = {
+  background: "transparent",
+  border: "1px solid var(--gold)",
+  color: "var(--goldHi)",
+  borderRadius: 999,
+  padding: "12px 24px",
+  fontSize: ".9rem",
+  fontWeight: 600,
+  cursor: "pointer",
+  textDecoration: "none",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+};
+
 const STEP_LINE: React.CSSProperties = {
-  width: 40,
+  flex: "1 1 auto",
   height: 1,
-  margin: "0 4px 16px",
-  background: "var(--gold-bdr)",
+  margin: "0 6px 18px",
+  background: "var(--line2)",
 };
 
-const STEP_BAR: React.CSSProperties = { marginBottom: 32 };
-
-const STEP_LABEL: React.CSSProperties = {
-  fontSize: ".625rem",
-  color: "var(--text-dim)",
-  marginTop: 5,
-};
-
-// .step-circle base + per-state border/background per the source <style>.
+// .step-circle base + per-state colours mapped onto the champagne palette.
 function stepCircleStyle(state: "done" | "active" | "pending"): React.CSSProperties {
   const base: React.CSSProperties = {
-    width: 32,
-    height: 32,
+    width: 34,
+    height: 34,
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: "1.5px",
     borderStyle: "solid",
-    fontSize: ".8125rem",
+    fontSize: ".85rem",
     fontWeight: 700,
   };
   if (state === "done")
-    return { ...base, background: "rgba(74,222,128,.15)", borderColor: "rgba(74,222,128,.4)", color: "var(--green)" };
+    return { ...base, background: "rgba(111,207,151,.15)", borderColor: "rgba(111,207,151,.4)", color: "var(--green)" };
   if (state === "active")
-    return { ...base, background: "var(--gold)", borderColor: "var(--gold)", color: "#0E0E12" };
-  return { ...base, background: "var(--bg-card2)", borderColor: "var(--gold-bdr)", color: "var(--text-dim)" };
+    return { ...base, background: "var(--gold)", borderColor: "var(--gold)", color: "var(--onGold)" };
+  return { ...base, background: "var(--surface2)", borderColor: "var(--line2)", color: "var(--dim)" };
 }
+
+const STEP_LABEL: React.CSSProperties = {
+  fontSize: ".64rem",
+  letterSpacing: ".06em",
+  color: "var(--dim)",
+  marginTop: 7,
+};
 
 export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
   const params = useSearchParams();
@@ -181,181 +269,254 @@ export default function SignupWizard({ tiers }: { tiers: WizardTier[] }) {
     setSubmitting(false);
   }
 
+  const STEPS = ["Choose Tier", "Create Account", "Payment", "Confirm"] as const;
+
   return (
-    <div className="container section" style={{ maxWidth: 680 }}>
-      <h1 className="visually-hidden">Join Rumbaclaat Membership</h1>
+    <section style={{ padding: "clamp(40px,5vw,64px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)" }}>
+      <div style={{ maxWidth: 680, margin: "0 auto" }}>
+        <h1 className="visually-hidden">Join Rumbaclaat Membership</h1>
 
-      <ol className="step-bar list-unstyled" style={STEP_BAR} aria-label="Signup progress">
-        <li className="d-flex flex-column align-items-center">
-          <span className="step-circle" style={stepCircleStyle(circleState(1))} aria-current={step === 1 ? "step" : undefined}>1</span>
-          <span className="step-label" style={STEP_LABEL}>Choose Tier</span>
-        </li>
-        <li style={STEP_LINE} aria-hidden="true" />
-        <li className="d-flex flex-column align-items-center">
-          <span className="step-circle" style={stepCircleStyle(circleState(2))} aria-current={step === 2 ? "step" : undefined}>2</span>
-          <span className="step-label" style={STEP_LABEL}>Create Account</span>
-        </li>
-        <li style={STEP_LINE} aria-hidden="true" />
-        <li className="d-flex flex-column align-items-center">
-          <span className="step-circle" style={stepCircleStyle(circleState(3))} aria-current={step === 3 ? "step" : undefined}>3</span>
-          <span className="step-label" style={STEP_LABEL}>Payment</span>
-        </li>
-        <li style={STEP_LINE} aria-hidden="true" />
-        <li className="d-flex flex-column align-items-center">
-          <span className="step-circle" style={stepCircleStyle(circleState(4))} aria-current={step === 4 ? "step" : undefined}>✓</span>
-          <span className="step-label" style={STEP_LABEL}>Confirm</span>
-        </li>
-      </ol>
+        {/* Step bar */}
+        <ol
+          className="list-unstyled"
+          style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", margin: "0 0 36px", padding: 0 }}
+          aria-label="Signup progress"
+        >
+          {STEPS.map((label, i) => {
+            const n = i + 1;
+            const state = circleState(n);
+            return (
+              <li key={label} style={{ display: "contents" }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <span style={stepCircleStyle(state)} aria-current={step === n ? "step" : undefined}>
+                    {state === "done" ? <i className="bi bi-check-lg" /> : n}
+                  </span>
+                  <span style={STEP_LABEL}>{label}</span>
+                </div>
+                {n < STEPS.length && <span style={STEP_LINE} aria-hidden="true" />}
+              </li>
+            );
+          })}
+        </ol>
 
-      {/* Step 1: Tier */}
-      {step === 1 && (
-        <section aria-labelledby="su1h">
-          <div className="card-brand">
-            <h2 id="su1h" className="h3 mb-2">Choose your tier</h2>
-            <p className="mb-4">Select the membership that suits you. You can change tier any time.</p>
-            <fieldset style={{ border: 0, padding: 0, margin: 0 }}>
+        {/* Step 1: Tier */}
+        {step === 1 && (
+          <section aria-labelledby="su1h" style={PANEL}>
+            <span style={EYEBROW}>Membership</span>
+            <h2 id="su1h" style={HEADING}>Choose your tier</h2>
+            <p style={INTRO}>Select the membership that suits you. You can change tier any time.</p>
+
+            <fieldset style={{ border: 0, padding: 0, margin: "24px 0 0" }}>
               <legend className="visually-hidden">Membership tier</legend>
-              <div className="row g-3" role="radiogroup" aria-label="Membership tier">
+              <div
+                role="radiogroup"
+                aria-label="Membership tier"
+                style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 14 }}
+              >
                 {tiers.map((t) => {
                   const selected = tier?.slug === t.slug;
-                  // .tier-select + .tier-select.selected/:hover from the source <style> (lines 22–23).
                   const lit = selected || hoverSlug === t.slug;
                   return (
-                    <div className="col-12 col-sm-6" key={t.slug}>
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={selected}
-                        onClick={() => setTier(t)}
-                        onMouseEnter={() => setHoverSlug(t.slug)}
-                        onMouseLeave={() => setHoverSlug(null)}
-                        className="d-block text-start"
-                        style={{
-                          borderRadius: 16,
-                          padding: 20,
-                          border: `1.5px solid ${lit ? "var(--gold)" : "var(--gold-bdr)"}`,
-                          background: lit ? "var(--gold-lt)" : "var(--bg-card)",
-                          width: "100%",
-                          height: "100%",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <span style={{ color: tierColor(t.name), fontFamily: "var(--serif)", fontSize: "1.25rem", fontWeight: 700 }}>{t.name}</span>
-                        <span className="d-block" style={{ fontFamily: "var(--serif)", fontSize: "1.5rem" }}>
-                          {priceLabel(t, "monthly")}
-                          {!t.isFree && <span style={{ fontSize: ".875rem", color: "var(--text-muted)" }}>/mo</span>}
-                        </span>
-                        <span className="d-block" style={{ fontSize: ".75rem", color: "var(--text-muted)", marginTop: 6 }}>
-                          {fmtMultiplier(t.pointsMultiplier)} points · {t.memberDiscountPct}% discount
-                        </span>
-                      </button>
-                    </div>
+                    <button
+                      key={t.slug}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => setTier(t)}
+                      onMouseEnter={() => setHoverSlug(t.slug)}
+                      onMouseLeave={() => setHoverSlug(null)}
+                      style={{
+                        textAlign: "left",
+                        borderRadius: 14,
+                        padding: "18px 20px",
+                        border: `1.5px solid ${lit ? "var(--gold)" : "var(--line2)"}`,
+                        background: lit ? "var(--goldLt)" : "var(--surface2)",
+                        width: "100%",
+                        height: "100%",
+                        cursor: "pointer",
+                        display: "block",
+                      }}
+                    >
+                      <span style={{ color: tierColor(t.name), fontFamily: "var(--serif)", fontSize: "1.25rem", fontWeight: 700 }}>
+                        {t.name}
+                      </span>
+                      <span style={{ display: "block", fontFamily: "var(--serif)", fontSize: "1.5rem", color: "var(--text)", marginTop: 2 }}>
+                        {priceLabel(t, "monthly")}
+                        {!t.isFree && <span style={{ fontSize: ".875rem", color: "var(--muted)" }}>/mo</span>}
+                      </span>
+                      <span style={{ display: "block", fontSize: ".75rem", color: "var(--muted)", marginTop: 6 }}>
+                        {fmtMultiplier(t.pointsMultiplier)} points · {t.memberDiscountPct}% discount
+                      </span>
+                    </button>
                   );
                 })}
               </div>
             </fieldset>
 
             {tier && !tier.isFree && (
-              <div className="mt-3">
-                <span className="form-label d-block">Billing period</span>
-                <div className="d-flex gap-2" role="group" aria-label="Billing period">
-                  <button type="button" className={`btn btn-sm ${billing === "monthly" ? "btn-gold" : "btn-outline-gold"}`} aria-pressed={billing === "monthly"} onClick={() => setBilling("monthly")}>Monthly</button>
-                  <button type="button" className={`btn btn-sm ${billing === "annual" ? "btn-gold" : "btn-outline-gold"}`} aria-pressed={billing === "annual"} onClick={() => setBilling("annual")}>Annual (save 2 months)</button>
+              <div style={{ marginTop: 20 }}>
+                <span style={LABEL}>Billing period</span>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }} role="group" aria-label="Billing period">
+                  <button
+                    type="button"
+                    aria-pressed={billing === "monthly"}
+                    onClick={() => setBilling("monthly")}
+                    style={billing === "monthly" ? { ...BTN_GOLD, padding: "9px 18px", fontSize: ".84rem" } : { ...BTN_OUTLINE, padding: "9px 18px", fontSize: ".84rem" }}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={billing === "annual"}
+                    onClick={() => setBilling("annual")}
+                    style={billing === "annual" ? { ...BTN_GOLD, padding: "9px 18px", fontSize: ".84rem" } : { ...BTN_OUTLINE, padding: "9px 18px", fontSize: ".84rem" }}
+                  >
+                    Annual (save 2 months)
+                  </button>
                 </div>
               </div>
             )}
 
             {errTier && (
-              <p className="alert mt-3" role="alert" style={ERR_BOX}>{errTier}</p>
+              <p role="alert" style={{ ...ERR_BOX, margin: "20px 0 0" }}>{errTier}</p>
             )}
-            <button type="button" className="btn btn-gold w-100 mt-4" onClick={continueFromTier}>Continue →</button>
-          </div>
-        </section>
-      )}
+            <button type="button" style={{ ...BTN_GOLD, width: "100%", marginTop: 24 }} onClick={continueFromTier}>
+              Continue <i className="bi bi-arrow-right" />
+            </button>
+          </section>
+        )}
 
-      {/* Step 2: Account */}
-      {step === 2 && (
-        <section aria-labelledby="su2h">
-          <div className="card-brand">
-            <h2 id="su2h" className="h3 mb-4">Create your account</h2>
+        {/* Step 2: Account */}
+        {step === 2 && (
+          <section aria-labelledby="su2h" style={PANEL}>
+            <span style={EYEBROW}>Create account</span>
+            <h2 id="su2h" style={{ ...HEADING, marginBottom: 20 }}>Create your account</h2>
             {errAccount && (
-              <div className="alert" role="alert" style={ERR_BOX}>{errAccount}</div>
+              <div role="alert" style={{ ...ERR_BOX, marginBottom: 16 }}>{errAccount}</div>
             )}
             <form onSubmit={submitAccount} noValidate>
-              <div className="row g-3">
-                <div className="col-sm-6"><label className="form-label" htmlFor="su-fname">First name *</label><input className="form-control" id="su-fname" autoComplete="given-name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required /></div>
-                <div className="col-sm-6"><label className="form-label" htmlFor="su-lname">Last name *</label><input className="form-control" id="su-lname" autoComplete="family-name" value={lastName} onChange={(e) => setLastName(e.target.value)} required /></div>
-                <div className="col-12"><label className="form-label" htmlFor="su-email">Email *</label><input className="form-control" type="email" id="su-email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-                <div className="col-12"><label className="form-label" htmlFor="su-pw">Password *</label><input className="form-control" type="password" id="su-pw" autoComplete="new-password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required /><span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>Minimum 8 characters.</span></div>
-                <div className="col-12"><label className="form-label" htmlFor="su-dob">Date of birth *</label><input className="form-control" type="date" id="su-dob" autoComplete="bday" value={dob} onChange={(e) => setDob(e.target.value)} required /><span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>You must be 18 or over to join.</span></div>
-                <div className="col-12"><div className="form-check"><input className="form-check-input" type="checkbox" id="su-terms" checked={terms} onChange={(e) => setTerms(e.target.checked)} required /><label className="form-check-label" htmlFor="su-terms" style={{ fontSize: ".8125rem", color: "var(--text-muted)" }}>I am 18+ and agree to the <a href="/terms" className="gold">Terms</a> and <a href="/privacy" className="gold">Privacy Policy</a>.</label></div></div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                <div>
+                  <label style={LABEL} htmlFor="su-fname">First name *</label>
+                  <input style={FIELD} id="su-fname" autoComplete="given-name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+                </div>
+                <div>
+                  <label style={LABEL} htmlFor="su-lname">Last name *</label>
+                  <input style={FIELD} id="su-lname" autoComplete="family-name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+                </div>
               </div>
-              <div className="d-flex gap-2 mt-4">
-                <button type="button" className="btn btn-outline-gold" onClick={() => goTo(1)}>← Back</button>
-                <button type="submit" className="btn btn-gold flex-grow-1">Continue →</button>
+              <div style={{ marginBottom: 16 }}>
+                <label style={LABEL} htmlFor="su-email">Email *</label>
+                <input style={FIELD} type="email" id="su-email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={LABEL} htmlFor="su-pw">Password *</label>
+                <input style={FIELD} type="password" id="su-pw" autoComplete="new-password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <span style={HINT}>Minimum 8 characters.</span>
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={LABEL} htmlFor="su-dob">Date of birth *</label>
+                <input style={FIELD} type="date" id="su-dob" autoComplete="bday" value={dob} onChange={(e) => setDob(e.target.value)} required />
+                <span style={HINT}>You must be 18 or over to join.</span>
+              </div>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: ".8125rem", color: "var(--muted)", lineHeight: 1.5, cursor: "pointer" }}>
+                <input type="checkbox" id="su-terms" checked={terms} onChange={(e) => setTerms(e.target.checked)} required style={{ marginTop: 2, accentColor: "var(--gold)" }} />
+                <span>
+                  I am 18+ and agree to the <a href="/terms" style={{ color: "var(--goldHi)" }}>Terms</a> and <a href="/privacy" style={{ color: "var(--goldHi)" }}>Privacy Policy</a>.
+                </span>
+              </label>
+              <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+                <button type="button" style={BTN_OUTLINE} onClick={() => goTo(1)}>
+                  <i className="bi bi-arrow-left" /> Back
+                </button>
+                <button type="submit" style={{ ...BTN_GOLD, flex: "1 1 auto" }}>
+                  Continue <i className="bi bi-arrow-right" />
+                </button>
               </div>
             </form>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {/* Step 3: Payment */}
-      {step === 3 && tier && (
-        <section aria-labelledby="su3h">
-          <div className="card-brand">
-            <h2 id="su3h" className="h3 mb-3">Payment</h2>
-            <div style={{ background: "var(--gold-lt)", border: "1px solid var(--gold-md)", borderRadius: 12, padding: 16, marginBottom: 20 }}>
-              <div className="d-flex justify-content-between">
-                <span style={{ fontSize: ".8125rem", color: "var(--text-muted)" }}>{tier.name} Membership</span>
-                <span style={{ fontFamily: "var(--serif)", fontSize: "1.25rem", fontWeight: 700, color: "var(--gold-hi)" }}>{priceLabel(tier, billing)}</span>
+        {/* Step 3: Payment */}
+        {step === 3 && tier && (
+          <section aria-labelledby="su3h" style={PANEL}>
+            <span style={EYEBROW}>Payment</span>
+            <h2 id="su3h" style={{ ...HEADING, marginBottom: 18 }}>Payment</h2>
+
+            <div style={{ background: "var(--goldLt)", border: "1px solid var(--line)", borderRadius: 12, padding: 16, marginBottom: 20 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
+                <span style={{ fontSize: ".8125rem", color: "var(--muted)" }}>{tier.name} Membership</span>
+                <span style={{ fontFamily: "var(--serif)", fontSize: "1.25rem", fontWeight: 700, color: "var(--goldHi)" }}>{priceLabel(tier, billing)}</span>
               </div>
-              <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "4px 0 0" }}>
+              <p style={{ fontSize: ".75rem", color: "var(--dim)", margin: "4px 0 0" }}>
                 {isFree ? "No charge" : billing === "monthly" ? "per month" : "per year — 2 months free"}
               </p>
             </div>
 
             {isFree ? (
-              <div><p>Bronze is free — no payment needed. Click continue to finish.</p></div>
+              <p style={{ color: "var(--muted)", fontSize: ".9rem", lineHeight: 1.6 }}>
+                Bronze is free — no payment needed. Click continue to finish.
+              </p>
             ) : (
               <div>
                 {errPay && (
-                  <div className="alert" role="alert" style={ERR_BOX}>{errPay}</div>
+                  <div role="alert" style={{ ...ERR_BOX, marginBottom: 16 }}>{errPay}</div>
                 )}
                 <form noValidate onSubmit={(e) => e.preventDefault()}>
-                  <div className="mb-3"><label className="form-label" htmlFor="su-card">Card number *</label><input className="form-control" id="su-card" inputMode="numeric" autoComplete="cc-number" maxLength={19} placeholder="1234 5678 9012 3456" value={card} onChange={(e) => setCard(e.target.value.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim())} required /></div>
-                  <div className="mb-3"><label className="form-label" htmlFor="su-cardname">Name on card *</label><input className="form-control" id="su-cardname" autoComplete="cc-name" value={cardName} onChange={(e) => setCardName(e.target.value)} required /></div>
-                  <div className="row g-3">
-                    <div className="col-6"><label className="form-label" htmlFor="su-exp">Expiry *</label><input className="form-control" id="su-exp" autoComplete="cc-exp" placeholder="MM/YY" maxLength={5} value={exp} onChange={(e) => { const d = e.target.value.replace(/\D/g, "").slice(0, 4); setExp(d.length > 2 ? d.slice(0, 2) + "/" + d.slice(2) : d); }} required /></div>
-                    <div className="col-6"><label className="form-label" htmlFor="su-cvv">CVV *</label><input className="form-control" type="password" id="su-cvv" inputMode="numeric" maxLength={4} autoComplete="cc-csc" value={cvv} onChange={(e) => setCvv(e.target.value)} required /></div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={LABEL} htmlFor="su-card">Card number *</label>
+                    <input style={FIELD} id="su-card" inputMode="numeric" autoComplete="cc-number" maxLength={19} placeholder="1234 5678 9012 3456" value={card} onChange={(e) => setCard(e.target.value.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim())} required />
                   </div>
-                  <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "16px 0" }}>🔒 Payment is simulated in this demo. No card is charged.</p>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={LABEL} htmlFor="su-cardname">Name on card *</label>
+                    <input style={FIELD} id="su-cardname" autoComplete="cc-name" value={cardName} onChange={(e) => setCardName(e.target.value)} required />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div>
+                      <label style={LABEL} htmlFor="su-exp">Expiry *</label>
+                      <input style={FIELD} id="su-exp" autoComplete="cc-exp" placeholder="MM/YY" maxLength={5} value={exp} onChange={(e) => { const d = e.target.value.replace(/\D/g, "").slice(0, 4); setExp(d.length > 2 ? d.slice(0, 2) + "/" + d.slice(2) : d); }} required />
+                    </div>
+                    <div>
+                      <label style={LABEL} htmlFor="su-cvv">CVV *</label>
+                      <input style={FIELD} type="password" id="su-cvv" inputMode="numeric" maxLength={4} autoComplete="cc-csc" value={cvv} onChange={(e) => setCvv(e.target.value)} required />
+                    </div>
+                  </div>
+                  <p style={{ fontSize: ".72rem", color: "var(--dim)", margin: "16px 0 0", display: "flex", alignItems: "center", gap: 6 }}>
+                    <i className="bi bi-lock" /> Payment is simulated in this demo. No card is charged.
+                  </p>
                 </form>
               </div>
             )}
 
-            <div className="d-flex gap-2 mt-2">
-              <button type="button" className="btn btn-outline-gold" onClick={() => goTo(2)}>← Back</button>
-              <button type="button" className="btn btn-gold flex-grow-1" onClick={complete} disabled={submitting}>{submitting ? "Creating account…" : "Complete Sign-Up"}</button>
+            <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+              <button type="button" style={BTN_OUTLINE} onClick={() => goTo(2)}>
+                <i className="bi bi-arrow-left" /> Back
+              </button>
+              <button type="button" style={{ ...BTN_GOLD, flex: "1 1 auto", opacity: submitting ? 0.7 : 1, cursor: submitting ? "default" : "pointer" }} onClick={complete} disabled={submitting}>
+                {submitting ? "Creating account…" : "Complete Sign-Up"}
+              </button>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      {/* Step 4: Done */}
-      {step === 4 && (
-        <section aria-labelledby="su4h">
-          <div className="card-brand text-center" style={{ padding: "48px 24px" }}>
-            <div style={{ fontSize: "3rem", marginBottom: 16, color: "var(--gold)" }} aria-hidden="true">✦</div>
-            <p style={{ fontSize: ".6875rem", letterSpacing: ".3em", color: "var(--gold-hi)", marginBottom: 12 }}>WELCOME TO RPM</p>
-            <h2 id="su4h" className="mb-3">You&apos;re all set!</h2>
-            <p style={{ maxWidth: 420, margin: "0 auto 28px" }}>Your <strong style={{ color: "var(--gold-hi)" }}>{tier?.name ?? "Bronze"}</strong> membership is active. We&apos;ve sent a confirmation to your email — check your inbox to verify your account.</p>
-            <div className="d-flex gap-2 justify-content-center flex-wrap">
-              <a href="/account" className="btn btn-gold">Go to Member Portal</a>
-              <a href="/shop" className="btn btn-outline-gold">Start Shopping →</a>
+        {/* Step 4: Done */}
+        {step === 4 && (
+          <section aria-labelledby="su4h" style={{ ...PANEL, textAlign: "center", padding: "clamp(40px,6vw,56px) 28px" }}>
+            <div style={{ fontSize: "2.6rem", marginBottom: 14, color: "var(--gold)" }} aria-hidden="true">
+              <i className="bi bi-stars" />
             </div>
-          </div>
-        </section>
-      )}
-    </div>
+            <span style={{ ...EYEBROW, display: "block", marginBottom: 12 }}>Welcome to RPM</span>
+            <h2 id="su4h" style={{ ...HEADING, margin: "0 0 12px" }}>You&apos;re all set!</h2>
+            <p style={{ color: "var(--muted)", fontSize: ".96rem", lineHeight: 1.6, maxWidth: 420, margin: "0 auto 28px" }}>
+              Your <strong style={{ color: "var(--goldHi)" }}>{tier?.name ?? "Bronze"}</strong> membership is active. We&apos;ve sent a confirmation to your email — check your inbox to verify your account.
+            </p>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+              <a href="/account" style={BTN_GOLD}>Go to Member Portal</a>
+              <a href="/shop" style={BTN_OUTLINE}>Start Shopping <i className="bi bi-arrow-right" /></a>
+            </div>
+          </section>
+        )}
+      </div>
+    </section>
   );
 }

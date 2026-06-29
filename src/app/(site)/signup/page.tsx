@@ -25,7 +25,13 @@ export default async function SignupPage() {
 
   return (
     <main id="main">
-      <Suspense fallback={<div className="container section" style={{ maxWidth: 680 }} />}>
+      <Suspense
+        fallback={
+          <section style={{ padding: "clamp(40px,5vw,64px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)" }}>
+            <div style={{ maxWidth: 680, margin: "0 auto" }} />
+          </section>
+        }
+      >
         <SignupWizard tiers={wizardTiers} />
       </Suspense>
     </main>

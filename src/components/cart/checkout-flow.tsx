@@ -22,6 +22,84 @@ export type CheckoutPrefill = {
 
 const STEP_LABELS = ["Delivery", "Payment", "Confirm", "Complete"];
 
+// --- Shared champagne style tokens (inline, per prototype) ---
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  color: "var(--muted)",
+  fontSize: ".78rem",
+  marginBottom: 6,
+};
+const fieldStyle: React.CSSProperties = {
+  width: "100%",
+  background: "var(--surface2)",
+  border: "1px solid var(--line2)",
+  color: "var(--text)",
+  borderRadius: 10,
+  padding: "12px 14px",
+  fontSize: ".9rem",
+  outline: "none",
+  fontFamily: "var(--sans)",
+};
+const cardStyle: React.CSSProperties = {
+  background: "var(--surface)",
+  border: "1px solid var(--line2)",
+  borderRadius: 18,
+  padding: "30px 30px 32px",
+};
+const goldPill: React.CSSProperties = {
+  background: "var(--gold)",
+  color: "var(--onGold)",
+  border: "none",
+  borderRadius: 999,
+  padding: "13px 30px",
+  fontSize: ".92rem",
+  fontWeight: 600,
+  cursor: "pointer",
+};
+const goldPillFull: React.CSSProperties = { ...goldPill, width: "100%", textAlign: "center" };
+const ghostPill: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 9,
+  background: "transparent",
+  border: "1px solid var(--gold)",
+  color: "var(--goldHi)",
+  borderRadius: 999,
+  padding: "12px 24px",
+  fontSize: ".9rem",
+  fontWeight: 600,
+  cursor: "pointer",
+  textDecoration: "none",
+};
+const eyebrowStyle: React.CSSProperties = {
+  fontSize: ".74rem",
+  letterSpacing: ".24em",
+  textTransform: "uppercase",
+  color: "var(--gold)",
+  fontWeight: 600,
+};
+const panelStyle: React.CSSProperties = {
+  background: "var(--surface2)",
+  border: "1px solid var(--line2)",
+  borderRadius: 14,
+  padding: 20,
+};
+const sectionHeading: React.CSSProperties = {
+  fontFamily: "var(--serif)",
+  fontWeight: 600,
+  fontSize: "clamp(1.5rem,3vw,1.9rem)",
+  color: "var(--text)",
+  margin: "0 0 22px",
+};
+const rowItem: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 12,
+  fontSize: ".9rem",
+  padding: "7px 0",
+  color: "var(--text)",
+};
+
 // --- Payment-method brand marks (decorative; the text label carries the a11y name) ---
 function Chip({ children }: { children: React.ReactNode }) {
   return (
@@ -143,220 +221,467 @@ export default function CheckoutFlow({ settings, initial }: { settings: Settings
 
   if (items.length === 0 && step < 4) {
     return (
-      <div className="text-center" style={{ padding: "40px 0" }}>
-        <p style={{ color: "var(--text-muted)" }}>Your cart is empty.</p>
-        <Link href="/shop" className="btn btn-gold mt-2">Browse the shop →</Link>
-      </div>
+      <section style={{ padding: "clamp(48px,7vw,84px) clamp(20px,5vw,40px)" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", textAlign: "center" }}>
+          <p style={{ color: "var(--muted)", fontSize: "1.02rem", margin: "0 0 18px" }}>Your cart is empty.</p>
+          <Link href="/shop" style={{ ...ghostPill, justifyContent: "center" }}>
+            Browse the shop <i className="bi bi-arrow-right" />
+          </Link>
+        </div>
+      </section>
     );
   }
 
   return (
-    <div className="container section" style={{ maxWidth: 1060 }}>
-      {/* Step bar */}
-      <ol className="step-bar list-unstyled" aria-label="Checkout progress">
-        {STEP_LABELS.map((label, i) => {
-          const n = i + 1;
-          const state = n < step ? "done" : n === step ? "active" : "pending";
-          const labelState = n === step ? "gold" : n < step ? "text-green" : "text-dim";
-          return (
-            <Fragment key={label}>
-              {i > 0 && <li className="step-connector" aria-hidden="true" />}
-              <li className="step-node">
-                <span className={`step-circle ${state}`} aria-current={n === step ? "step" : undefined}>{n < step ? "✓" : n}</span>
-                <span className={`step-label ${labelState}`}>{label}</span>
-              </li>
-            </Fragment>
-          );
-        })}
-      </ol>
+    <section
+      style={{
+        position: "relative",
+        padding: "clamp(40px,5vw,64px) clamp(20px,5vw,40px) clamp(72px,9vw,110px)",
+        overflow: "hidden",
+        borderBottom: "1px solid var(--line2)",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "radial-gradient(80% 70% at 50% 0%, rgba(205,181,130,.1), transparent 60%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div style={{ position: "relative", maxWidth: 1100, margin: "0 auto" }}>
+        <span style={eyebrowStyle}>Secure Checkout</span>
 
-      <div className="row g-4 mt-2">
-        <div className="col-12 col-lg-8">
-          {error && (
-            <div role="alert" className="mb-3" style={{ background: "rgba(242,109,109,.12)", border: "1px solid rgba(242,109,109,.35)", color: "var(--red)", borderRadius: 8, padding: "8px 12px", fontSize: ".875rem" }}>{error}</div>
-          )}
+        {/* Step bar */}
+        <ol
+          aria-label="Checkout progress"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            listStyle: "none",
+            padding: 0,
+            margin: "20px 0 32px",
+            gap: 0,
+            flexWrap: "wrap",
+          }}
+        >
+          {STEP_LABELS.map((label, i) => {
+            const n = i + 1;
+            const done = n < step;
+            const active = n === step;
+            const circleBg = active ? "var(--gold)" : done ? "var(--goldLt)" : "var(--surface2)";
+            const circleColor = active ? "var(--onGold)" : done ? "var(--goldHi)" : "var(--dim)";
+            const circleBorder = active ? "var(--gold)" : done ? "var(--gold)" : "var(--line2)";
+            const labelColor = active ? "var(--goldHi)" : done ? "var(--muted)" : "var(--dim)";
+            return (
+              <Fragment key={label}>
+                {i > 0 && (
+                  <li
+                    aria-hidden="true"
+                    style={{
+                      flex: 1,
+                      minWidth: 24,
+                      height: 1,
+                      background: done || active ? "var(--gold)" : "var(--line2)",
+                      margin: "0 8px",
+                    }}
+                  />
+                )}
+                <li style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
+                  <span
+                    aria-current={active ? "step" : undefined}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      borderRadius: "50%",
+                      flex: "0 0 30px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: circleBg,
+                      border: `1px solid ${circleBorder}`,
+                      color: circleColor,
+                      fontFamily: "var(--serif)",
+                      fontWeight: 600,
+                      fontSize: ".95rem",
+                    }}
+                  >
+                    {done ? <i className="bi bi-check-lg" /> : n}
+                  </span>
+                  <span style={{ fontSize: ".82rem", fontWeight: 600, color: labelColor }}>{label}</span>
+                </li>
+              </Fragment>
+            );
+          })}
+        </ol>
 
-          {/* Step 1 */}
-          {step === 1 && (
-            <div className="card-brand">
-              <h2 className="h3 mb-4">Delivery Details</h2>
-              {isMember && (
-                <p style={{ fontSize: ".8125rem", color: "var(--gold-hi)", background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: 8, padding: "8px 12px", marginBottom: 18 }}>
-                  ✓ Signed in{form.email ? ` as ${form.email}` : ""} — we’ve pre-filled your saved details. Edit anything below before continuing.
-                </p>
-              )}
-              <form onSubmit={submitDelivery} noValidate>
-                <div className="row g-3">
-                  <div className="col-sm-6"><label className="form-label">First name *</label><input className="form-control" value={form.fname} onChange={set("fname")} autoComplete="given-name" /></div>
-                  <div className="col-sm-6"><label className="form-label">Last name *</label><input className="form-control" value={form.lname} onChange={set("lname")} autoComplete="family-name" /></div>
-                  <div className="col-12"><label className="form-label">Email *</label><input type="email" className="form-control" value={form.email} onChange={set("email")} autoComplete="email" /></div>
-                  <div className="col-12"><label className="form-label">Phone</label><input type="tel" className="form-control" value={form.phone} onChange={set("phone")} autoComplete="tel" /></div>
-                  <div className="col-12"><label className="form-label">Address line 1 *</label><input className="form-control" value={form.addr1} onChange={set("addr1")} autoComplete="address-line1" /></div>
-                  <div className="col-12"><label className="form-label">Address line 2</label><input className="form-control" value={form.addr2} onChange={set("addr2")} autoComplete="address-line2" /></div>
-                  <div className="col-sm-6"><label className="form-label">City *</label><input className="form-control" value={form.city} onChange={set("city")} autoComplete="address-level2" /></div>
-                  <div className="col-sm-6"><label className="form-label">Postcode *</label><input className="form-control" value={form.postcode} onChange={set("postcode")} autoComplete="postal-code" /></div>
-                  <div className="col-12"><label className="form-label">Country *</label>
-                    <select className="form-select" value={form.country} onChange={set("country")}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: step < 4 ? "minmax(0,1.7fr) minmax(0,1fr)" : "minmax(0,1fr)",
+            gap: 20,
+            alignItems: "start",
+          }}
+        >
+          <div>
+            {error && (
+              <div
+                role="alert"
+                style={{
+                  background: "rgba(242,109,109,.12)",
+                  border: "1px solid rgba(242,109,109,.35)",
+                  color: "var(--red)",
+                  borderRadius: 10,
+                  padding: "12px 14px",
+                  fontSize: ".85rem",
+                  marginBottom: 16,
+                }}
+              >
+                {error}
+              </div>
+            )}
+
+            {/* Step 1 — Delivery */}
+            {step === 1 && (
+              <div style={cardStyle}>
+                <h2 style={sectionHeading}>Delivery Details</h2>
+                {isMember && (
+                  <p
+                    style={{
+                      fontSize: ".84rem",
+                      color: "var(--goldHi)",
+                      background: "var(--goldLt)",
+                      border: "1px solid var(--line)",
+                      borderRadius: 10,
+                      padding: "10px 14px",
+                      margin: "0 0 18px",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 8,
+                    }}
+                  >
+                    <i className="bi bi-check-circle-fill" style={{ marginTop: 2 }} />
+                    <span>
+                      Signed in{form.email ? ` as ${form.email}` : ""} — we&apos;ve pre-filled your saved details. Edit
+                      anything below before continuing.
+                    </span>
+                  </p>
+                )}
+                <form onSubmit={submitDelivery} noValidate>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                    <div>
+                      <label htmlFor="co-fname" style={labelStyle}>First name *</label>
+                      <input id="co-fname" style={fieldStyle} value={form.fname} onChange={set("fname")} autoComplete="given-name" />
+                    </div>
+                    <div>
+                      <label htmlFor="co-lname" style={labelStyle}>Last name *</label>
+                      <input id="co-lname" style={fieldStyle} value={form.lname} onChange={set("lname")} autoComplete="family-name" />
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label htmlFor="co-email" style={labelStyle}>Email *</label>
+                    <input id="co-email" type="email" style={fieldStyle} value={form.email} onChange={set("email")} autoComplete="email" />
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label htmlFor="co-phone" style={labelStyle}>Phone</label>
+                    <input id="co-phone" type="tel" style={fieldStyle} value={form.phone} onChange={set("phone")} autoComplete="tel" />
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label htmlFor="co-addr1" style={labelStyle}>Address line 1 *</label>
+                    <input id="co-addr1" style={fieldStyle} value={form.addr1} onChange={set("addr1")} autoComplete="address-line1" />
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label htmlFor="co-addr2" style={labelStyle}>Address line 2</label>
+                    <input id="co-addr2" style={fieldStyle} value={form.addr2} onChange={set("addr2")} autoComplete="address-line2" />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                    <div>
+                      <label htmlFor="co-city" style={labelStyle}>City *</label>
+                      <input id="co-city" style={fieldStyle} value={form.city} onChange={set("city")} autoComplete="address-level2" />
+                    </div>
+                    <div>
+                      <label htmlFor="co-postcode" style={labelStyle}>Postcode *</label>
+                      <input id="co-postcode" style={fieldStyle} value={form.postcode} onChange={set("postcode")} autoComplete="postal-code" />
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: 20 }}>
+                    <label htmlFor="co-country" style={labelStyle}>Country *</label>
+                    <select id="co-country" style={{ ...fieldStyle, cursor: "pointer", appearance: "none" }} value={form.country} onChange={set("country")}>
                       <option>United Kingdom</option><option>United States</option><option>Germany</option><option>France</option><option>Jamaica</option>
                     </select>
                   </div>
-                </div>
-                <fieldset className="mt-3" style={{ border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 16, background: "var(--bg-card2)" }}>
-                  <legend className="form-label" style={{ fontSize: ".875rem", fontWeight: 600, float: "none", width: "auto" }}>Delivery method</legend>
-                  <div className="form-check"><input className="form-check-input" type="radio" name="delivery" id="d-std" checked={delivery === "standard"} onChange={() => setDelivery("standard")} /><label className="form-check-label" htmlFor="d-std" style={{ fontSize: ".875rem" }}>Standard UK (3–5 days) — {money(settings.shippingStandardCost)} · FREE on {money(settings.freeShippingThreshold)}+</label></div>
-                  <div className="form-check"><input className="form-check-input" type="radio" name="delivery" id="d-exp" checked={delivery === "express"} onChange={() => setDelivery("express")} /><label className="form-check-label" htmlFor="d-exp" style={{ fontSize: ".875rem" }}>Express UK (1–2 days) — {money(settings.shippingExpressCost)}</label></div>
-                </fieldset>
-                <button type="submit" className="btn btn-gold w-100 mt-4">Continue to Payment →</button>
-              </form>
-            </div>
-          )}
 
-          {/* Step 2 */}
-          {step === 2 && (
-            <div className="card-brand">
-              <h2 className="h3 mb-4">Payment</h2>
-              <div className="row g-2 mb-3" role="radiogroup" aria-label="Payment method">
-                {PAY_METHODS.map((m) => (
-                  <div className="col-4" key={m.id}>
-                    <input type="radio" className="btn-check" name="paymethod" id={`pm-${m.id}`} checked={payment === m.id} onChange={() => setPayment(m.id)} />
-                    <label className="btn btn-outline-gold w-100 d-flex flex-column align-items-center justify-content-center gap-2 py-3" htmlFor={`pm-${m.id}`} style={{ minHeight: 72 }}>
-                      <span className="d-flex align-items-center gap-1" aria-hidden="true">{m.logo}</span>
-                      <span style={{ fontSize: ".75rem", fontWeight: 600 }}>{m.label}</span>
+                  <fieldset style={{ ...panelStyle, marginBottom: 22, border: "1px solid var(--line2)" }}>
+                    <legend style={{ ...labelStyle, color: "var(--text)", fontWeight: 600, fontSize: ".88rem", padding: 0, marginBottom: 12, float: "none", width: "auto" }}>
+                      Delivery method
+                    </legend>
+                    <label
+                      htmlFor="d-std"
+                      style={{ display: "flex", alignItems: "center", gap: 10, fontSize: ".88rem", color: "var(--muted)", cursor: "pointer", marginBottom: 10 }}
+                    >
+                      <input type="radio" name="delivery" id="d-std" checked={delivery === "standard"} onChange={() => setDelivery("standard")} style={{ accentColor: "var(--gold)" }} />
+                      <span>Standard UK (3–5 days) — {money(settings.shippingStandardCost)} · FREE on {money(settings.freeShippingThreshold)}+</span>
                     </label>
+                    <label
+                      htmlFor="d-exp"
+                      style={{ display: "flex", alignItems: "center", gap: 10, fontSize: ".88rem", color: "var(--muted)", cursor: "pointer" }}
+                    >
+                      <input type="radio" name="delivery" id="d-exp" checked={delivery === "express"} onChange={() => setDelivery("express")} style={{ accentColor: "var(--gold)" }} />
+                      <span>Express UK (1–2 days) — {money(settings.shippingExpressCost)}</span>
+                    </label>
+                  </fieldset>
+
+                  <button type="submit" style={{ ...goldPillFull, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                    Continue to Payment <i className="bi bi-arrow-right" />
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* Step 2 — Payment */}
+            {step === 2 && (
+              <div style={cardStyle}>
+                <h2 style={sectionHeading}>Payment</h2>
+                <div role="radiogroup" aria-label="Payment method" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 20 }}>
+                  {PAY_METHODS.map((m) => {
+                    const on = payment === m.id;
+                    return (
+                      <label
+                        key={m.id}
+                        htmlFor={`pm-${m.id}`}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 8,
+                          minHeight: 78,
+                          padding: "14px 8px",
+                          borderRadius: 14,
+                          cursor: "pointer",
+                          background: on ? "var(--goldLt)" : "var(--surface2)",
+                          border: `1px solid ${on ? "var(--gold)" : "var(--line2)"}`,
+                          color: on ? "var(--goldHi)" : "var(--muted)",
+                        }}
+                      >
+                        <input type="radio" name="paymethod" id={`pm-${m.id}`} checked={on} onChange={() => setPayment(m.id)} style={{ position: "absolute", opacity: 0, width: 0, height: 0 }} />
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }} aria-hidden="true">{m.logo}</span>
+                        <span style={{ fontSize: ".78rem", fontWeight: 600 }}>{m.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                {payment === "card" && (
+                  <div style={panelStyle}>
+                    <div style={{ marginBottom: 16 }}>
+                      <label htmlFor="cc-num" style={labelStyle}>Card number</label>
+                      <input id="cc-num" style={fieldStyle} placeholder="1234 5678 9012 3456" inputMode="numeric" />
+                    </div>
+                    <div style={{ marginBottom: 16 }}>
+                      <label htmlFor="cc-name" style={labelStyle}>Name on card</label>
+                      <input id="cc-name" style={fieldStyle} />
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                      <div>
+                        <label htmlFor="cc-exp" style={labelStyle}>Expiry</label>
+                        <input id="cc-exp" style={fieldStyle} placeholder="MM/YY" />
+                      </div>
+                      <div>
+                        <label htmlFor="cc-cvv" style={labelStyle}>CVV</label>
+                        <input id="cc-cvv" style={fieldStyle} type="password" inputMode="numeric" />
+                      </div>
+                    </div>
+                    <p style={{ fontSize: ".74rem", color: "var(--dim)", lineHeight: 1.5, margin: "16px 0 0" }}>
+                      <i className="bi bi-lock-fill" /> 256-bit SSL · No card data stored · Card &amp; Google Pay are
+                      simulated in this build — choose <strong style={{ color: "var(--goldHi)" }}>PayPal</strong> for a
+                      live (sandbox) payment.
+                    </p>
                   </div>
-                ))}
-              </div>
-              {payment === "card" && (
-                <div style={{ background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 20 }}>
-                  <div className="mb-3"><label className="form-label">Card number</label><input className="form-control" placeholder="1234 5678 9012 3456" inputMode="numeric" /></div>
-                  <div className="mb-3"><label className="form-label">Name on card</label><input className="form-control" /></div>
-                  <div className="row g-3">
-                    <div className="col-6"><label className="form-label">Expiry</label><input className="form-control" placeholder="MM/YY" /></div>
-                    <div className="col-6"><label className="form-label">CVV</label><input className="form-control" type="password" inputMode="numeric" /></div>
+                )}
+
+                {payment === "paypal" && (
+                  <div style={{ ...panelStyle, textAlign: "center", padding: 28 }}>
+                    <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.3rem", color: "var(--text)", margin: "0 0 8px" }}>Continue with PayPal</h3>
+                    <p style={{ fontSize: ".9rem", color: "var(--muted)", lineHeight: 1.6, margin: "0 0 22px" }}>
+                      You&apos;ll be redirected to PayPal to authorise payment of <strong style={{ color: "var(--text)" }}>{money(total)}</strong>.
+                    </p>
+                    <button type="button" style={{ ...goldPillFull, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }} onClick={() => go(3)}>
+                      Continue to PayPal <i className="bi bi-arrow-right" />
+                    </button>
                   </div>
-                  <p style={{ fontSize: ".6875rem", color: "var(--text-dim)", margin: "16px 0 0" }}>🔒 256-bit SSL · No card data stored · Card &amp; Google Pay are simulated in this build — choose <strong style={{ color: "var(--gold-hi)" }}>PayPal</strong> for a live (sandbox) payment.</p>
-                </div>
-              )}
-              {payment === "paypal" && (
-                <div className="text-center" style={{ background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 28 }}>
-                  <h3 className="h4 mb-2">Continue with PayPal</h3>
-                  <p style={{ fontSize: ".875rem", marginBottom: 24 }}>You&apos;ll be redirected to PayPal to authorise payment of <strong style={{ color: "var(--text)" }}>{money(total)}</strong>.</p>
-                  <button type="button" className="btn btn-gold w-100" onClick={() => go(3)}>Continue to PayPal →</button>
-                </div>
-              )}
-              {payment === "googlepay" && (
-                <div className="text-center" style={{ background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 28 }}>
-                  <h3 className="h4 mb-2">Pay with Google Pay</h3>
-                  <p style={{ fontSize: ".875rem", marginBottom: 24 }}>Confirm payment of <strong style={{ color: "var(--text)" }}>{money(total)}</strong> using your saved Google Pay method.</p>
-                  <button type="button" className="btn btn-gold w-100" onClick={() => go(3)}>Pay with Google Pay</button>
-                </div>
-              )}
-              {payment === "card" && (
-                <button type="button" className="btn btn-gold w-100 mt-3" onClick={() => go(3)}>Review order →</button>
-              )}
-              <button type="button" className="btn btn-outline-gold mt-3" onClick={() => go(1)}>← Back to Delivery</button>
-            </div>
-          )}
+                )}
 
-          {/* Step 3 */}
-          {step === 3 && (
-            <div className="card-brand">
-              <h2 className="h3 mb-4">Confirm Your Order</h2>
-              <div style={{ background: "var(--bg-card2)", borderRadius: "var(--radius)", padding: 20, marginBottom: 20 }}>
-                <p style={{ fontSize: ".75rem", color: "var(--text-dim)", marginBottom: 10, letterSpacing: ".15em" }}>ITEMS</p>
-                {items.map((i) => (
-                  <div className="order-summary-item" key={i.key}><span>{i.name} ×{i.qty}</span><span>{money(i.price * i.qty)}</span></div>
-                ))}
-              </div>
-              <div className="d-flex justify-content-between" style={{ fontWeight: 600, padding: "12px 0", borderTop: "1px solid var(--gold-bdr)" }}>
-                <span>Total charged</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(total)}</span>
-              </div>
-              <p style={{ fontSize: ".75rem", color: "var(--text-dim)", margin: "8px 0 24px" }}>By placing this order you confirm you are 18 or over and agree to our <Link href="/terms">Terms &amp; Conditions</Link>. Age is verified on delivery. Standard 14-day returns apply.</p>
-              {payment === "paypal" ? (
-                PP_CLIENT_ID ? (
-                  <PayPalScriptProvider options={{ clientId: PP_CLIENT_ID, currency: "GBP", intent: "capture" }}>
-                    <PayPalButtons
-                      style={{ layout: "vertical", color: "gold", shape: "pill", label: "paypal" }}
-                      disabled={placing}
-                      createOrder={async () => {
-                        setError("");
-                        const r = await createPaypalOrder(buildInput());
-                        return r.id;
-                      }}
-                      onApprove={async (data) => {
-                        setPlacing(true);
-                        try {
-                          const res = await capturePaypalOrder(String(data.orderID), buildInput());
-                          setResult(res); snapshotRecap(); clear(); go(4);
-                        } catch (e) {
-                          setError(e instanceof Error ? e.message : "Payment could not be completed.");
-                        } finally {
-                          setPlacing(false);
-                        }
-                      }}
-                      onError={() => setError("PayPal could not process the payment. Please try again.")}
-                    />
-                  </PayPalScriptProvider>
-                ) : (
-                  <p style={{ color: "var(--yellow)", fontSize: ".85rem" }}>PayPal isn’t configured yet — choose another payment method.</p>
-                )
-              ) : (
-                <button type="button" className="btn btn-gold btn-lg w-100" onClick={placeOrder} disabled={placing}>{placing ? "Placing order…" : "Place Order"}</button>
-              )}
-              <button type="button" className="btn btn-outline-gold mt-3" onClick={() => go(2)}>← Back to Payment</button>
-            </div>
-          )}
+                {payment === "googlepay" && (
+                  <div style={{ ...panelStyle, textAlign: "center", padding: 28 }}>
+                    <h3 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.3rem", color: "var(--text)", margin: "0 0 8px" }}>Pay with Google Pay</h3>
+                    <p style={{ fontSize: ".9rem", color: "var(--muted)", lineHeight: 1.6, margin: "0 0 22px" }}>
+                      Confirm payment of <strong style={{ color: "var(--text)" }}>{money(total)}</strong> using your saved Google Pay method.
+                    </p>
+                    <button type="button" style={goldPillFull} onClick={() => go(3)}>Pay with Google Pay</button>
+                  </div>
+                )}
 
-          {/* Step 4 */}
-          {step === 4 && result && (
-            <div className="card-brand text-center" style={{ padding: "48px 24px" }}>
-              <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(74,222,128,.12)", border: "1px solid rgba(74,222,128,.4)", margin: "0 auto 18px", display: "flex", alignItems: "center", justifyContent: "center" }} aria-hidden="true">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                {payment === "card" && (
+                  <button type="button" style={{ ...goldPillFull, marginTop: 16, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }} onClick={() => go(3)}>
+                    Review order <i className="bi bi-arrow-right" />
+                  </button>
+                )}
+                <button type="button" style={{ ...ghostPill, marginTop: 16 }} onClick={() => go(1)}>
+                  <i className="bi bi-arrow-left" /> Back to Delivery
+                </button>
               </div>
-              <p style={{ fontSize: ".6875rem", letterSpacing: ".3em", color: "var(--gold-hi)", marginBottom: 12 }}>PAYMENT SUCCESSFUL · ORDER CONFIRMED</p>
-              <h2 className="mb-3" style={{ fontSize: "clamp(1.5rem,3vw,2.25rem)" }}>Thank you for your order</h2>
-              <p style={{ maxWidth: 460, margin: "0 auto 8px" }}>Your order <strong className="gold">#{result.ref}</strong> has been placed.</p>
-              <p style={{ maxWidth: 460, margin: "0 auto 28px", fontSize: ".9375rem", color: "var(--text-muted)" }}>We&apos;ve emailed a receipt to <strong style={{ color: "var(--text)" }}>{form.email}</strong>. Standard UK delivery — expect dispatch within 1 working day, then 3–5 working days to arrive. Someone aged 18+ must sign for the parcel.</p>
+            )}
 
-              {/* Compact order recap */}
-              {recap && recap.lines.length > 0 && (
-                <div className="text-start mx-auto" style={{ maxWidth: 460, background: "var(--bg-card2)", border: "1px solid var(--gold-bdr)", borderRadius: "var(--radius)", padding: 20 }}>
-                  <div style={{ fontSize: ".75rem", color: "var(--text-dim)", letterSpacing: ".15em", marginBottom: 10 }}>ORDER SUMMARY</div>
-                  {recap.lines.map((l, idx) => (
-                    <div className="order-summary-item" key={idx}><span>{l.qty} × {l.name}</span><span>{money(l.lineTotal)}</span></div>
+            {/* Step 3 — Confirm */}
+            {step === 3 && (
+              <div style={cardStyle}>
+                <h2 style={sectionHeading}>Confirm Your Order</h2>
+                <div style={{ ...panelStyle, marginBottom: 20 }}>
+                  <p style={{ ...eyebrowStyle, fontSize: ".7rem", margin: "0 0 12px" }}>Items</p>
+                  {items.map((i) => (
+                    <div style={rowItem} key={i.key}>
+                      <span style={{ color: "var(--muted)" }}>{i.name} ×{i.qty}</span>
+                      <span>{money(i.price * i.qty)}</span>
+                    </div>
                   ))}
-                  <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Subtotal</span><span>{money(recap.subtotal)}</span></div>
-                  <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Shipping</span><span>{recap.shipping === 0 ? "FREE" : money(recap.shipping)}</span></div>
-                  <div className="order-summary-item" style={{ fontWeight: 600, border: "none", paddingTop: 14 }}><span>Total paid</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(recap.total)}</span></div>
                 </div>
-              )}
-
-              <div className="d-flex gap-2 justify-content-center flex-wrap mt-4">
-                <Link href="/order" className="btn btn-gold">View order details →</Link>
-                <Link href="/" className="btn btn-outline-gold">Back to home</Link>
-                <Link href="/account" className="btn btn-ghost">My account</Link>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontWeight: 600, padding: "12px 0", borderTop: "1px solid var(--line2)" }}>
+                  <span style={{ color: "var(--text)" }}>Total charged</span>
+                  <span style={{ fontFamily: "var(--serif)", color: "var(--goldHi)", fontSize: "1.5rem" }}>{money(total)}</span>
+                </div>
+                <p style={{ fontSize: ".78rem", color: "var(--dim)", lineHeight: 1.5, margin: "8px 0 24px" }}>
+                  By placing this order you confirm you are 18 or over and agree to our{" "}
+                  <Link href="/terms" style={{ color: "var(--goldHi)" }}>Terms &amp; Conditions</Link>. Age is verified
+                  on delivery. Standard 14-day returns apply.
+                </p>
+                {payment === "paypal" ? (
+                  PP_CLIENT_ID ? (
+                    <PayPalScriptProvider options={{ clientId: PP_CLIENT_ID, currency: "GBP", intent: "capture" }}>
+                      <PayPalButtons
+                        style={{ layout: "vertical", color: "gold", shape: "pill", label: "paypal" }}
+                        disabled={placing}
+                        createOrder={async () => {
+                          setError("");
+                          const r = await createPaypalOrder(buildInput());
+                          return r.id;
+                        }}
+                        onApprove={async (data) => {
+                          setPlacing(true);
+                          try {
+                            const res = await capturePaypalOrder(String(data.orderID), buildInput());
+                            setResult(res); snapshotRecap(); clear(); go(4);
+                          } catch (e) {
+                            setError(e instanceof Error ? e.message : "Payment could not be completed.");
+                          } finally {
+                            setPlacing(false);
+                          }
+                        }}
+                        onError={() => setError("PayPal could not process the payment. Please try again.")}
+                      />
+                    </PayPalScriptProvider>
+                  ) : (
+                    <p style={{ color: "var(--yellow)", fontSize: ".85rem" }}>PayPal isn&apos;t configured yet — choose another payment method.</p>
+                  )
+                ) : (
+                  <button type="button" style={{ ...goldPillFull, padding: "15px 30px", fontSize: "1rem" }} onClick={placeOrder} disabled={placing}>
+                    {placing ? "Placing order…" : "Place Order"}
+                  </button>
+                )}
+                <button type="button" style={{ ...ghostPill, marginTop: 16 }} onClick={() => go(2)}>
+                  <i className="bi bi-arrow-left" /> Back to Payment
+                </button>
               </div>
-            </div>
+            )}
+
+            {/* Step 4 — Complete */}
+            {step === 4 && result && (
+              <div style={{ ...cardStyle, textAlign: "center", padding: "48px 30px" }}>
+                <div
+                  style={{
+                    width: 72,
+                    height: 72,
+                    borderRadius: "50%",
+                    background: "rgba(111,207,151,.12)",
+                    border: "1px solid rgba(111,207,151,.4)",
+                    margin: "0 auto 18px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--green)",
+                    fontSize: "1.9rem",
+                  }}
+                  aria-hidden="true"
+                >
+                  <i className="bi bi-check-lg" />
+                </div>
+                <p style={{ ...eyebrowStyle, color: "var(--goldHi)", margin: "0 0 12px" }}>Payment Successful · Order Confirmed</p>
+                <h2 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "clamp(1.6rem,3.4vw,2.4rem)", color: "var(--text)", margin: "0 0 12px" }}>
+                  Thank you for your order
+                </h2>
+                <p style={{ maxWidth: 460, margin: "0 auto 8px", color: "var(--muted)", fontSize: ".96rem" }}>
+                  Your order <strong style={{ color: "var(--goldHi)", fontFamily: "var(--serif)" }}>#{result.ref}</strong> has been placed.
+                </p>
+                <p style={{ maxWidth: 460, margin: "0 auto 28px", fontSize: ".92rem", color: "var(--muted)", lineHeight: 1.6 }}>
+                  We&apos;ve emailed a receipt to <strong style={{ color: "var(--text)" }}>{form.email}</strong>. Standard
+                  UK delivery — expect dispatch within 1 working day, then 3–5 working days to arrive. Someone aged 18+
+                  must sign for the parcel.
+                </p>
+
+                {/* Compact order recap */}
+                {recap && recap.lines.length > 0 && (
+                  <div style={{ ...panelStyle, textAlign: "left", maxWidth: 460, margin: "0 auto" }}>
+                    <div style={{ ...eyebrowStyle, fontSize: ".7rem", marginBottom: 12 }}>Order Summary</div>
+                    {recap.lines.map((l, idx) => (
+                      <div style={rowItem} key={idx}>
+                        <span style={{ color: "var(--muted)" }}>{l.qty} × {l.name}</span>
+                        <span>{money(l.lineTotal)}</span>
+                      </div>
+                    ))}
+                    <div style={rowItem}><span style={{ color: "var(--muted)" }}>Subtotal</span><span>{money(recap.subtotal)}</span></div>
+                    <div style={rowItem}><span style={{ color: "var(--muted)" }}>Shipping</span><span>{recap.shipping === 0 ? "FREE" : money(recap.shipping)}</span></div>
+                    <div style={{ ...rowItem, fontWeight: 600, borderTop: "1px solid var(--line2)", marginTop: 6, paddingTop: 14 }}>
+                      <span style={{ color: "var(--text)" }}>Total paid</span>
+                      <span style={{ fontFamily: "var(--serif)", color: "var(--goldHi)", fontSize: "1.5rem" }}>{money(recap.total)}</span>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginTop: 26 }}>
+                  <Link href="/order" style={{ ...goldPill, display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+                    View order details <i className="bi bi-arrow-right" />
+                  </Link>
+                  <Link href="/" style={{ ...ghostPill }}>Back to home</Link>
+                  <Link href="/account" style={{ color: "var(--goldHi)", fontSize: ".9rem", fontWeight: 600, textDecoration: "none", alignSelf: "center" }}>My account</Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Summary sidebar */}
+          {step < 4 && (
+            <aside style={cardStyle}>
+              <h2 style={{ fontFamily: "var(--serif)", fontWeight: 600, fontSize: "1.3rem", color: "var(--text)", margin: "0 0 18px" }}>Order Summary</h2>
+              {items.map((i) => (
+                <div style={rowItem} key={i.key}>
+                  <span style={{ color: "var(--muted)" }}>{i.name} ×{i.qty}</span>
+                  <span>{money(i.price * i.qty)}</span>
+                </div>
+              ))}
+              <hr style={{ border: "none", borderTop: "1px solid var(--line2)", margin: "14px 0" }} />
+              <div style={rowItem}><span style={{ color: "var(--muted)" }}>Subtotal</span><span>{money(subtotal)}</span></div>
+              <div style={rowItem}><span style={{ color: "var(--muted)" }}>Shipping</span><span>{shipping === 0 ? "FREE" : money(shipping)}</span></div>
+              <div style={{ ...rowItem, fontWeight: 600, borderTop: "1px solid var(--line2)", marginTop: 6, paddingTop: 14 }}>
+                <span style={{ color: "var(--text)" }}>Total</span>
+                <span style={{ fontFamily: "var(--serif)", color: "var(--goldHi)", fontSize: "1.5rem" }}>{money(total)}</span>
+              </div>
+              <p style={{ fontSize: ".76rem", color: "var(--dim)", textAlign: "center", marginTop: 16 }}>
+                <i className="bi bi-lock-fill" /> Secure · 18+ verified on delivery
+              </p>
+            </aside>
           )}
         </div>
-
-        {/* Summary */}
-        {step < 4 && (
-          <div className="col-12 col-lg-4">
-            <div className="card-brand">
-              <h2 className="h4 mb-3">Order Summary</h2>
-              {items.map((i) => (
-                <div className="order-summary-item" key={i.key}><span style={{ color: "var(--text-muted)" }}>{i.name} ×{i.qty}</span><span>{money(i.price * i.qty)}</span></div>
-              ))}
-              <hr style={{ borderColor: "var(--gold-bdr)" }} />
-              <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Subtotal</span><span>{money(subtotal)}</span></div>
-              <div className="order-summary-item"><span style={{ color: "var(--text-muted)" }}>Shipping</span><span>{shipping === 0 ? "FREE" : money(shipping)}</span></div>
-              <div className="order-summary-item" style={{ fontWeight: 600, border: "none", paddingTop: 14 }}><span>Total</span><span className="serif gold" style={{ fontSize: "1.375rem" }}>{money(total)}</span></div>
-              <p style={{ fontSize: ".75rem", color: "var(--text-dim)", textAlign: "center", marginTop: 14 }}>🔒 Secure · 18+ verified on delivery</p>
-            </div>
-          </div>
-        )}
       </div>
-    </div>
+    </section>
   );
 }

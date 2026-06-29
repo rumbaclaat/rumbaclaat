@@ -5,6 +5,33 @@ import { useCart } from "@/components/cart/cart-provider";
 
 const PRESETS = [25, 50, 75, 100, 200] as const;
 
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  color: "var(--muted)",
+  fontSize: ".78rem",
+  marginBottom: 6,
+};
+
+const fieldStyle: React.CSSProperties = {
+  width: "100%",
+  background: "var(--surface2)",
+  border: "1px solid var(--line2)",
+  color: "var(--text)",
+  borderRadius: 10,
+  padding: "12px 14px",
+  fontSize: ".9rem",
+  outline: "none",
+  fontFamily: "var(--sans)",
+};
+
+const sectionLabelStyle: React.CSSProperties = {
+  fontSize: ".74rem",
+  letterSpacing: ".24em",
+  textTransform: "uppercase",
+  color: "var(--gold)",
+  fontWeight: 600,
+};
+
 export default function GiftCardConfigurator() {
   const { add } = useCart();
 
@@ -51,81 +78,148 @@ export default function GiftCardConfigurator() {
     setTimeout(() => setAdded(false), 1500);
   }
 
+  function AmountTile({
+    value,
+    selected,
+    onSelect,
+    main,
+    sub,
+  }: {
+    value: string;
+    selected: boolean;
+    onSelect: (v: string) => void;
+    main: string;
+    sub?: string;
+  }) {
+    return (
+      <label
+        htmlFor={`gc-${value}`}
+        style={{
+          display: "block",
+          textAlign: "center",
+          cursor: "pointer",
+          background: selected ? "var(--goldLt)" : "var(--surface2)",
+          border: `1px solid ${selected ? "var(--gold)" : "var(--line2)"}`,
+          borderRadius: 12,
+          padding: "18px 12px",
+        }}
+      >
+        <input
+          type="radio"
+          name="gc-amount"
+          id={`gc-${value}`}
+          value={value}
+          checked={selected}
+          onChange={(e) => onSelect(e.target.value)}
+          style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
+        />
+        <span
+          style={{
+            display: "block",
+            fontFamily: "var(--serif)",
+            fontWeight: 600,
+            fontSize: sub ? "1.4rem" : "1.6rem",
+            lineHeight: 1.1,
+            color: selected ? "var(--goldHi)" : "var(--text)",
+          }}
+        >
+          {main}
+        </span>
+        {sub && (
+          <span
+            style={{
+              display: "block",
+              fontSize: ".74rem",
+              color: "var(--dim)",
+              marginTop: 6,
+            }}
+          >
+            {sub}
+          </span>
+        )}
+      </label>
+    );
+  }
+
   return (
-    <div className="row g-5">
+    <div
+      className="gift-config-grid"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.4fr 1fr",
+        gap: "clamp(28px,4vw,48px)",
+        alignItems: "start",
+      }}
+    >
       {/* Configure */}
-      <div className="col-12 col-lg-7">
-        <h2 className="h4 mb-3">1. Choose an amount</h2>
-        <fieldset style={{ border: 0, padding: 0, margin: "0 0 28px" }}>
-          <legend className="visually-hidden">Gift card amount</legend>
-          <div className="row g-3" role="radiogroup" aria-label="Gift card amount">
+      <div>
+        <p style={{ ...sectionLabelStyle, margin: "0 0 14px" }}>
+          1 · Choose an amount
+        </p>
+        <fieldset style={{ border: 0, padding: 0, margin: "0 0 32px" }}>
+          <legend
+            style={{
+              position: "absolute",
+              width: 1,
+              height: 1,
+              overflow: "hidden",
+              clip: "rect(0,0,0,0)",
+            }}
+          >
+            Gift card amount
+          </legend>
+          <div
+            role="radiogroup"
+            aria-label="Gift card amount"
+            className="gift-amount-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3,1fr)",
+              gap: 12,
+            }}
+          >
             {PRESETS.map((v) => (
-              <div className="col-6 col-md-4" key={v}>
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="gc-amount"
-                  id={`gc-${v}`}
-                  value={String(v)}
-                  checked={amountChoice === String(v)}
-                  onChange={(e) => setAmountChoice(e.target.value)}
-                />
-                <label className="gc-card d-block text-center" htmlFor={`gc-${v}`}>
-                  <span className="gc-amount">£{v}</span>
-                </label>
-              </div>
-            ))}
-            <div className="col-6 col-md-4">
-              <input
-                type="radio"
-                className="btn-check"
-                name="gc-amount"
-                id="gc-custom"
-                value="custom"
-                checked={isCustom}
-                onChange={(e) => setAmountChoice(e.target.value)}
+              <AmountTile
+                key={v}
+                value={String(v)}
+                selected={amountChoice === String(v)}
+                onSelect={setAmountChoice}
+                main={`£${v}`}
               />
-              <label className="gc-card d-block text-center" htmlFor="gc-custom">
-                <span className="gc-amount" style={{ fontSize: "1.5rem" }}>
-                  Custom
-                </span>
-                <span
-                  style={{
-                    display: "block",
-                    fontSize: ".75rem",
-                    color: "var(--text-muted)",
-                    marginTop: 6,
-                  }}
-                >
-                  £10 to £500
-                </span>
-              </label>
-            </div>
+            ))}
+            <AmountTile
+              value="custom"
+              selected={isCustom}
+              onSelect={setAmountChoice}
+              main="Custom"
+              sub="£10 to £500"
+            />
           </div>
           {isCustom && (
-            <div className="mt-3">
-              <label className="form-label" htmlFor="gc-custom-amount">
+            <div style={{ marginTop: 16 }}>
+              <label htmlFor="gc-custom-amount" style={labelStyle}>
                 Custom amount (£)
               </label>
               <input
                 type="number"
-                className="form-control"
                 id="gc-custom-amount"
                 min={10}
                 max={500}
                 placeholder="e.g. 150"
                 value={customAmount}
                 onChange={(e) => setCustomAmount(e.target.value)}
+                style={fieldStyle}
               />
             </div>
           )}
         </fieldset>
 
-        <h2 className="h4 mb-3">2. Personalise it</h2>
+        <p style={{ ...sectionLabelStyle, margin: "0 0 14px" }}>
+          2 · Personalise it
+        </p>
         <form id="gc-form" noValidate onSubmit={handleSubmit}>
           {error && (
             <div
-              className="alert"
               id="err-gc"
               role="alert"
               tabIndex={-1}
@@ -134,87 +228,157 @@ export default function GiftCardConfigurator() {
                 background: "rgba(242,109,109,.12)",
                 border: "1px solid rgba(242,109,109,.35)",
                 color: "var(--red)",
-                borderRadius: "var(--radius)",
+                borderRadius: 10,
+                padding: "12px 14px",
+                fontSize: ".85rem",
+                marginBottom: 16,
+                outline: "none",
               }}
             >
               {error}
             </div>
           )}
-          <div className="row g-3">
-            <div className="col-sm-6">
-              <label className="form-label" htmlFor="gc-to">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 16,
+              marginBottom: 16,
+            }}
+            className="gift-field-pair"
+          >
+            <div>
+              <label htmlFor="gc-to" style={labelStyle}>
                 To (recipient name) *
               </label>
               <input
-                className="form-control"
                 id="gc-to"
                 required
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
+                style={fieldStyle}
               />
             </div>
-            <div className="col-sm-6">
-              <label className="form-label" htmlFor="gc-from">
+            <div>
+              <label htmlFor="gc-from" style={labelStyle}>
                 From *
               </label>
               <input
-                className="form-control"
                 id="gc-from"
                 required
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
+                style={fieldStyle}
               />
             </div>
-            <div className="col-sm-6">
-              <label className="form-label" htmlFor="gc-to-email">
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 16,
+              marginBottom: 16,
+            }}
+            className="gift-field-pair"
+          >
+            <div>
+              <label htmlFor="gc-to-email" style={labelStyle}>
                 Recipient email *
               </label>
               <input
-                className="form-control"
                 type="email"
                 id="gc-to-email"
                 required
                 value={toEmail}
                 onChange={(e) => setToEmail(e.target.value)}
+                style={fieldStyle}
               />
             </div>
-            <div className="col-sm-6">
-              <label className="form-label" htmlFor="gc-send-date">
+            <div>
+              <label htmlFor="gc-send-date" style={labelStyle}>
                 Send on
               </label>
               <input
-                className="form-control"
                 type="date"
                 id="gc-send-date"
                 value={sendDate}
                 onChange={(e) => setSendDate(e.target.value)}
+                style={fieldStyle}
               />
-              <span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: ".74rem",
+                  color: "var(--dim)",
+                  marginTop: 6,
+                }}
+              >
                 Leave blank to send immediately
               </span>
             </div>
-            <div className="col-12">
-              <label className="form-label" htmlFor="gc-message">
-                Personal message
-              </label>
-              <textarea
-                className="form-control"
-                id="gc-message"
-                rows={4}
-                maxLength={500}
-                placeholder="Something thoughtful…"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-              <span style={{ fontSize: ".75rem", color: "var(--text-dim)" }}>
-                <span id="gc-msg-count">{message.length}</span>/500
-              </span>
-            </div>
           </div>
-          <button type="submit" className="btn btn-gold mt-4" aria-live="polite">
-            {added ? "Added ✓" : <>Add to cart — <span id="gc-total">£{amount.toFixed(2)}</span></>}
+
+          <div style={{ marginBottom: 18 }}>
+            <label htmlFor="gc-message" style={labelStyle}>
+              Personal message
+            </label>
+            <textarea
+              id="gc-message"
+              rows={4}
+              maxLength={500}
+              placeholder="Something thoughtful…"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              style={{ ...fieldStyle, resize: "vertical", lineHeight: 1.55 }}
+            />
+            <span
+              style={{
+                display: "block",
+                fontSize: ".74rem",
+                color: "var(--dim)",
+                marginTop: 6,
+              }}
+            >
+              <span id="gc-msg-count">{message.length}</span>/500
+            </span>
+          </div>
+
+          <button
+            type="submit"
+            aria-live="polite"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: "var(--gold)",
+              color: "var(--onGold)",
+              border: "none",
+              borderRadius: 999,
+              padding: "13px 30px",
+              fontSize: ".92rem",
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            {added ? (
+              <>
+                Added <i className="bi bi-check-lg" />
+              </>
+            ) : (
+              <>
+                Add to cart — <span id="gc-total">£{amount.toFixed(2)}</span>
+              </>
+            )}
           </button>
-          <p style={{ fontSize: ".75rem", color: "var(--text-dim)", marginTop: 14 }}>
+          <p
+            style={{
+              fontSize: ".78rem",
+              color: "var(--dim)",
+              lineHeight: 1.5,
+              margin: "14px 0 0",
+            }}
+          >
             Sent by email on your chosen date. Gift cards never expire and can be
             redeemed against any product. The recipient must be 18+ when
             purchasing alcohol.
@@ -223,62 +387,91 @@ export default function GiftCardConfigurator() {
       </div>
 
       {/* Live preview */}
-      <div className="col-12 col-lg-5">
-        <p className="eyebrow">PREVIEW</p>
-        <div className="gc-preview">
+      <div style={{ position: "sticky", top: 96 }}>
+        <p style={{ ...sectionLabelStyle, margin: "0 0 14px" }}>Preview</p>
+        <div
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            background: "linear-gradient(160deg, rgba(205,181,130,.12), var(--surface))",
+            border: "1px solid var(--line)",
+            borderRadius: 18,
+            padding: "28px 26px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            gap: 32,
+            minHeight: 230,
+          }}
+        >
           <span
             aria-hidden="true"
             style={{
               position: "absolute",
               top: 0,
               right: 0,
-              width: 120,
-              height: 120,
+              width: 140,
+              height: 140,
               background:
-                "radial-gradient(circle, var(--gold-lt) 0%, transparent 70%)",
+                "radial-gradient(circle, var(--goldLt) 0%, transparent 70%)",
+              pointerEvents: "none",
             }}
           />
-          <div>
+          <div style={{ position: "relative" }}>
             <p
               style={{
                 fontFamily: "var(--serif)",
-                fontSize: ".875rem",
+                fontWeight: 600,
+                fontSize: ".95rem",
                 letterSpacing: ".18em",
-                color: "var(--gold-hi)",
-                marginBottom: 0,
+                color: "var(--goldHi)",
+                margin: 0,
               }}
             >
               RUMBACLAAT
             </p>
             <p
               style={{
-                fontSize: ".6875rem",
+                fontSize: ".68rem",
                 letterSpacing: ".18em",
-                color: "var(--text-muted)",
+                color: "var(--muted)",
                 margin: 0,
               }}
             >
               GIFT CARD
             </p>
           </div>
-          <div>
+          <div style={{ position: "relative" }}>
             <p
               id="gc-preview-amount"
               style={{
                 fontFamily: "var(--serif)",
                 fontSize: "3rem",
                 fontWeight: 700,
-                color: "var(--gold-hi)",
+                color: "var(--goldHi)",
                 lineHeight: 1,
-                marginBottom: 6,
+                margin: "0 0 8px",
               }}
             >
               £{amount}
             </p>
-            <p style={{ fontSize: ".75rem", color: "var(--text-muted)", margin: 0 }}>
-              To: <span style={{ color: "var(--text)" }}>{to || "Recipient"}</span>
+            <p
+              style={{
+                fontSize: ".78rem",
+                color: "var(--muted)",
+                margin: 0,
+              }}
+            >
+              To:{" "}
+              <span style={{ color: "var(--text)" }}>{to || "Recipient"}</span>
             </p>
-            <p style={{ fontSize: ".75rem", color: "var(--text-muted)", margin: 0 }}>
+            <p
+              style={{
+                fontSize: ".78rem",
+                color: "var(--muted)",
+                margin: 0,
+              }}
+            >
               From: <span style={{ color: "var(--text)" }}>{from || "You"}</span>
             </p>
           </div>
@@ -286,10 +479,11 @@ export default function GiftCardConfigurator() {
         <p
           id="gc-preview-message"
           style={{
-            fontSize: ".875rem",
-            color: "var(--text-muted)",
+            fontSize: ".88rem",
+            color: "var(--muted)",
+            lineHeight: 1.6,
             fontStyle: "italic",
-            marginTop: 14,
+            marginTop: 16,
             minHeight: 60,
           }}
         >
